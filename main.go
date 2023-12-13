@@ -11,12 +11,12 @@ func main() {
 	// middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(middleware.Static("views/webRoot"))
-	e.Use(sessionMiddleware)
+	e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
+	e.Use(sessionMiddleware)                  // 세션관리 추가
 
 	// 시작 페이지 핸들러 함수
 	e.GET("/", func(c echo.Context) error {
-		return c.File("index.html") // 예시로 index.html 파일을 반환하도록 설정
+		return c.File("index.html")
 	})
 
 	// login URL 그룹화

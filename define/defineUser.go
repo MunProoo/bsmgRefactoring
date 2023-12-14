@@ -11,6 +11,7 @@ type BsmgMemberInfo struct {
 	Mem_Name     string `json:"mem_name"`
 	Mem_Rank     string `json:"mem_rank"`
 	Mem_Part     string `json:"mem_part"`
+	Mem_Index    string `gorm:"AUTO_INCREMENT;primary_key"`
 }
 
 // 페이징처리를 위한 count(쿼리로 불러온 열의 수)     -> 굳이 구조체로 만들어야 하나? : 놉. eXBuilder랑 통신하는 규격만 맞추면 된다.

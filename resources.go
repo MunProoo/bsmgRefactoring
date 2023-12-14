@@ -3,9 +3,9 @@ package main
 import (
 	"BsmgRefactoring/define"
 
+	"github.com/blue1004jy/gorm"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 var log = logrus.New()

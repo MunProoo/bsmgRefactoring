@@ -1,6 +1,8 @@
 package main
 
 import (
+	"BsmgRefactoring/define"
+
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo"
 )
@@ -9,12 +11,6 @@ var (
 	key   = []byte("super-secret-key")
 	store = sessions.NewCookieStore(key)
 )
-
-type SessionData struct {
-	Authenticated bool
-	ID            string
-	RememberedID  string
-}
 
 // 세션 초기화 작업
 func sessionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
@@ -33,7 +29,7 @@ func sessionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func chkSession(c echo.Context) (data SessionData) {
+func chkSession(c echo.Context) (data define.SessionData) {
 	// 세션체크
 	session := c.Get("Member").(*sessions.Session)
 	if session.Values["mem_id"] == nil {
@@ -52,4 +48,22 @@ func chkSession(c echo.Context) (data SessionData) {
 	data.RememberedID = session.Values["rememberedID"].(string)
 	return
 
+}
+
+func createSession(c echo.Context, sessionValue define.SessionValue) {
+	session, _ := c.Get("Member").(*sessions.Session)
+	// Set session
+	session.Values["authenticated"] = true
+	session.Values["mem_id"] = sessionValue.ID
+
+	// ID 기억하기에 체크 되어있다면. rememberID에 sessionValue.ID 기입
+	var rememberedID string
+	if sessionValue.RememberID == 1 {
+		rememberedID = sessionValue.ID
+	} else {
+		rememberedID = ""
+	}
+
+	session.Values["rememberedID"] = rememberedID
+	c.Set("Member", session)
 }

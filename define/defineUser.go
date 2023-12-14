@@ -6,12 +6,12 @@ type Result struct {
 
 // 멤버 구조체 객체
 type BsmgMemberInfo struct {
-	Mem_ID       string `json:"mem_id"`
-	Mem_Password string `json:"mem_pw"`
-	Mem_Name     string `json:"mem_name"`
-	Mem_Rank     string `json:"mem_rank"`
-	Mem_Part     string `json:"mem_part"`
-	Mem_Index    string `gorm:"AUTO_INCREMENT;primary_key"`
+	Mem_Index    string `gorm:"type:int;AUTO_INCREMENT;primary_key"`
+	Mem_ID       string `json:"mem_id" gorm:"type:varchar(20);unique_key"`
+	Mem_Password string `json:"mem_pw" gorm:"type:varchar(50)"`
+	Mem_Name     string `json:"mem_name" gorm:"type:varchar(50)"`
+	Mem_Rank     string `json:"mem_rank" gorm:"type:int"`
+	Mem_Part     string `json:"mem_part" gorm:"type:int"`
 }
 
 // 페이징처리를 위한 count(쿼리로 불러온 열의 수)     -> 굳이 구조체로 만들어야 하나? : 놉. eXBuilder랑 통신하는 규격만 맞추면 된다.

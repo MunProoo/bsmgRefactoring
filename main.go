@@ -6,6 +6,15 @@ import (
 )
 
 func main() {
+	// db
+	var server ServerProcessor
+	err := server.ConnectDataBase()
+	if err != nil {
+		// 로그
+		log.Printf("ConnectDataBase Failed . err = %v\n", err)
+		return
+	}
+
 	e := echo.New()
 
 	// middleware
@@ -24,6 +33,7 @@ func main() {
 
 	// 그룹 내에서 처리할 핸들러 함수 등록
 	bsmgLoginGroup.GET("/chkLogin", getChkLoginRequest)
+	bsmgLoginGroup.POST("/login", postLoginRequest)
 
 	// bsmgUserGroup.GET("/profile", handleUserProfile)
 	// bsmgUserGroup.GET("/settings", handleUserSettings)

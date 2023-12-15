@@ -20,7 +20,7 @@ func (dbm *DBGormMaria) ConnectMariaDB() (err error) {
 	dbm.release()
 
 	// config 파일로 받아오도록 수정
-	connectionString := "root:0000@tcp(127.0.0.1:3306)/"
+	connectionString := "root:12345@tcp(127.0.0.1:3306)/"
 	// dbm.DB, err = gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	dbm.DB, err = gorm.Open("mysql", connectionString)
 	if err != nil {
@@ -79,7 +79,7 @@ func (dbm *DBGormMaria) CreateDataBase() error {
 func (dbm *DBGormMaria) ConnectBSMG() (err error) {
 	dbm.release()
 
-	connectionString := "root:0000@tcp(127.0.0.1:3306)/BSMG?charset=utf8&parseTime=True&loc=Local"
+	connectionString := "root:12345@tcp(127.0.0.1:3306)/BSMG?charset=utf8&parseTime=True&loc=Local"
 	dbm.DB, err = gorm.Open("mysql", connectionString)
 	if err != nil {
 		return err

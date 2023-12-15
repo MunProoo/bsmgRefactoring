@@ -2,21 +2,18 @@ package main
 
 import (
 	"BsmgRefactoring/define"
-	"fmt"
 	"net/http"
 
-	"github.com/gorilla/sessions"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
-// 로그인 중인지 세션을 통해 확인
+// 로그인 중인지 확인
 func getChkLoginRequest(c echo.Context) error {
 
 	var result define.BsmgMemberResult
-	chkSess := chkSession(c)
-	if !chkSess.Authenticated {
-		result.Result.ResultCode = 1
-
+	isAuthenticated := chkSession(c)
+	if !isAuthenticated {
+		result.Result.ResultCode = define.ErrorInvalidParameter
 	} else {
 		result.MemberInfo = &define.BsmgMemberInfo{}
 		result.MemberInfo.Mem_ID = "mem_id"
@@ -30,34 +27,29 @@ func getChkLoginRequest(c echo.Context) error {
 }
 
 func postLoginRequest(c echo.Context) error {
-	// Get URL DATA는 queryParam
-	ID := c.QueryParam("id")
-	fmt.Println(ID)
+	var result *define.BsmgMemberResult
+	result = &define.BsmgMemberResult{}
 
-	var result define.BsmgMemberResult
-
-	memID := c.FormValue("mem_id")
-	memPW := c.FormValue("mem_pw")
 	value, err := c.FormParams()
-	fmt.Println(err)
-	memID = value.Get("mem_id")
-	// 이렇게 받을수밖에없을까
-	memID = value.Get("@d1#mem_id")
+	if err != nil {
+		result.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, result)
+	}
 
-	result.MemberInfo.Mem_ID = memID
-	result.MemberInfo.Mem_Name = "Test"
-	result.MemberInfo.Mem_Password = memPW
+	parser := initFormParser(value)
+	if parser == nil {
+		result.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, result)
+	}
+
+	result = parseLoginRequest(parser)
+
 	result.Result.ResultCode = 0
+	result.MemberInfo.Mem_Name = "뀨뀨"
 
-	var sessionValue define.SessionValue
-	sessionValue.ID = memID
+	// 세션 생성
+	createSession(c, result.MemberInfo)
 
-	createSession(c, sessionValue)
-
-	// 세션으로부터 값 받아오기 테스트
-	session := c.Get("Member").(*sessions.Session)
-	sessionID := session.Values["mem_id"]
-
-	fmt.Printf("%v", sessionID)
-	return nil
+	// 테스트용으로 무조건 통과되게
+	return c.JSON(http.StatusOK, result)
 }

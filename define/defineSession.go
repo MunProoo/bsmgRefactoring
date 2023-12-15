@@ -8,6 +8,5 @@ type SessionValue struct {
 
 type SessionData struct {
 	Authenticated bool
-	ID            string
-	RememberedID  string
+	Member        BsmgMemberInfo
 }

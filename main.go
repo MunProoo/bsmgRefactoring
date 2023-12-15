@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	// db
+	// db 연결, 미들웨어 연결 등은 server state에 맞춰서 go routine으로 기동하도록 변경할까
 	var server ServerProcessor
 	err := server.ConnectDataBase()
 	if err != nil {
@@ -21,10 +22,13 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
-	e.Use(sessionMiddleware)                  // 세션관리 추가
+	e.Use(session.Middleware(store))          // 세션 미들웨어 추가
+	e.Use(initSessionMiddleware)
 
-	// 시작 페이지 핸들러 함수
+	// 세션 확인
 	e.GET("/", func(c echo.Context) error {
+		// initSessionMiddleware(c)
+
 		return c.File("index.html")
 	})
 

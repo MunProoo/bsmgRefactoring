@@ -3,6 +3,7 @@ package database
 import (
 	"BsmgRefactoring/define"
 	"fmt"
+	"log"
 
 	"github.com/blue1004jy/gorm"
 	_ "github.com/go-sql-driver/mysql"
@@ -20,7 +21,7 @@ func (dbm *DBGormMaria) ConnectMariaDB() (err error) {
 	dbm.release()
 
 	// config 파일로 받아오도록 수정
-	connectionString := "root:12345@tcp(127.0.0.1:3306)/"
+	connectionString := "root:0000@tcp(127.0.0.1:3306)/"
 	// dbm.DB, err = gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	dbm.DB, err = gorm.Open("mysql", connectionString)
 	if err != nil {
@@ -41,6 +42,17 @@ func (dbm *DBGormMaria) ConnectMariaDB() (err error) {
 	}
 	// 로그
 	// 연결 성공
+	return nil
+}
+
+func (dbm *DBGormMaria) IsConnected() (err error) {
+	err = dbm.DB.DB().Ping()
+	if err != nil {
+		// out.Printe(out.LogArg{"pn": "ITO", "fn": "connectDB", "text": "connect fail", "err": err})
+		dbm.DB.Close()
+		dbm.DB = nil
+		return err
+	}
 	return nil
 }
 
@@ -79,7 +91,7 @@ func (dbm *DBGormMaria) CreateDataBase() error {
 func (dbm *DBGormMaria) ConnectBSMG() (err error) {
 	dbm.release()
 
-	connectionString := "root:12345@tcp(127.0.0.1:3306)/BSMG?charset=utf8&parseTime=True&loc=Local"
+	connectionString := "root:0000@tcp(127.0.0.1:3306)/BSMG?charset=utf8&parseTime=True&loc=Local"
 	dbm.DB, err = gorm.Open("mysql", connectionString)
 	if err != nil {
 		return err
@@ -106,4 +118,36 @@ func (dbm *DBGormMaria) CreateMemberTable() {
 			fmt.Printf("%v \n", err)
 		}
 	}
+}
+
+// GORM 사용법 확인 필요
+func (dbm *DBGormMaria) InsertMember(member define.BsmgMemberInfo) (err error) {
+	nextIdx := dbm.findMinIdx()
+	member.Mem_Index = nextIdx
+
+	// 왜 mem_index 인식 못하고
+	// Error 1364 (HY000): Field 'mem_index' doesn't have a default value 뜰까?
+	// err = dbm.DB.Debug().Create(member).Error
+	queryString := fmt.Sprintf(`INSERT INTO 'bsmg_member_infos' (mem_index, mem_id, mem_password, mem_name,
+		mem_rank, mem_part) VALUES (%d,%s,%s,%s,%s,%s)`, member.Mem_Index, member.Mem_ID, member.Mem_Password,
+		member.Mem_Name, member.Mem_Rank, member.Mem_Part)
+	err = dbm.DB.Debug().Exec(queryString).Error
+
+	if err != nil {
+		log.Printf("%v \n", err)
+		return
+	}
+	return
+}
+
+// 가장 작은 user index 번호 return
+func (dbm *DBGormMaria) findMinIdx() int32 {
+	queryString := `SELECT MIN(t1.mem_index + 1) AS next_available_id
+	FROM bsmg_member_infos t1
+	LEFT JOIN bsmg_member_infos t2 ON t1.mem_index + 1 = t2.mem_index
+	WHERE t2.mem_index IS NULL`
+
+	var nextIdx int32
+	dbm.DB.Exec(queryString).Scan(&nextIdx)
+	return nextIdx
 }

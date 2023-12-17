@@ -2,6 +2,7 @@ package main
 
 import (
 	"BsmgRefactoring/database"
+	"sync"
 
 	"github.com/sirupsen/logrus"
 )
@@ -22,6 +23,10 @@ var log = logrus.New()
 
 type ServerProcessor struct {
 	dbManager database.DatabaseManager
+	State     uint16 // 서버의 상태
+	mutex     sync.RWMutex
+	reqCh     chan interface{}
+	resCh     chan interface{}
 }
 
 func (server *ServerProcessor) ConnectDataBase() (err error) {
@@ -29,7 +34,7 @@ func (server *ServerProcessor) ConnectDataBase() (err error) {
 	if err != nil {
 		// 로그
 		log.Printf("InitDBManager Failed . err = %v\n", err)
-		return
+		return err
 	}
 	return
 }

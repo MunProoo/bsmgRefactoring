@@ -1,20 +1,32 @@
 package main
 
 import (
+	"BsmgRefactoring/define"
+	"encoding/gob"
+
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
+const (
+	sessionKey = "BSMG"
+)
+
+var server ServerProcessor // 핸들러에서도 접근 가능하도록 전역으로 할당
+
+func init() {
+	// Gob에 BsmgMemberInfo 타입 등록
+	gob.Register(define.BsmgMemberInfo{})
+}
+
 func main() {
-	// db 연결, 미들웨어 연결 등은 server state에 맞춰서 go routine으로 기동하도록 변경할까
-	var server ServerProcessor
-	err := server.ConnectDataBase()
-	if err != nil {
-		// 로그
-		log.Printf("ConnectDataBase Failed . err = %v\n", err)
-		return
-	}
+	// TODO : server를 goroutine으로 돌려야함
+	// DB 채널통신 테스트중
+	server.reqCh = make(chan interface{}, 6000)
+	server.resCh = make(chan interface{}, 6000)
+
+	go server.StartServer()
 
 	e := echo.New()
 
@@ -22,29 +34,26 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
-	e.Use(session.Middleware(store))          // 세션 미들웨어 추가
-	e.Use(initSessionMiddleware)
 
-	// 세션 확인
+	e.Use(session.Middleware(store)) // 세션 미들웨어 추가
+	// 스레드 안정성을 고려하여 서버 변수를 컨텍스트에 할당
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Set("server", &server)
+			return next(c)
+		}
+	})
+
 	e.GET("/", func(c echo.Context) error {
-		// initSessionMiddleware(c)
-
+		c.Set("server", &server)
 		return c.File("index.html")
 	})
 
-	// login URL 그룹화
-	bsmgLoginGroup := e.Group("/bsmg/login")
-
-	// 그룹 내에서 처리할 핸들러 함수 등록
-	bsmgLoginGroup.GET("/chkLogin", getChkLoginRequest)
-	bsmgLoginGroup.POST("/login", postLoginRequest)
-
-	// bsmgUserGroup.GET("/profile", handleUserProfile)
-	// bsmgUserGroup.GET("/settings", handleUserSettings)
-	// bsmgUserGroup.POST("/update", handleUserUpdate)
+	// URL 그룹화
+	bsmgGroup := e.Group("/bsmg/")
 
 	// Route
-	// fileServer := http.FileServer(http.Dir("./webRoot"))
+	initRouteGroup(bsmgGroup)
 
 	e.Logger.Fatal(e.Start(":3000"))
 }

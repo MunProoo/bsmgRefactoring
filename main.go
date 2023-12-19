@@ -1,5 +1,7 @@
 package main
 
+// SPA (클라이언트 측 페이지 전환) 방식이므로 세션체크는 클라이언트에서 한다.
+
 import (
 	"BsmgRefactoring/define"
 	"encoding/gob"
@@ -36,22 +38,23 @@ func main() {
 	e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
 
 	e.Use(session.Middleware(store)) // 세션 미들웨어 추가
-	// 스레드 안정성을 고려하여 서버 변수를 컨텍스트에 할당
+	// e.Use(initSessionMiddleware)
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			c.Set("server", &server)
+			// 세션 초기화
+			initSessionMiddleware(c)
+			// 스레드 안정성을 고려하여 서버 변수를 컨텍스트에 할당
+			c.Set("Server", &server)
 			return next(c)
 		}
 	})
 
 	e.GET("/", func(c echo.Context) error {
-		c.Set("server", &server)
 		return c.File("index.html")
 	})
 
 	// URL 그룹화
 	bsmgGroup := e.Group("/bsmg/")
-
 	// Route
 	initRouteGroup(bsmgGroup)
 

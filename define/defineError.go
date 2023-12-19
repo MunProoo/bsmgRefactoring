@@ -8,4 +8,5 @@ const (
 	LoginPWMismatch
 	NotLoggedIn
 	ParsingFailed
+	NotAuthorizedUser
 )

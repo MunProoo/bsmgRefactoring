@@ -41,21 +41,9 @@ type PartTree struct {
 }
 
 type BsmgRankPartResult struct {
-	RankList []*BsmgRankInfo `json:"ds_rank"`
-	PartList []*BsmgPartInfo `json:"ds_part"`
-	Result   Result          `json:"Result"`
-}
-
-// 직급 구조체
-type BsmgRankInfo struct {
-	Rank_Idx  int32  `json:"rank_idx"`
-	Rank_Name string `json:"rank_name"`
-}
-
-// 부서 구조체
-type BsmgPartInfo struct {
-	Part_Idx  int32  `json:"part_idx"`
-	Part_Name string `json:"part_name"`
+	RankList []BsmgRankInfo `json:"ds_rank"`
+	PartList []BsmgPartInfo `json:"ds_part"`
+	Result   Result         `json:"Result"`
 }
 
 // 부서 변경시 보고대상 바로 해당 팀의 팀장급으로
@@ -76,51 +64,32 @@ type PageInfo struct {
 
 // 일일 업무보고 조회시
 type BsmgReportResult struct {
-	ReportList   []*BsmgReportInfo   `json:"ds_rptList"`
-	ScheduleList []*BsmgScheduleInfo `json:"ds_schedule"`
-	ReportInfo   *BsmgReportInfo     `json:"dm_reportInfo"`
-	TotalCount   TotalCountData      `json:"totalCount"`
-	Result       Result              `json:"Result"`
+	ReportList   []BsmgReportInfo   `json:"ds_rptList"`
+	ScheduleList []BsmgScheduleInfo `json:"ds_schedule"`
+	ReportInfo   *BsmgReportInfo    `json:"dm_reportInfo"`
+	TotalCount   TotalCountData     `json:"totalCount"`
+	Result       Result             `json:"Result"`
 }
 
 // 주간 업무보고 조회시
 type BsmgWeekRptResult struct {
-	WeekReportList []*BsmgWeekRptInfo `json:"ds_weekRptList"`
-	WeekReportInfo *BsmgWeekRptInfo   `json:"dm_weekRptInfo"`
-	TotalCount     TotalCountData     `json:"totalCount"`
-	Result         Result             `json:"Result"`
+	WeekReportList []BsmgWeekRptInfo `json:"ds_weekRptList"`
+	WeekReportInfo BsmgWeekRptInfo   `json:"dm_weekRptInfo"`
+	TotalCount     TotalCountData    `json:"totalCount"`
+	Result         Result            `json:"Result"`
 }
 
-// 일일 업무보고서 객체
-type BsmgReportInfo struct {
-	Rpt_Idx      int32  `json:"rpt_idx"`
-	Rpt_Reporter string `json:"rpt_reporter"`
-	Rpt_date     string `json:"rpt_date"`
-	Rpt_toRpt    string `json:"rpt_toRpt"`
-	Rpt_ref      string `json:"rpt_ref"`
-	Rpt_schedule string `json:"rpt_schedule"`
-	Rpt_title    string `json:"rpt_title"`
-	Rpt_content  string `json:"rpt_content"`
-	Rpt_etc      string `json:"rpt_etc"`
-	Rpt_attr1    string `json:"rpt_attr1"`
-	Rpt_attr2    string `json:"rpt_attr2"`
-	Rpt_confirm  bool   `json:"rpt_confirm"`
+type BsmgMemberRequest struct {
+	Data struct {
+		MemberList []BsmgMemberInfo `json:"Src_memberList"` // ds_memberList
+		MemberInfo BsmgMemberInfo   `json:"dm_memberInfo"`
+		TotalCount TotalCountData   `json:"TotalCount"`
+		Result     Result           `json:"Result"`
+	} `json:"data"`
 }
-
-// 일일 업무보고서 일정 객체
-type BsmgScheduleInfo struct {
-	Rpt_Idx    int32  `json:"rpt_idx"`
-	Sc_Content string `json:"sc_content"`
-}
-
-// 주간 업무 보고서 객체
-type BsmgWeekRptInfo struct {
-	WRpt_Idx          int32  `json:"wRpt_idx"` // Struct 필드는 항상 대문자로 시작해야 한다
-	WRpt_Reporter     string `json:"wRpt_reporter"`
-	WRpt_Date         string `json:"wRpt_date"`
-	WRpt_ToRpt        string `json:"wRpt_toRpt"`
-	WRpt_Title        string `json:"wRpt_title"`
-	WRpt_Content      string `json:"wRpt_content"`
-	WRpt_OmissionDate string `json:"wRpt_omissionDate"`
-	WRpt_Part         int32  `json:"wRpt_part"`
+type BsmgMemberResponse struct {
+	MemberList []BsmgMemberInfo `json:"Src_memberList"` // ds_memberList
+	MemberInfo BsmgMemberInfo   `json:"dm_memberInfo"`
+	TotalCount TotalCountData   `json:"TotalCount"`
+	Result     Result           `json:"Result"`
 }

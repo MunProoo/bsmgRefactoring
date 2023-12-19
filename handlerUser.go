@@ -12,13 +12,13 @@ import (
 func getUserListRequest(c echo.Context) error {
 	log.Println("getUserList Req")
 
-	result := &define.BsmgMemberResult{}
+	result := &define.BsmgMemberResponse{}
 
 	// DB에서 가져오는거로 변경
 	var count int = 1
 	result.TotalCount.Count = int32(count)
 	if count > 0 {
-		result.MemberList = make([]*define.BsmgMemberInfo, count)
+		result.MemberList = make([]define.BsmgMemberInfo, count)
 	}
 
 	result.Result.ResultCode = define.Success
@@ -31,12 +31,12 @@ func getUserListRequest(c echo.Context) error {
 func getIdCheckRequest(c echo.Context) error {
 	log.Println("getIdCheckRequest")
 
-	var result define.BsmgMemberResult
+	var result define.BsmgMemberRequest
 
 	value, err := c.FormParams()
 	if err != nil {
 		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
+		result.Data.Result.ResultCode = define.ErrorInvalidParameter
 		return c.JSON(http.StatusOK, result)
 	}
 	parser := initFormParser(value)
@@ -46,7 +46,7 @@ func getIdCheckRequest(c echo.Context) error {
 
 	fmt.Println(mem_id)
 
-	result.Result.ResultCode = define.Success
+	result.Data.Result.ResultCode = define.Success
 
 	// 테스트용으로 무조건 통과되게
 	return c.JSON(http.StatusOK, result)
@@ -56,7 +56,7 @@ func getIdCheckRequest(c echo.Context) error {
 func getUserSearchRequest(c echo.Context) error {
 	log.Println("getUserSearchRequest")
 
-	var result define.BsmgMemberResult
+	var result define.BsmgMemberResponse
 	var search *define.SearchData
 
 	value, err := c.FormParams()
@@ -77,14 +77,14 @@ func getUserSearchRequest(c echo.Context) error {
 func postUserReq(c echo.Context) error {
 	log.Println("postUserReq")
 
-	var result define.BsmgMemberResult
+	var result define.BsmgMemberRequest
 	var member *define.BsmgMemberInfo
-	server := c.Get("server").(*ServerProcessor)
+	server := c.Get("Server").(*ServerProcessor)
 
 	value, err := c.FormParams()
 	if err != nil {
 		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
+		result.Data.Result.ResultCode = define.ErrorInvalidParameter
 		return c.JSON(http.StatusOK, result)
 	}
 	parser := initFormParser(value)
@@ -92,7 +92,7 @@ func postUserReq(c echo.Context) error {
 
 	if err != nil {
 		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
+		result.Data.Result.ResultCode = define.ErrorInvalidParameter
 		return c.JSON(http.StatusOK, result)
 	}
 
@@ -108,23 +108,26 @@ func postUserReq(c echo.Context) error {
 func putUserReq(c echo.Context) error {
 	log.Println("putUserReq")
 
-	var result define.BsmgMemberResult
+	var req define.BsmgMemberRequest
+	c.Bind(&req)
+	fmt.Printf("%v ", req)
+	var res define.BsmgMemberResponse
 	var member *define.BsmgMemberInfo
 	server := c.Get("server").(*ServerProcessor)
 
 	value, err := c.FormParams()
 	if err != nil {
 		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		res.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, res)
 	}
 	parser := initFormParser(value)
 	member, err = parseUserRegistRequest(parser)
 
 	if err != nil {
 		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		res.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, res)
 	}
 
 	// 내용 DB에 Update 작업해야함
@@ -132,14 +135,14 @@ func putUserReq(c echo.Context) error {
 	fmt.Printf("%v ", member)
 	server.dbManager.DBGorm.InsertMember(*member)
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, res)
 }
 
 // 사용자 삭제
 func deleteUserReq(c echo.Context) error {
 	log.Println("deleteUserReq")
 
-	var result define.BsmgMemberResult
+	var result define.BsmgMemberResponse
 	// server := c.Get("server").(*ServerProcessor)
 	url := c.Request().URL.Path[1:]
 	reqSlice := strings.Split(url, "/")

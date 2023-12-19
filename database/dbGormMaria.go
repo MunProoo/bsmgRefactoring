@@ -40,6 +40,7 @@ func (dbManager *DatabaseManager) InitDBManager() (err error) {
 	// 필요? -------------------------
 
 	// mariaDB 연결
+	log.Println("Connect DB ... ")
 	dbManager.DBGorm = &DBGormMaria{}
 	err = dbManager.DBGorm.ConnectMariaDB()
 	if err != nil {
@@ -65,6 +66,7 @@ func (dbManager *DatabaseManager) InitDBManager() (err error) {
 	}
 
 	// database 연결
+	log.Println("Connect BSMG ... ")
 	err = dbManager.DBGorm.ConnectBSMG()
 	if err != nil {
 		// 로그
@@ -74,7 +76,49 @@ func (dbManager *DatabaseManager) InitDBManager() (err error) {
 	}
 
 	// 테이블 한번에 묶기
-	dbManager.DBGorm.CreateMemberTable()
+	log.Println("Create Tables ... ")
+	err = dbManager.CreateTables()
+	if err != nil {
+		log.Printf("CreateTables : %v \n", err)
+		return err
+	}
 
 	return nil
+}
+
+func (dbManager *DatabaseManager) CreateTables() (err error) {
+	err = dbManager.DBGorm.CreateRankTable()
+	if err != nil {
+		return err
+	}
+	err = dbManager.DBGorm.CreatePartTable()
+	if err != nil {
+		return err
+	}
+	err = dbManager.DBGorm.CreateMemberTable()
+	if err != nil {
+		return err
+	}
+	err = dbManager.DBGorm.CreateAttr1Table()
+	if err != nil {
+		return err
+	}
+	err = dbManager.DBGorm.CreateAttr2Table()
+	if err != nil {
+		return err
+	}
+	err = dbManager.DBGorm.CreateDailyReportTable()
+	if err != nil {
+		return err
+	}
+	err = dbManager.DBGorm.CreateScheduleTable()
+	if err != nil {
+		return err
+	}
+	err = dbManager.DBGorm.CreateWeekReportTable()
+	if err != nil {
+		return err
+	}
+
+	return
 }

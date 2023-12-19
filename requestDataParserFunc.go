@@ -4,25 +4,25 @@ import (
 	"BsmgRefactoring/define"
 )
 
-func parseLoginRequest(parser *FormParser) (result *define.BsmgMemberResult) {
-	var err error
-	result = &define.BsmgMemberResult{}
-	result.MemberInfo = &define.BsmgMemberInfo{}
-	result.MemberInfo.Mem_ID, err = parser.getStringValue(0, "mem_id", 0)
-	if err != nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return result
-	}
+// func parseLoginRequest(parser *FormParser) (result *define.BsmgMemberResult) {
+// 	var err error
+// 	result = &define.BsmgMemberResult{}
+// 	result.Data.MemberInfo = &define.BsmgMemberInfo{}
+// 	result.Data.MemberInfo.Mem_ID, err = parser.getStringValue(0, "mem_id", 0)
+// 	if err != nil {
+// 		result.Data.Result.ResultCode = define.ErrorInvalidParameter
+// 		return result
+// 	}
 
-	result.MemberInfo.Mem_Password, err = parser.getStringValue(0, "mem_pw", 0)
-	if err != nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return result
-	}
+// 	result.Data.MemberInfo.Mem_Password, err = parser.getStringValue(0, "mem_pw", 0)
+// 	if err != nil {
+// 		result.Data.Result.ResultCode = define.ErrorInvalidParameter
+// 		return result
+// 	}
 
-	result.Result.ResultCode = 0
-	return
-}
+// 	result.Data.Result.ResultCode = 0
+// 	return
+// }
 
 func parseSearchRequest(parser *FormParser) (search *define.SearchData) {
 	var err error
@@ -59,12 +59,12 @@ func parseUserRegistRequest(parser *FormParser) (member *define.BsmgMemberInfo, 
 		log.Printf("%v \n ", err)
 		return nil, err
 	}
-	member.Mem_Rank, err = parser.getStringValue(0, "mem_rank", 0)
+	member.Mem_Rank, err = parser.getInt32Value(0, "mem_rank", 0)
 	if err != nil {
 		log.Printf("%v \n ", err)
 		return nil, err
 	}
-	member.Mem_Part, err = parser.getStringValue(0, "mem_part", 0)
+	member.Mem_Part, err = parser.getInt32Value(0, "mem_part", 0)
 	if err != nil {
 		log.Printf("%v \n ", err)
 		return nil, err

@@ -23,18 +23,24 @@ func getRankPartReq(c echo.Context) error {
 	log.Println("getRankPartReq")
 
 	var result define.BsmgRankPartResult
-	result.PartList = make([]*define.BsmgPartInfo, 0)
-	part := &define.BsmgPartInfo{
-		Part_Idx:  1,
-		Part_Name: "부서1",
+	server := c.Get("Server").(*ServerProcessor)
+
+	rankList, err := server.dbManager.DBGorm.SelectRankList()
+	if err != nil {
+		log.Printf("%v \n", err)
+		result.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, result)
 	}
-	result.PartList = append(result.PartList, part)
-	result.RankList = make([]*define.BsmgRankInfo, 0)
-	rank := &define.BsmgRankInfo{
-		Rank_Idx:  1,
-		Rank_Name: "랭크1",
+	result.RankList = rankList
+
+	partList, err := server.dbManager.DBGorm.SelectPartist()
+	if err != nil {
+		log.Printf("%v \n", err)
+		result.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, result)
 	}
-	result.RankList = append(result.RankList, rank)
+	result.PartList = partList
+
 	result.Result.ResultCode = define.Success
 	return c.JSON(http.StatusOK, result)
 }

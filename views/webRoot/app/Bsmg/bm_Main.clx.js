@@ -29,12 +29,6 @@
 			 */
 			function onBodyLoad(/* cpr.events.CEvent */ e){
 				app.lookup("sms_chkLogin").send();
-				var mem_rank = app.lookup("dm_memberInfo").getString("mem_rank");	
-				if(mem_rank == '관리자'){
-					app.lookup("user_regist").visible = true;
-					app.lookup("userManagement").visible = true;
-				}
-				app.getContainer().redraw();
 			}
 			
 			
@@ -151,10 +145,53 @@
 				 */
 				var sms_chkLogin = e.control;
 				var result = app.lookup("Result").getString("ResultCode");
-				if(result != 0){
-					alert("세션이 끊어졌습니다.");
-					app.close();
+				if(result == 0) {
+					app.lookup("sms_setRankPart").send();
+				} else {
+					alert("연결이  끊어졌습니다아앙.");
+					cpr.core.App.load("app/Bsmg/bm_login", function(newapp){
+						app.close();
+						var newInst = newapp.createNewInstance();
+						newInst.run();
+					});
+					return; 
 				}
+			}
+			
+			
+			/*
+			 * 서브미션에서 submit-done 이벤트 발생 시 호출.
+			 * 응답처리가 모두 종료되면 발생합니다.
+			 */
+			function onSms_setRankPartSubmitDone(/* cpr.events.CSubmissionEvent */ e){
+				/** 
+				 * @type cpr.protocols.Submission
+				 */
+				var sms_setRankPart = e.control;
+				
+				var result = app.lookup("Result").getValue("ResultCode");
+				if(result == 0) {
+					var memInfo = app.lookup("dm_memberInfo");
+					var mem_rank = memInfo.getString("mem_rank");	
+					var mem_part = memInfo.getString("mem_part");	
+					if(mem_rank < 3){
+						app.lookup("user_regist").visible = true;
+						app.lookup("userManagement").visible = true;
+					}
+					
+					
+					var rankString = app.lookup("ds_rank");
+					var rankRow = rankString.findFirstRow("rank_idx == " + mem_rank);
+					var rankName = rankRow.getValue("rank_name");
+					app.lookup("Main_RankOpb").value = rankName;
+					
+					var partString = app.lookup("ds_part");
+					var partRow = partString.findFirstRow("part_idx == " + mem_part);
+					var partName = partRow.getValue("part_name");
+					app.lookup("Main_PartOpb").value = partName;
+				} 
+				app.getContainer().redraw();
+				
 			};
 			// End - User Script
 			
@@ -168,13 +205,43 @@
 				]
 			});
 			app.register(dataSet_1);
+			
+			var dataSet_2 = new cpr.data.DataSet("ds_rank");
+			dataSet_2.parseData({
+				"columns" : [
+					{"name": "rank_name"},
+					{
+						"name": "rank_idx",
+						"dataType": "number"
+					}
+				]
+			});
+			app.register(dataSet_2);
+			
+			var dataSet_3 = new cpr.data.DataSet("ds_part");
+			dataSet_3.parseData({
+				"columns" : [
+					{"name": "part_name"},
+					{
+						"name": "part_idx",
+						"dataType": "number"
+					}
+				]
+			});
+			app.register(dataSet_3);
 			var dataMap_1 = new cpr.data.DataMap("dm_memberInfo");
 			dataMap_1.parseData({
 				"columns" : [
 					{"name": "mem_id"},
 					{"name": "mem_name"},
-					{"name": "mem_rank"},
-					{"name": "mem_part"}
+					{
+						"name": "mem_rank",
+						"dataType": "number"
+					},
+					{
+						"name": "mem_part",
+						"dataType": "number"
+					}
 				]
 			});
 			app.register(dataMap_1);
@@ -201,6 +268,18 @@
 				submission_2.addEventListener("submit-done", onSms_chkLoginSubmitDone);
 			}
 			app.register(submission_2);
+			
+			var submission_3 = new cpr.protocols.Submission("sms_setRankPart");
+			submission_3.async = true;
+			submission_3.method = "get";
+			submission_3.action = "/bsmg/setting/rankPart";
+			submission_3.addResponseData(dataSet_2, false);
+			submission_3.addResponseData(dataSet_3, false);
+			submission_3.addResponseData(dataMap_2, false);
+			if(typeof onSms_setRankPartSubmitDone == "function") {
+				submission_3.addEventListener("submit-done", onSms_setRankPartSubmitDone);
+			}
+			app.register(submission_3);
 			
 			app.supportMedia("all and (min-width: 1024px)", "default");
 			app.supportMedia("all and (min-width: 500px) and (max-width: 1023px)", "tablet");
@@ -366,7 +445,7 @@
 				]
 			});
 			
-			var output_5 = new cpr.controls.Output();
+			var output_5 = new cpr.controls.Output("Main_RankOpb");
 			output_5.style.css({
 				"border-right-style" : "dashed",
 				"font-weight" : "bold",
@@ -375,7 +454,6 @@
 				"border-top-style" : "dashed",
 				"text-align" : "center"
 			});
-			output_5.bind("value").toDataMap(app.lookup("dm_memberInfo"), "mem_rank");
 			container.addChild(output_5, {
 				positions: [
 					{
@@ -404,7 +482,7 @@
 				]
 			});
 			
-			var output_6 = new cpr.controls.Output();
+			var output_6 = new cpr.controls.Output("Main_PartOpb");
 			output_6.style.css({
 				"border-right-style" : "dashed",
 				"border-bottom-color" : "#000000",
@@ -417,7 +495,6 @@
 				"border-top-style" : "dashed",
 				"text-align" : "center"
 			});
-			output_6.bind("value").toDataMap(app.lookup("dm_memberInfo"), "mem_part");
 			container.addChild(output_6, {
 				positions: [
 					{

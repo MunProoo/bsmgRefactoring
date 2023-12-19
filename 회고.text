@@ -1,0 +1,13 @@
+1. SPA
+클라이언트 측에서 페이지를 변경하는 SPA라서, 세션 체크 요청은 클라이언트 측에서 해야한다.
+추후 jwt를 사용해도 웹앱 형식이면 마찬가지 일듯
+
+2. 서브미션의 mediaType  : application/json ? application/x-www-form-urlencoded
+통신을 application/json으로 사용하도록 전부 변경하려 했지만, eXBuilder6의 여러 가지 문제가 있었다.
+    1) json으로 통신 시 무조건 POST로 가는 문제
+        >> GET으로 가야하면 무조건 application/x-www-form-urlencoded를 사용해야함
+    2) 웹에서 보내줄 땐 {data: {dm_memberInfo: {mem_id: "ㅁㅇ", mem_pw: "ad", mem_name: "", mem_rank: "", mem_part: ""}}} 
+       "data"가 다른 데이터들을 감싸 안은 포맷이라서 서버에서 c.Bind()로 매핑하려할 땐, "data" 구조체를 따로 만들어야 했다.
+       반대로 서버에서 클라이언트에 보낼땐 "data"가 없어야 값을 받을 수 있었다.. 
+
+       ... 그래서 구조체 재사용이 안되고, request, response 따로 운영해야 했다.

@@ -27,7 +27,7 @@
 			function onBodyLoad(/* cpr.events.CEvent */ e){
 				momentToday();
 				app.lookup("sms_setAttr").send();
-				app.lookup("sms_chkLogin").send();
+			//	app.lookup("sms_chkLogin").send();
 				
 				makeTitle();
 			}

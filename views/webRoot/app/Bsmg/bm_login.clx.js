@@ -144,19 +144,29 @@
 					{"name": "mem_id"},
 					{"name": "mem_pw"},
 					{"name": "mem_name"},
-					{"name": "mem_rank"},
-					{"name": "mem_part"}
+					{
+						"name": "mem_rank",
+						"dataType": "number"
+					},
+					{
+						"name": "mem_part",
+						"dataType": "number"
+					}
 				]
 			});
 			app.register(dataMap_1);
 			
 			var dataMap_2 = new cpr.data.DataMap("Result");
 			dataMap_2.parseData({
-				"columns" : [{"name": "ResultCode"}]
+				"columns" : [{
+					"name": "ResultCode",
+					"dataType": "string"
+				}]
 			});
 			app.register(dataMap_2);
 			var submission_1 = new cpr.protocols.Submission("sms_login");
 			submission_1.action = "/bsmg/login/login";
+			submission_1.mediaType = "application/json";
 			submission_1.addRequestData(dataMap_1);
 			submission_1.addResponseData(dataMap_2, false);
 			submission_1.addResponseData(dataMap_1, false);

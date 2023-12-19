@@ -10,8 +10,8 @@ import (
 // 로그인 중인지 확인
 func getChkLoginRequest(c echo.Context) error {
 	log.Println("getChkLogin Req")
-	var result define.BsmgMemberResult
-	isAuthenticated := chkSession(c)
+	var result define.BsmgMemberResponse
+	isAuthenticated := checkSession(c)
 	if !isAuthenticated {
 		result.Result.ResultCode = define.ErrorInvalidParameter
 	} else {
@@ -23,40 +23,41 @@ func getChkLoginRequest(c echo.Context) error {
 }
 
 func postLoginRequest(c echo.Context) error {
+
 	log.Println("postLoginRequest")
-	var result *define.BsmgMemberResult
-	result = &define.BsmgMemberResult{}
+	request := &define.BsmgMemberRequest{}
+	response := &define.BsmgMemberResponse{}
 
-	value, err := c.FormParams()
+	err := c.Bind(request)
 	if err != nil {
 		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		response.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, response)
 	}
+	// value, err := c.FormParams()
+	// if err != nil {
+	// 	log.Printf("%v \n", err)
+	// 	result.Data.Result.ResultCode = define.ErrorInvalidParameter
+	// 	return c.JSON(http.StatusOK, result)
+	// }
 
-	parser := initFormParser(value)
-	if parser == nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
+	// parser := initFormParser(value)
+	// if parser == nil {
+	// 	result.Data.Result.ResultCode = define.ErrorInvalidParameter
+	// 	return c.JSON(http.StatusOK, result)
+	// }
 
-	result = parseLoginRequest(parser)
+	response.Result.ResultCode = define.Success
+	response.MemberInfo.Mem_ID = request.Data.MemberInfo.Mem_ID
+	response.MemberInfo.Mem_Name = "뀨뀨"
+	response.MemberInfo.Mem_Rank = 0
+	response.MemberInfo.Mem_Part = 0
 
-	result.Result.ResultCode = define.Success
-	result.MemberInfo.Mem_Name = "뀨뀨"
-	result.MemberInfo.Mem_Rank = "관리자"
-
-	err = initSession(c)
-	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
 	// 세션 생성
-	createSession(c, result.MemberInfo)
+	createSession(c, &response.MemberInfo)
 
 	// 테스트용으로 무조건 통과되게
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, response)
 }
 
 func postLogoutRequest(c echo.Context) error {

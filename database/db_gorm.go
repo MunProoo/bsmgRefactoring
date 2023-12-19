@@ -21,7 +21,12 @@ func (dbm *DBGormMaria) ConnectMariaDB() (err error) {
 	dbm.release()
 
 	// config 파일로 받아오도록 수정
-	connectionString := "root:12345@tcp(127.0.0.1:3306)/"
+	id := dbm.DBConfig.DatabaseID
+	pw := dbm.DBConfig.DatabasePW
+	ip := dbm.DBConfig.DatabaseIP
+	port := dbm.DBConfig.DatabasePort
+	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/", id, pw, ip, port)
+
 	// dbm.DB, err = gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	dbm.DB, err = gorm.Open("mysql", connectionString)
 	if err != nil {
@@ -57,7 +62,7 @@ func (dbm *DBGormMaria) IsConnected() (err error) {
 // DB 존재여부 확인
 func (DBGorm *DBGormMaria) IsExistBSMG() error {
 	var count int64
-	err := DBGorm.DB.Table("INFORMATION_SCHEMA.SCHEMATA").Where("SCHEMA_NAME = 'BSMG'").Count(&count).Error
+	err := DBGorm.DB.Table("INFORMATION_SCHEMA.SCHEMATA").Where("SCHEMA_NAME = ?", DBNAME).Count(&count).Error
 	if err != nil {
 		return err
 	}
@@ -88,8 +93,11 @@ func (dbm *DBGormMaria) CreateDataBase() error {
 // BSMG 연결
 func (dbm *DBGormMaria) ConnectBSMG() (err error) {
 	dbm.release()
-
-	connectionString := "root:12345@tcp(127.0.0.1:3306)/BSMG?charset=utf8&parseTime=True&loc=Local"
+	id := dbm.DBConfig.DatabaseID
+	pw := dbm.DBConfig.DatabasePW
+	ip := dbm.DBConfig.DatabaseIP
+	port := dbm.DBConfig.DatabasePort
+	connectionString := fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local`, id, pw, ip, port, DBNAME)
 	dbm.DB, err = gorm.Open("mysql", connectionString)
 	if err != nil {
 		return err
@@ -236,12 +244,12 @@ func (dbm *DBGormMaria) CreateWeekReportTable() (err error) {
 
 // 사용자 등록
 func (dbm *DBGormMaria) InsertMember(member define.BsmgMemberInfo) (err error) {
-	nextIdx := dbm.findMinIdx()
+	nextIdx := dbm.FindMinIdx()
 	if nextIdx == 0 {
 		// 0은 INSERT 에러, doesn't have a default value
 		nextIdx++
 	}
-	member.Mem_Idx = int32(nextIdx)
+	member.Mem_Idx = nextIdx
 
 	err = dbm.DB.Debug().Create(&member).Error
 	// queryString := fmt.Sprintf(`INSERT INTO bsmg_member_infos (mem_index, mem_id, mem_password, mem_name,
@@ -257,18 +265,21 @@ func (dbm *DBGormMaria) InsertMember(member define.BsmgMemberInfo) (err error) {
 }
 
 // 가장 작은 user index 번호 return
-func (dbm *DBGormMaria) findMinIdx() int {
-	queryString := `SELECT MIN(t1.mem_idx + 1) AS next_available_id
+func (dbm *DBGormMaria) FindMinIdx() int32 {
+	queryString := `SELECT MIN(t1.mem_idx + 1) AS NextIdx
 	FROM bsmg_member_infos t1
 	LEFT JOIN bsmg_member_infos t2 ON t1.mem_idx + 1 = t2.mem_idx
 	WHERE t2.mem_idx IS NULL;`
 
-	var nextIdx int
-	err := dbm.DB.Debug().Exec(queryString).Scan(&nextIdx).Error
+	NextIdx := define.NextIdx{}
+	err := dbm.DB.Debug().Raw(queryString).Scan(&NextIdx).Error
+	fmt.Println(err)
+	fmt.Println(NextIdx)
 	if err != nil {
 		log.Printf("%v \n", err)
 	}
-	return nextIdx
+
+	return NextIdx.Idx.Int32
 }
 
 func (dbm *DBGormMaria) SelectRankList() (rankList []define.BsmgRankInfo, err error) {

@@ -11,10 +11,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-const (
-	sessionKey = "BSMG"
-)
-
 var server ServerProcessor // 핸들러에서도 접근 가능하도록 전역으로 할당
 
 func init() {

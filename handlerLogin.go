@@ -29,7 +29,8 @@ func postLoginRequest(c echo.Context) error {
 	response := &define.BsmgMemberResponse{}
 
 	err := c.Bind(request)
-	if err != nil {
+	if err != nil && err.(*echo.HTTPError).Code != 400 {
+		// MacOS의 경우 Bind시 type이 다르다고 err뜨는데 안쓰는 필드라서 일단 skip
 		log.Printf("%v \n", err)
 		response.Result.ResultCode = define.ErrorInvalidParameter
 		return c.JSON(http.StatusOK, response)

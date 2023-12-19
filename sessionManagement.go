@@ -9,6 +9,9 @@ import (
 )
 
 // echo framework로 구조 변경후엔 토큰 기반 세션으로 바꿔볼까
+const (
+	sessionKey = "BSMG"
+)
 
 var (
 	key   = []byte("suuuuper-secret-key")
@@ -49,16 +52,17 @@ func initSessionMiddleware(c echo.Context) error {
 	}
 
 	// 세션 Init
-	if _, ok := session.Values["initialized"]; !ok {
-		session.Options = &sessions.Options{
-			// Path:     "/",   // 모든 경로에서 세션 확인
-			MaxAge:   86400, // 하루
-			HttpOnly: true,
-		}
-		session.Values["initialized"] = true
-		session.Save(c.Request(), c.Response())
+	if _, ok := session.Values["initialized"]; ok {
+		return nil
 	}
 
+	session.Options = &sessions.Options{
+		// Path:     "/",   // 모든 경로에서 세션 확인
+		MaxAge:   86400, // 하루
+		HttpOnly: true,
+	}
+	session.Values["initialized"] = true
+	session.Save(c.Request(), c.Response())
 	return err
 }
 
@@ -83,7 +87,10 @@ func initSessionMiddleware(c echo.Context) error {
 //		}
 //	}
 func checkSession(c echo.Context) bool {
-	session, _ := session.Get(sessionKey, c)
+	session, err := session.Get(sessionKey, c)
+	if err != nil {
+		return false
+	}
 
 	if session.Values["Member"] == nil || !session.Values["authenticated"].(bool) {
 		return false
@@ -116,7 +123,7 @@ func createSession(c echo.Context, member *define.BsmgMemberInfo) {
 }
 
 func deleteSession(c echo.Context) {
-	session, err := session.Get("BSMG", c)
+	session, err := session.Get(sessionKey, c)
 	if err != nil {
 		log.Printf("%v", err)
 		return

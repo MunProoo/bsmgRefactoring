@@ -12,36 +12,28 @@ const (
 )
 
 type DatabaseManager struct {
-	DBGorm   DBInterface
-	DBConfig define.DBConfig
+	DBGorm DBInterface
 }
 
 type DBGormMaria struct {
-	DB *gorm.DB
+	DB       *gorm.DB
+	DBConfig define.DBConfig
 }
 
 func (dbManager *DatabaseManager) InitDBManager() (err error) {
 	// 필요? -------------------------
 	// 메모리에 저장하자 AES 256해서
-	DBManager := &DatabaseManager{
-		DBConfig: define.DBConfig{},
-		DBGorm:   &DBGormMaria{},
-	}
-
-	// 필요한가?
-	DBConfig := define.DBConfig{
-		DatabaseIP:   "127.0.0.1",
-		DatabaseID:   "root",
-		DatabasePW:   "0000",
-		DatabasePort: "3306",
-		DatabaseName: "",
-	}
-	DBManager.DBConfig = DBConfig
-	// 필요? -------------------------
 
 	// mariaDB 연결
 	log.Println("Connect DB ... ")
-	dbManager.DBGorm = &DBGormMaria{}
+	dbManager.DBGorm = &DBGormMaria{
+		DBConfig: define.DBConfig{
+			DatabaseIP:   "127.0.0.1",
+			DatabaseID:   "root",
+			DatabasePW:   "0000",
+			DatabasePort: "3306",
+		},
+	}
 	err = dbManager.DBGorm.ConnectMariaDB()
 	if err != nil {
 		// 로그남기기

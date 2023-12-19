@@ -1,11 +1,12 @@
 package define
 
+import "database/sql"
+
 type DBConfig struct {
 	DatabaseIP       string
 	DatabasePort     string
 	DatabaseID       string
 	DatabasePW       string
-	DatabaseName     string
 	ServerListenPort int
 }
 
@@ -75,4 +76,8 @@ type BsmgWeekRptInfo struct {
 	WRpt_Content      string `json:"wRpt_content" gorm:"type:text"`             // 업무 내용
 	WRpt_Part         int32  `json:"wRpt_part" gorm:"type:int"`                 // 부서
 	WRpt_OmissionDate string `json:"wRpt_omissionDate" gorm:"type:varchar(50)"` // 보고서 누락 날짜
+}
+
+type NextIdx struct {
+	Idx sql.NullInt32
 }

@@ -26,7 +26,9 @@ type DBInterface interface {
 	// Select
 	SelectRankList() (rankList []define.BsmgRankInfo, err error)
 	SelectPartist() (partList []define.BsmgPartInfo, err error)
+	SelectAttrS() (attrTreeList []define.AttrTree, err error)
 
 	// util
 	FindMinIdx() int32
+	Release()
 }

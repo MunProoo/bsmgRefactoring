@@ -27,7 +27,7 @@
 			function onBodyLoad(/* cpr.events.CEvent */ e){
 				momentToday();
 				app.lookup("sms_setAttr").send();
-			//	app.lookup("sms_chkLogin").send();
+				app.lookup("sms_chkLogin").send();
 				
 				makeTitle();
 			}
@@ -422,6 +422,7 @@
 			var submission_2 = new cpr.protocols.Submission("sms_registRpt");
 			submission_2.async = false;
 			submission_2.action = "/bsmg/report/report";
+			submission_2.mediaType = "application/json";
 			submission_2.addRequestData(dataMap_1);
 			submission_2.addResponseData(dataMap_2, false);
 			submission_2.addResponseData(dataMap_1, false);
@@ -433,6 +434,7 @@
 			var submission_3 = new cpr.protocols.Submission("sms_registSch");
 			submission_3.async = false;
 			submission_3.action = "/bsmg/report/registSch";
+			submission_3.mediaType = "application/json";
 			submission_3.addRequestData(dataSet_5);
 			submission_3.addRequestData(dataMap_1);
 			submission_3.addResponseData(dataMap_2, false);

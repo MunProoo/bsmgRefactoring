@@ -10,7 +10,7 @@ import (
 )
 
 // DB연결 초기화
-func (dbm *DBGormMaria) release() {
+func (dbm *DBGormMaria) Release() {
 	if dbm.DB != nil {
 		dbm.DB.Close()
 		dbm.DB = nil
@@ -18,7 +18,7 @@ func (dbm *DBGormMaria) release() {
 }
 
 func (dbm *DBGormMaria) ConnectMariaDB() (err error) {
-	dbm.release()
+	dbm.Release()
 
 	// config 파일로 받아오도록 수정
 	id := dbm.DBConfig.DatabaseID
@@ -92,7 +92,7 @@ func (dbm *DBGormMaria) CreateDataBase() error {
 
 // BSMG 연결
 func (dbm *DBGormMaria) ConnectBSMG() (err error) {
-	dbm.release()
+	dbm.Release()
 	id := dbm.DBConfig.DatabaseID
 	pw := dbm.DBConfig.DatabasePW
 	ip := dbm.DBConfig.DatabaseIP
@@ -266,20 +266,19 @@ func (dbm *DBGormMaria) InsertMember(member define.BsmgMemberInfo) (err error) {
 
 // 가장 작은 user index 번호 return
 func (dbm *DBGormMaria) FindMinIdx() int32 {
-	queryString := `SELECT MIN(t1.mem_idx + 1) AS NextIdx
+	queryString := `SELECT MIN(t1.mem_idx + 1) AS nextIdx
 	FROM bsmg_member_infos t1
 	LEFT JOIN bsmg_member_infos t2 ON t1.mem_idx + 1 = t2.mem_idx
 	WHERE t2.mem_idx IS NULL;`
 
-	NextIdx := define.NextIdx{}
-	err := dbm.DB.Debug().Raw(queryString).Scan(&NextIdx).Error
-	fmt.Println(err)
-	fmt.Println(NextIdx)
+	var nextIdx int32
+	err := dbm.DB.Debug().Raw(queryString).Row().Scan(&nextIdx)
+	fmt.Printf("%v \n ", nextIdx)
 	if err != nil {
 		log.Printf("%v \n", err)
 	}
 
-	return NextIdx.Idx.Int32
+	return nextIdx
 }
 
 func (dbm *DBGormMaria) SelectRankList() (rankList []define.BsmgRankInfo, err error) {
@@ -298,4 +297,24 @@ func (dbm *DBGormMaria) SelectPartist() (partList []define.BsmgPartInfo, err err
 		return nil, err
 	}
 	return
+}
+
+func (dbm *DBGormMaria) SelectAttrTree() (attrTreeList []define.AttrTree, err error) {
+	// AttrTreeList 뼈대 생성 (count를 통한 리스트 length 할당)
+	// 업무속성 1 + 업무속성 2 갯수 합
+	queryString := `SELECT sum(total.cnt) 
+	FROM (SELECT COUNT(*) as cnt FROM bsmgAttr1 UNION ALL 
+	SELECT COUNT(*) as cnt FROM bsmgAttr2) total`
+
+	var count int32
+	err = dbm.DB.Debug().Raw(queryString).Row().Scan(&count)
+	if err != nil {
+		log.Printf("%v \n", err)
+	}
+
+	if int(count) > 0 {
+		attrTreeList = make([]define.AttrTree, int(count))
+	}
+
+	return nil, nil
 }

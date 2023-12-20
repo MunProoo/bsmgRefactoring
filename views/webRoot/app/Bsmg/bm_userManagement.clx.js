@@ -453,6 +453,7 @@
 			var submission_5 = new cpr.protocols.Submission("sms_putUserList");
 			submission_5.method = "put";
 			submission_5.action = "/bsmg/user";
+			submission_5.mediaType = "application/json";
 			submission_5.addRequestData(dataSet_5);
 			submission_5.addResponseData(dataMap_1, false);
 			if(typeof onSms_putUserListSubmitDone == "function") {

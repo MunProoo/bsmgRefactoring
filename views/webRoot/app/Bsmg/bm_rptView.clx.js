@@ -27,7 +27,7 @@
 			 * 앱이 최초 구성된후 최초 랜더링 직후에 발생하는 이벤트 입니다.
 			 */
 			function onBodyLoad(/* cpr.events.CEvent */ e){
-			//	app.lookup("sms_chkLogin").send();
+				app.lookup("sms_chkLogin").send();
 			}
 			
 			
@@ -583,6 +583,7 @@
 			submission_4.async = false;
 			submission_4.method = "put";
 			submission_4.action = "/bsmg/report/putRpt";
+			submission_4.mediaType = "application/json";
 			submission_4.addRequestData(dataMap_1);
 			submission_4.addResponseData(dataMap_2, false);
 			if(typeof onSms_putRptSubmitDone == "function") {
@@ -594,6 +595,7 @@
 			submission_5.async = false;
 			submission_5.method = "put";
 			submission_5.action = "/bsmg/report/putSchedule";
+			submission_5.mediaType = "application/json";
 			submission_5.addRequestData(dataMap_3);
 			submission_5.addRequestData(dataSet_1, cpr.protocols.PayloadType.all);
 			submission_5.addResponseData(dataMap_2, false);

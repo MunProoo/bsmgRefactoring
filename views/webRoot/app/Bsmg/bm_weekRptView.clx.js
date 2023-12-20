@@ -383,6 +383,7 @@
 			submission_2.async = false;
 			submission_2.method = "put";
 			submission_2.action = "/bsmg/report/putWeekRpt";
+			submission_2.mediaType = "application/json";
 			submission_2.addRequestData(dataMap_1);
 			submission_2.addResponseData(dataMap_4, false);
 			if(typeof onSms_putWeekRptSubmitDone == "function") {

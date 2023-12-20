@@ -21,14 +21,17 @@ type DBInterface interface {
 	CreateWeekReportTable() (err error)
 
 	// Insert
+	InsertDefaultAttr1()
+	InsertDefaultAttr2()
 	InsertMember(member define.BsmgMemberInfo) (err error)
 
 	// Select
 	SelectRankList() (rankList []define.BsmgRankInfo, err error)
 	SelectPartist() (partList []define.BsmgPartInfo, err error)
-	SelectAttrS() (attrTreeList []define.AttrTree, err error)
+	SelectAttrTree() (attrTreeList []define.AttrTree, err error)
 
 	// util
 	FindMinIdx() int32
 	Release()
+	AttrTotalCount() int32
 }

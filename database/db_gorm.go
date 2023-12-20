@@ -299,6 +299,50 @@ func (dbm *DBGormMaria) SelectPartist() (partList []define.BsmgPartInfo, err err
 	return
 }
 
+func (dbm *DBGormMaria) InsertDefaultAttr1() {
+	attr1List := make([]define.BsmgAttr1Info, 2)
+	attr1List[0] = define.BsmgAttr1Info{Attr1_Idx: 1, Attr1_Category: "솔루션"}
+	attr1List[1] = define.BsmgAttr1Info{Attr1_Idx: 2, Attr1_Category: "제품"}
+
+	// 슬라이스 사용이 안되다니
+	for _, val := range attr1List {
+		err := dbm.DB.Create(val).Error
+		if err != nil {
+			log.Printf("%v \n", err)
+		}
+	}
+}
+func (dbm *DBGormMaria) InsertDefaultAttr2() {
+	attr2List := make([]define.BsmgAttr2Info, 19)
+	attr2List[0] = define.BsmgAttr2Info{Attr2_Idx: 1, Attr1_Idx: 1, Attr2_Name: "출입통제 솔루션"}
+	attr2List[1] = define.BsmgAttr2Info{Attr2_Idx: 2, Attr1_Idx: 1, Attr2_Name: "발열감지 솔루션"}
+	attr2List[2] = define.BsmgAttr2Info{Attr2_Idx: 3, Attr1_Idx: 1, Attr2_Name: "근태관리 솔루션"}
+	attr2List[3] = define.BsmgAttr2Info{Attr2_Idx: 4, Attr1_Idx: 1, Attr2_Name: "식수관리 솔루션"}
+	attr2List[4] = define.BsmgAttr2Info{Attr2_Idx: 5, Attr1_Idx: 1, Attr2_Name: "생체인증형 음주측정 솔루션"}
+	attr2List[5] = define.BsmgAttr2Info{Attr2_Idx: 6, Attr1_Idx: 1, Attr2_Name: "비대면 방문자 및 행사관리 솔루션"}
+	attr2List[6] = define.BsmgAttr2Info{Attr2_Idx: 7, Attr1_Idx: 1, Attr2_Name: "모바일 출입카드 시스템"}
+	attr2List[7] = define.BsmgAttr2Info{Attr2_Idx: 8, Attr1_Idx: 1, Attr2_Name: "서버기반 생체인증 솔루션"}
+
+	attr2List[8] = define.BsmgAttr2Info{Attr2_Idx: 9, Attr1_Idx: 2, Attr2_Name: "얼굴인식 장치"}
+	attr2List[9] = define.BsmgAttr2Info{Attr2_Idx: 10, Attr1_Idx: 2, Attr2_Name: "홍채인식 장치"}
+	attr2List[10] = define.BsmgAttr2Info{Attr2_Idx: 11, Attr1_Idx: 2, Attr2_Name: "지문인식 장치"}
+	attr2List[11] = define.BsmgAttr2Info{Attr2_Idx: 12, Attr1_Idx: 2, Attr2_Name: "카드인식 장치"}
+	attr2List[12] = define.BsmgAttr2Info{Attr2_Idx: 13, Attr1_Idx: 2, Attr2_Name: "라이브 스캐너"}
+	attr2List[13] = define.BsmgAttr2Info{Attr2_Idx: 14, Attr1_Idx: 2, Attr2_Name: "지문 스캐너"}
+	attr2List[14] = define.BsmgAttr2Info{Attr2_Idx: 15, Attr1_Idx: 2, Attr2_Name: "도장 스캐너"}
+	attr2List[15] = define.BsmgAttr2Info{Attr2_Idx: 16, Attr1_Idx: 2, Attr2_Name: "지문인식 모듈"}
+	attr2List[16] = define.BsmgAttr2Info{Attr2_Idx: 17, Attr1_Idx: 2, Attr2_Name: "컨트롤러"}
+	attr2List[17] = define.BsmgAttr2Info{Attr2_Idx: 18, Attr1_Idx: 2, Attr2_Name: "발열감지 모듈"}
+	attr2List[18] = define.BsmgAttr2Info{Attr2_Idx: 19, Attr1_Idx: 2, Attr2_Name: "단종 제품"}
+
+	for _, val := range attr2List {
+		err := dbm.DB.Create(val).Error
+		if err != nil {
+			log.Printf("%v \n", err)
+		}
+	}
+}
+
 func (dbm *DBGormMaria) SelectAttrTree() (attrTreeList []define.AttrTree, err error) {
 	// AttrTreeList 뼈대 생성 (count를 통한 리스트 length 할당)
 	// 업무속성 1 + 업무속성 2 갯수 합
@@ -317,4 +361,15 @@ func (dbm *DBGormMaria) SelectAttrTree() (attrTreeList []define.AttrTree, err er
 	}
 
 	return nil, nil
+}
+
+// 속성1, 속성2 열의 합
+func (dbm *DBGormMaria) AttrTotalCount() int32 {
+	var count int32
+	dbWhere := dbm.DB
+	queryString := `SELECT (SELECT COUNT(*) FROM bsmg_attr1_infos) + 
+	(SELECT COUNT(*) FROM bsmg_attr2_infos) FROM DUAL;`
+	dbWhere.Debug().Raw(queryString).Row().Scan(&count)
+	fmt.Println(count)
+	return count
 }

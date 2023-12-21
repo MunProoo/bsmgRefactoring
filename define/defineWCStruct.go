@@ -21,9 +21,9 @@ type SearchData struct {
 
 // 메인 화면의 tree 구조를 위한 결과물
 type BsmgTreeResult struct {
-	AttrTreeList []*AttrTree `json:"ds_List"`
-	PartTreeList []*PartTree `json:"ds_partTree"`
-	Result       Result      `json:"Result"`
+	AttrTreeList []AttrTree `json:"ds_List"`
+	PartTreeList []PartTree `json:"ds_partTree"`
+	Result       Result     `json:"Result"`
 }
 
 // 업무속성을 트리 구조로 만든 객체

@@ -8,12 +8,16 @@ import (
 )
 
 // 사용자 업무보고 속성트리
-func getAttrTreeReq(c echo.Context) error {
+func getAttrTreeReq(c echo.Context) (err error) {
 	log.Println("getAttrTreeReq")
 
 	var result define.BsmgTreeResult
-	result.AttrTreeList = make([]*define.AttrTree, 0)
-	result.PartTreeList = make([]*define.PartTree, 0)
+	result.AttrTreeList, err = server.dbManager.DBGorm.MakeAttrTree()
+	if err != nil {
+		log.Printf("%v \n", err)
+		return err
+	}
+	result.PartTreeList = make([]define.PartTree, 0)
 
 	return c.JSON(http.StatusOK, result)
 }
@@ -50,8 +54,8 @@ func getWeekRptCategoryReq(c echo.Context) error {
 	log.Println("getWeekRptCategoryReq")
 
 	var result define.BsmgTreeResult
-	result.AttrTreeList = make([]*define.AttrTree, 0)
-	result.PartTreeList = make([]*define.PartTree, 0)
+	result.AttrTreeList = make([]define.AttrTree, 0)
+	result.PartTreeList = make([]define.PartTree, 0)
 
 	result.Result.ResultCode = define.Success
 	return c.JSON(http.StatusOK, result)

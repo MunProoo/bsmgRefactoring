@@ -28,10 +28,11 @@ type DBInterface interface {
 	// Select
 	SelectRankList() (rankList []define.BsmgRankInfo, err error)
 	SelectPartist() (partList []define.BsmgPartInfo, err error)
-	SelectAttrTree() (attrTreeList []define.AttrTree, err error)
+	MakeAttrTree() (attrTreeList []define.AttrTree, err error)
+	SelectUserList() (userList []define.BsmgMemberInfo, err error)
 
 	// util
 	FindMinIdx() int32
 	Release()
-	AttrTotalCount() int32
+	Attr1Count() int32
 }

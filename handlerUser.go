@@ -15,10 +15,15 @@ func getUserListRequest(c echo.Context) error {
 	result := &define.BsmgMemberResponse{}
 
 	// DB에서 가져오는거로 변경
-	var count int = 1
+	userList, err := server.dbManager.DBGorm.SelectUserList()
+	if err != nil {
+		result.Result.ResultCode = define.DataBaseError
+		return c.JSON(http.StatusOK, result)
+	}
+	count := len(userList)
 	result.TotalCount.Count = int32(count)
 	if count > 0 {
-		result.MemberList = make([]define.BsmgMemberInfo, count)
+		result.MemberList = userList
 	}
 
 	result.Result.ResultCode = define.Success
@@ -99,7 +104,12 @@ func postUserReq(c echo.Context) error {
 	// 내용 DB에 INSERT 작업해야함
 
 	fmt.Printf("%v ", member)
-	server.dbManager.DBGorm.InsertMember(*member)
+	err = server.dbManager.DBGorm.InsertMember(*member)
+	if err != nil {
+		log.Printf("%v \n", err)
+		result.Data.Result.ResultCode = define.DataBaseError
+		return c.JSON(http.StatusOK, result)
+	}
 
 	return c.JSON(http.StatusOK, result)
 }

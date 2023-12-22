@@ -30,7 +30,7 @@ func (dbManager *DatabaseManager) InitDBManager() (err error) {
 		DBConfig: define.DBConfig{
 			DatabaseIP:   "127.0.0.1",
 			DatabaseID:   "root",
-			DatabasePW:   "12345",
+			DatabasePW:   "0000",
 			DatabasePort: "3306",
 		},
 	}

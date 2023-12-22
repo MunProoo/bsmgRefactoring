@@ -34,5 +34,8 @@ mysql이라면 ...?
 4. MacOS
 windows에서는 그냥 넘어갈 수 있는 부분들이 Mac에선 안넘어가졌다
 - 1 request json이 구조체에 bind안되는 이슈 (400 typeErr 구조체의 필드가 int라 해당 에러 발생..)
+-> 그냥 request Data Get용 구조체하나 생성해서 타입을 일일이 Parsing하기로 함
 - 2 index가 0부터 시작하면 doesn't have default value, 
 아니 근데 auto_increment 왜안됨? 애초에 인덱스 안넣어도 알아서 증가해야지?
+
+gorm mariadb auto_increment는 왜 안먹는걸까... 그냥 테이블에서 바꿔버림

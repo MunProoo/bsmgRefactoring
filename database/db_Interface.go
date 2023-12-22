@@ -23,16 +23,21 @@ type DBInterface interface {
 	// Insert
 	InsertDefaultAttr1()
 	InsertDefaultAttr2()
+	InsertDefaultRank()
+	InsertDefaultPart()
 	InsertMember(member define.BsmgMemberInfo) (err error)
+	CreateDailyReport(report define.BsmgReportInfo) (err error)
 
 	// Select
 	SelectRankList() (rankList []define.BsmgRankInfo, err error)
 	SelectPartist() (partList []define.BsmgPartInfo, err error)
-	MakeAttrTree() (attrTreeList []define.AttrTree, err error)
 	SelectUserList() (userList []define.BsmgMemberInfo, err error)
+
+	// Update
+	UpdateUser(setVal map[string]interface{}, memID string) error
 
 	// util
 	FindMinIdx() int32
 	Release()
-	Attr1Count() int32
+	MakeAttrTree() (attrTreeList []define.AttrTree, err error)
 }

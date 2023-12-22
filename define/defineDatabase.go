@@ -45,17 +45,17 @@ type BsmgAttr2Info struct {
 
 // 일일 업무보고서 객체
 type BsmgReportInfo struct {
-	Rpt_Idx      int32  `json:"rpt_idx" gorm:"type:int;auto_increment;primary_key"` // 인덱스
-	Rpt_Reporter string `json:"rpt_reporter" gorm:"type:varchar(20)"`               // 보고자
-	Rpt_date     string `json:"rpt_date" gorm:"type:varchar(30)"`                   // 보고 일자
-	Rpt_toRpt    string `json:"rpt_toRpt" gorm:"type:nvarchar(20)"`                 // 보고 대상
-	Rpt_ref      string `json:"rpt_ref" gorm:"type:nvarchar(100)"`                  // 참조 대상
-	Rpt_title    string `json:"rpt_title" gorm:"type:nvarchar(40)"`                 // 업무보고 제목
-	Rpt_content  string `json:"rpt_content" gorm:"type:text"`                       // 업무보고 내용
-	Rpt_attr1    int32  `json:"rpt_attr1" gorm:"type:int"`                          // 업무속성1(솔루션/제품)
-	Rpt_attr2    int32  `json:"rpt_attr2" gorm:"type:int"`                          // 업무속성2 (이름)
-	Rpt_etc      string `json:"rpt_etc" gorm:"type:nvarchar(50)"`                   // 기타 특이사항
-	Rpt_confirm  byte   `json:"rpt_confirm" gorm:"type:bit"`                        // 보고서 확정 상태
+	Rpt_Idx      int32  `json:"rpt_idx" gorm:"type:int;auto_increment;primary_key;not null"` // 인덱스
+	Rpt_Reporter string `json:"rpt_reporter" gorm:"type:varchar(20)"`                        // 보고자
+	Rpt_date     string `json:"rpt_date" gorm:"type:varchar(30)"`                            // 보고 일자
+	Rpt_toRpt    string `json:"rpt_toRpt" gorm:"type:nvarchar(20)"`                          // 보고 대상
+	Rpt_ref      string `json:"rpt_ref" gorm:"type:nvarchar(100)"`                           // 참조 대상
+	Rpt_title    string `json:"rpt_title" gorm:"type:nvarchar(40)"`                          // 업무보고 제목
+	Rpt_content  string `json:"rpt_content" gorm:"type:text"`                                // 업무보고 내용
+	Rpt_attr1    int32  `json:"rpt_attr1" gorm:"type:int"`                                   // 업무속성1(솔루션/제품)
+	Rpt_attr2    int32  `json:"rpt_attr2" gorm:"type:int"`                                   // 업무속성2 (이름)
+	Rpt_etc      string `json:"rpt_etc" gorm:"type:nvarchar(50)"`                            // 기타 특이사항
+	Rpt_confirm  byte   `json:"rpt_confirm" gorm:"type:bit"`                                 // 보고서 확정 상태
 }
 
 // 일일 업무보고서 일정 객체

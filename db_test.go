@@ -20,23 +20,25 @@ func TestFindMinQuery(t *testing.T) {
 	assert.Equal(t, int32(2), int2)
 }
 
-func TestCountAttr(t *testing.T) {
+func TestTableSturctureUpdate(t *testing.T) {
 	server := ServerProcessor{}
 	server.ConnectDataBase()
 	defer server.dbManager.DBGorm.Release()
 
-	cnt := server.dbManager.DBGorm.Attr1Count()
-	assert.Equal(t, 21, int(cnt))
+	server.dbManager.DBGorm.CreateDailyReportTable()
 
 }
 
-func TestInsertAttrDefaultRow(t *testing.T) {
+func TestInsertDefaultDBData(t *testing.T) {
 	server := ServerProcessor{}
 	server.ConnectDataBase()
 	defer server.dbManager.DBGorm.Release()
 
-	server.dbManager.DBGorm.InsertDefaultAttr1()
-	server.dbManager.DBGorm.InsertDefaultAttr2()
+	// server.dbManager.DBGorm.InsertDefaultAttr1()
+	// server.dbManager.DBGorm.InsertDefaultAttr2()
+	// server.dbManager.DBGorm.InsertDefaultRank()
+	// server.dbManager.DBGorm.InsertDefaultPart()
+
 }
 
 func TestMakeAttrTree(t *testing.T) {

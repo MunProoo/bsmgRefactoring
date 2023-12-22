@@ -4,6 +4,7 @@ import (
 	"BsmgRefactoring/define"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -78,74 +79,76 @@ func getUserSearchRequest(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-// 사용자 등록
+// 사용자 등록 -> 통신 json으로 변경필요
 func postUserReq(c echo.Context) error {
 	log.Println("postUserReq")
 
-	var result define.BsmgMemberRequest
+	// var apiRequest define.BsmgMemberRequest
+	var apiResponse define.BsmgMemberResponse
 	var member *define.BsmgMemberInfo
 	server := c.Get("Server").(*ServerProcessor)
 
 	value, err := c.FormParams()
 	if err != nil {
 		log.Printf("%v \n", err)
-		result.Data.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, apiResponse)
 	}
 	parser := initFormParser(value)
 	member, err = parseUserRegistRequest(parser)
 
 	if err != nil {
 		log.Printf("%v \n", err)
-		result.Data.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, apiResponse)
 	}
 
-	// 내용 DB에 INSERT 작업해야함
-
-	fmt.Printf("%v ", member)
 	err = server.dbManager.DBGorm.InsertMember(*member)
 	if err != nil {
 		log.Printf("%v \n", err)
-		result.Data.Result.ResultCode = define.DataBaseError
-		return c.JSON(http.StatusOK, result)
+		apiResponse.Result.ResultCode = define.DataBaseError
+		return c.JSON(http.StatusOK, apiResponse)
 	}
 
-	return c.JSON(http.StatusOK, result)
+	apiResponse.Result.ResultCode = define.Success
+
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 // 사용자 수정
 func putUserReq(c echo.Context) error {
 	log.Println("putUserReq")
 
-	var req define.BsmgMemberRequest
-	c.Bind(&req)
-	fmt.Printf("%v ", req)
-	var res define.BsmgMemberResponse
-	var member *define.BsmgMemberInfo
-	server := c.Get("server").(*ServerProcessor)
+	var apiRequest define.BsmgPutMemberRequest
+	var apiResponse define.OnlyResult
 
-	value, err := c.FormParams()
+	err := c.Bind(&apiRequest)
 	if err != nil {
-		log.Printf("%v \n", err)
-		res.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, res)
+		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, apiResponse)
 	}
-	parser := initFormParser(value)
-	member, err = parseUserRegistRequest(parser)
+	var member define.BsmgMemberInfo
+	server := c.Get("Server").(*ServerProcessor)
 
-	if err != nil {
-		log.Printf("%v \n", err)
-		res.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, res)
+	for _, reqMember := range apiRequest.Data.MemberList {
+		member.Mem_ID = reqMember.Mem_ID
+		// member.Mem_Name = reqMember.Mem_Name
+		rank, _ := strconv.Atoi(reqMember.Mem_Rank)
+		member.Mem_Rank = int32(rank)
+		part, _ := strconv.Atoi(reqMember.Mem_Part)
+		member.Mem_Part = int32(part)
+
+		setVal := make(map[string]interface{})
+		setVal["mem_name"] = reqMember.Mem_Name
+		setVal["mem_rank"] = rank
+		setVal["mem_part"] = part
+
+		server.dbManager.DBGorm.UpdateUser(setVal, member.Mem_ID)
 	}
 
-	// 내용 DB에 Update 작업해야함
+	apiResponse.Result.ResultCode = define.Success
 
-	fmt.Printf("%v ", member)
-	server.dbManager.DBGorm.InsertMember(*member)
-
-	return c.JSON(http.StatusOK, res)
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 // 사용자 삭제

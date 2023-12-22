@@ -2,6 +2,7 @@ package main
 
 import (
 	"BsmgRefactoring/define"
+	"fmt"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
@@ -56,8 +57,10 @@ func initSessionMiddleware(c echo.Context) error {
 		return nil
 	}
 
+	url := c.Request().URL.RawQuery
+	fmt.Println("url = ", url)
 	session.Options = &sessions.Options{
-		// Path:     "/",   // 모든 경로에서 세션 확인
+		Path:     "/",   // 모든 경로에서 세션 확인
 		MaxAge:   86400, // 하루
 		HttpOnly: true,
 	}
@@ -105,20 +108,22 @@ func checkSession(c echo.Context) bool {
 }
 
 func createSession(c echo.Context, member *define.BsmgMemberInfo) {
-	// session, _ := c.Get("BSMG").(*sessions.Session)
+	log.Println("Session 생성!!")
 	session, err := session.Get(sessionKey, c)
 	if err != nil {
 		log.Printf("%v \n", err)
 	}
 
-	// Set session
-	session.Values["authenticated"] = true
-	session.Values["Member"] = member
+	if _, ok := session.Values["initialized"]; ok {
+		// Set session
+		session.Values["authenticated"] = true
+		session.Values["Member"] = member
 
-	err = session.Save(c.Request(), c.Response())
-	if err != nil {
-		// 로그
-		log.Printf("%v \n", err)
+		err = session.Save(c.Request(), c.Response())
+		if err != nil {
+			// 로그
+			log.Printf("%v \n", err)
+		}
 	}
 }
 

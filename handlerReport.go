@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
 
@@ -402,4 +403,42 @@ func getConfirmRptReq(c echo.Context) error {
 	result.Result.ResultCode = define.Success
 
 	return c.JSON(http.StatusOK, result)
+}
+
+func postReportReq(c echo.Context) error {
+	log.Println("postReportReq")
+
+	apiRequest := define.BsmgPostReportRequest{}
+	apiResponse := define.OnlyResult{}
+
+	// 세션으로 클라이언트 정보 Get
+	session, err := session.Get(sessionKey, c)
+	if err != nil {
+		apiResponse.Result.ResultCode = define.ErrorSession
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+	client := session.Values["Member"].(define.BsmgMemberInfo)
+
+	// request data Get
+	err = c.Bind(&apiRequest)
+	if err != nil {
+		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+
+	// parsing
+	report := apiRequest.Data.BsmgReportInfo.ParseReport()
+	report.Rpt_Reporter = client.Mem_ID
+
+	// DB 처리
+	server := c.Get("Server").(*ServerProcessor)
+	err = server.dbManager.DBGorm.CreateDailyReport(report)
+	if err != nil {
+		apiResponse.Result.ResultCode = define.DataBaseError
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+
+	apiResponse.Result.ResultCode = define.Success
+	return c.JSON(http.StatusOK, apiResponse)
+
 }

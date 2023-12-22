@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:cl="http://tomatosystem.co.kr/cleopatra" xmlns:std="http://tomatosystem.co.kr/cleopatra/studio" std:sid="html-649433b8" version="1.0.0.0">
+  <head std:sid="head-50767d67">
+    <title>bm_userManagement</title>
+    <screen std:sid="screen-ed0a1fde" id="default" name="default" minwidth="1024px" width="1024px" height="768px"/>
+    <screen std:sid="screen-662e12e0" id="tablet" name="tablet" minwidth="500px" maxwidth="1023px" width="500px" height="667px"/>
+    <screen std:sid="screen-3aa763a8" id="mobile" name="mobile" maxwidth="499px" width="350px" height="525px"/>
+    <cl:model std:sid="model-fbd81da1">
+      <cl:dataset std:sid="d-set-d6e1374d" id="Src_memberList">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-1861a2d7" name="mem_id"/>
+          <cl:datacolumn std:sid="d-column-3329fc3a" name="mem_name"/>
+          <cl:datacolumn std:sid="d-column-be7b868d" name="mem_rank"/>
+          <cl:datacolumn std:sid="d-column-7799d694" name="mem_part"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:dataset std:sid="d-set-663b3e6b" id="ds_rank">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-ed34bb65" name="rank_name"/>
+          <cl:datacolumn std:sid="d-column-79471cf9" name="rank_idx" datatype="number"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:dataset std:sid="d-set-9cdb67c6" id="ds_part">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-2df979df" name="part_name"/>
+          <cl:datacolumn std:sid="d-column-e04d0354" name="part_idx" datatype="number"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:dataset std:sid="d-set-690f8843" id="ds_memberListCopy">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-3afc4327" name="mem_id"/>
+          <cl:datacolumn std:sid="d-column-5b095ffd" name="mem_name"/>
+          <cl:datacolumn std:sid="d-column-8c25a6d8" name="mem_rank"/>
+          <cl:datacolumn std:sid="d-column-1b93638a" name="mem_part"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:dataset std:sid="d-set-f15158fc" id="ds_putMember">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-f44ef9f9" name="mem_id"/>
+          <cl:datacolumn std:sid="d-column-05ef6d46" name="mem_name"/>
+          <cl:datacolumn std:sid="d-column-983eedb2" name="mem_rank"/>
+          <cl:datacolumn std:sid="d-column-06d5c2da" name="mem_part"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:datamap std:sid="d-map-eb7efa5a" id="Result">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-0a619883" name="ResultCode"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-317a5f91" id="dm_search">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-0a3e83fd" name="search_combo"/>
+          <cl:datacolumn std:sid="d-column-25dd8361" name="search_input"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:submission std:sid="submission-5d125569" id="sms_getUserList" async="false" method="get" action="/bsmg/user/userList">
+        <cl:listener std:sid="listener-e6db31b6" name="submit-done" handler="onSms_getUserListSubmitDone"/>
+        <cl:listener std:sid="listener-f18a6922" name="before-send" handler="onSms_getUserListBeforeSend"/>
+        <cl:responsedata dataid="Src_memberList"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-639d9589" id="sms_getUserListSearch" method="get" action="/bsmg/user/userSearch">
+        <cl:listener std:sid="listener-a90f015a" name="submit-done" handler="onSms_getUserListSearchSubmitDone"/>
+        <cl:listener std:sid="listener-47858eab" name="before-send" handler="onSms_getUserListSearchBeforeSend"/>
+        <cl:requestdata dataid="dm_search"/>
+        <cl:responsedata dataid="Src_memberList"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-0c6ee7e4" id="sms_delUser" method="delete" action="/bsmg/user/deleteUser">
+        <cl:listener std:sid="listener-54a8eaaf" name="submit-done" handler="onSms_delUserSubmitDone"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-3c6c43ba" id="sms_setRankPart" async="false" method="get" action="/bsmg/setting/rankPart">
+        <cl:listener std:sid="listener-8ed2f756" name="submit-done" handler="onSms_setRankPartSubmitDone"/>
+        <cl:responsedata dataid="ds_rank"/>
+        <cl:responsedata dataid="ds_part"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-74ce46f3" id="sms_putUserList" method="put" action="/bsmg/user" mediatype="application/json">
+        <cl:listener std:sid="listener-84671760" name="submit-done" handler="onSms_putUserListSubmitDone"/>
+        <cl:requestdata dataid="ds_putMember"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+    </cl:model>
+    <cl:appspec/>
+  </head>
+  <body std:sid="body-645c7810" style="top:0px; left:0px; width:800px; height:600px;">
+    <cl:listener std:sid="listener-deeedc57" name="load" handler="onBodyLoad"/>
+    <cl:group std:sid="group-3ff48f7f" class="cl-form-group">
+      <cl:xylayoutdata std:sid="xyl-data-8b90a649" top="40px" left="10px" width="534px" height="30px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+      <cl:searchinput std:sid="s-input-0b9ccfc8" id="ipb1">
+        <cl:listener std:sid="listener-02cba30e" name="search" handler="onIpb1Search"/>
+        <cl:formdata std:sid="f-data-08c2cce0" row="0" col="1" rowspan="1" colspan="1"/>
+      </cl:searchinput>
+      <cl:combobox std:sid="c-box-2eb1dfdc" id="cmb1" value="0" fixedlistwidth="true" placeholder="전체" preventinput="true">
+        <cl:formdata std:sid="f-data-cbfc1f67" row="0" col="0" rowspan="1" colspan="1"/>
+        <cl:item std:sid="item-b55bc07a" label="전체" value="0"/>
+        <cl:item std:sid="item-7e937ffd" label="이름" value="1"/>
+        <cl:item std:sid="item-29c3db48" label="직급" value="2"/>
+        <cl:item std:sid="item-2f7401e3" label="부서" value="3"/>
+      </cl:combobox>
+      <cl:formlayout std:sid="f-layout-73d64a03" hspace="0px" vspace="0px" top-margin="0px" right-margin="0px" bottom-margin="0px" left-margin="0px" hseparatorwidth="1" hseparatortype="BY_CLASS" vseparatorwidth="1" vseparatortype="BY_CLASS">
+        <cl:rows length="1" unit="FRACTION"/>
+        <cl:columns length="1" unit="FRACTION" autoSizing="false" shadetype="BY_CLASS" shadecolor="#000000" minlength="0"/>
+        <cl:columns length="3" unit="FRACTION" autoSizing="false" shadetype="NONE" shadecolor="#000000" minlength="0"/>
+      </cl:formlayout>
+    </cl:group>
+    <cl:grid std:sid="grid-f239125a" id="userList" style="padding-left:3px;" datasetid="Src_memberList" wheelrowcount="1" resizablecolumns="all" columnMovable="true">
+      <cl:listener std:sid="listener-845591de" name="row-dblclick" handler="onUserListRowDblclick"/>
+      <cl:xylayoutdata std:sid="xyl-data-fa8b9607" top="70px" left="10px" width="534px" height="495px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+      <cl:gridcolumn std:sid="g-column-785a663e" width="25px"/>
+      <cl:gridcolumn std:sid="g-column-5987d239"/>
+      <cl:gridcolumn std:sid="g-column-7a521edb"/>
+      <cl:gridcolumn std:sid="g-column-6e192dce"/>
+      <cl:gridcolumn std:sid="g-column-faef051d"/>
+      <cl:gridheader std:sid="gh-band-7399b020">
+        <cl:gridrow std:sid="g-row-07785705"/>
+        <cl:gridcell std:sid="gh-cell-7785326a" rowindex="0" colindex="0" targetcolumnname="chk" sortable="false" filterable="false" columntype="checkbox" text="chk"/>
+        <cl:gridcell std:sid="gh-cell-b4b0a391" rowindex="0" colindex="1" targetcolumnname="mem_id" filterable="false" text="아이디"/>
+        <cl:gridcell std:sid="gh-cell-15bea060" rowindex="0" colindex="2" targetcolumnname="mem_name" sortable="false" filterable="false" text="이름"/>
+        <cl:gridcell std:sid="gh-cell-8fc0cbcf" rowindex="0" colindex="3" targetcolumnname="mem_rank" sortable="true" filterable="false" text="직급"/>
+        <cl:gridcell std:sid="gh-cell-bf40a619" rowindex="0" colindex="4" targetcolumnname="mem_part" sortable="true" filterable="false" text="부서"/>
+      </cl:gridheader>
+      <cl:griddetail std:sid="gd-band-c3018b3b">
+        <cl:gridrow std:sid="g-row-d8efe29f"/>
+        <cl:gridcell std:sid="gd-cell-bffba205" rowindex="0" colindex="0" columntype="checkbox"/>
+        <cl:gridcell std:sid="gd-cell-46f22f93" rowindex="0" colindex="1" columnname="mem_id"/>
+        <cl:gridcell std:sid="gd-cell-13f5ac60" rowindex="0" colindex="2" columnname="mem_name">
+          <cl:inputbox std:sid="i-box-01743348" id="ipb2"/>
+        </cl:gridcell>
+        <cl:gridcell std:sid="gd-cell-efeefde7" rowindex="0" colindex="3" columnname="mem_rank">
+          <cl:combobox std:sid="c-box-e932dda7" id="cmb2" preventinput="true">
+            <cl:itemset datasetid="ds_rank" label="rank_name" value="rank_idx"/>
+          </cl:combobox>
+        </cl:gridcell>
+        <cl:gridcell std:sid="gd-cell-9241ca31" rowindex="0" colindex="4" columnname="mem_part">
+          <cl:combobox std:sid="c-box-421da95f" id="cmb3" preventinput="true">
+            <cl:itemset datasetid="ds_part" label="part_name" value="part_idx"/>
+          </cl:combobox>
+        </cl:gridcell>
+      </cl:griddetail>
+    </cl:grid>
+    <cl:output std:sid="output-8bf8b427" style="font-weight:bolder; text-align:center;" value="사용자 목록">
+      <cl:xylayoutdata std:sid="xyl-data-5cc275b5" top="10px" left="10px" width="534px" height="30px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+    </cl:output>
+    <cl:button std:sid="button-744fb00e" value="삭제">
+      <cl:listener std:sid="listener-6affa471" name="click" handler="onButtonClick"/>
+      <cl:xylayoutdata std:sid="xyl-data-3ff52e8e" top="187px" left="554px" width="88px" height="47px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+    </cl:button>
+    <cl:button std:sid="button-edca2bb2" id="update" value="수정">
+      <cl:listener std:sid="listener-573bd57a" name="click" handler="onUpdateClick"/>
+      <cl:xylayoutdata std:sid="xyl-data-8db8f957" top="70px" left="554px" width="88px" height="47px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+    </cl:button>
+    <cl:combobox comment="라벨로 콤보박스의 값을 받으려고 만듦" std:sid="c-box-97cf6ea7" id="cmb4" visible="false">
+      <cl:xylayoutdata std:sid="xyl-data-d5ab6d98" top="259px" left="739px" width="100px" height="20px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+      <cl:itemset datasetid="ds_rank" label="rank_name" value="rank_idx"/>
+    </cl:combobox>
+    <cl:combobox std:sid="c-box-af44804c" id="cmb5" visible="false">
+      <cl:xylayoutdata std:sid="xyl-data-655f83fd" top="278px" left="739px" width="100px" height="20px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+      <cl:itemset datasetid="ds_part" label="part_name" value="part_idx"/>
+    </cl:combobox>
+    <cl:button std:sid="button-3256c43c" id="cancel" value="취소">
+      <cl:listener std:sid="listener-09f2c620" name="click" handler="onCancelClick"/>
+      <cl:xylayoutdata std:sid="xyl-data-80208270" top="70px" left="652px" width="88px" height="47px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+    </cl:button>
+    <cl:button std:sid="button-93148b40" value="닫기">
+      <cl:listener std:sid="listener-8a8bcfb5" name="click" handler="onButtonClick2"/>
+      <cl:xylayoutdata std:sid="xyl-data-9eee0a3a" top="245px" left="554px" width="88px" height="47px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+    </cl:button>
+    <cl:xylayout std:sid="xylayout-f1a75b8b"/>
+  </body>
+  <std:studiosetting>
+    <std:hruler/>
+    <std:vruler/>
+  </std:studiosetting>
+</html>

@@ -144,13 +144,14 @@
 				var dsUserList = app.lookup("Src_memberList");
 				var grd = app.lookup("userList");
 				for(var i=0; i<grd.getRowCount(); i++){
-					var cmb4 = app.lookup("cmb4");
-					var cmb5 = app.lookup("cmb5");
-					cmb4.selectItemByLabel(dsUserList.getRow(i).getValue("mem_rank"));
-					cmb5.selectItemByLabel(dsUserList.getRow(i).getValue("mem_part"));
+					var cmb4 = app.lookup("cmb2");
+					var cmb5 = app.lookup("cmb3");
+					cmb4.selectItemByValue(dsUserList.getRow(i).getValue("mem_rank"));
+					cmb5.selectItemByValue(dsUserList.getRow(i).getValue("mem_part"));
 					
-					grd.setCellValue(i, 3, cmb4.value);
-					grd.setCellValue(i, 4, cmb5.value);
+			//		grd.setCellValue(i, 3, cmb4.value);
+			//		grd.setCellValue(i, 4, cmb5.value);
+					console.log("흐아")
 				}
 				grd.sort("mem_part ASC");
 				grd.redraw();

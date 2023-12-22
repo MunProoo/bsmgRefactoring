@@ -1,0 +1,95 @@
+@import "../settings.part.less";
+
+ /* 서치 인풋 */
+.cl-searchinput {
+	font: @default-font;
+	color: @default-text-color;
+	border: 1px solid @default-border-color;
+	text-align: left;
+
+	/* 서치 인풋 텍스트 */
+	.cl-text {
+	}
+
+	/* 서치 인풋 Clear버튼 */
+	.cl-searchinput-clear{
+		// background-image: url(icons/clear-button.png);
+		// background-repeat: no-repeat;
+		// background-size: contain;
+		// background-position: center;
+		// align-self: center;
+		
+		// cursor:pointer;
+		&:hover{
+			/* Clear버튼 hover시 Clear버튼 스타일 */
+		}
+	}
+
+	/* 서치 인풋 검색버튼 */
+	.cl-searchinput-search {
+		// background-image: url(icons/search-button.png);
+		// background-repeat: no-repeat;
+		// background-size: contain;
+		// background-position: center;
+		// align-self: center;
+		// cursor:pointer;
+
+		&.cl-left {
+			/* 검색버튼이 왼쪽에 표시될때 상태 */
+		}
+		&.cl-right {
+			/* 검색버튼이 오른쪽에 표시될때 상태 */
+		}
+		&:hover{
+			/* 검색버튼 hover시 검색버튼 스타일 */
+		}
+	}
+
+	&.cl-disabled{ 
+		/* 서치 인풋 disabled 상태 검색버튼 */
+		.cl-searchinput-search {
+			// background-image: url(icons/search-button-disabled.png);
+		}
+		/* 서치 인풋 disabled 상태 Clear버튼 */
+		.cl-searchinput-clear{
+			// background-image: url(icons/clear-button-disabled.png);
+		}
+	}
+
+	&:not(.cl-disabled) {
+		/* Clear버튼 hover상태 */
+		.cl-searchinput-clear:hover{
+			
+		}
+		/* Clear버튼 active상태 */
+		.cl-searchinput-clear:active {
+		
+		}
+		/* 검색버튼 hover상태 */
+		.cl-searchinput-search:hover{
+
+		}
+		/* 검색버튼 active상태 */
+		.cl-searchinput-search:active {
+		}
+	}
+
+	&.cl-disabled {
+		color: @disabled-text-color;
+		background-color: @disabled-selection-background;
+		border-color: @disabled-border-color;
+	}
+	
+	/* 서치 인풋 포커스 상태 */
+	&.cl-focus {
+		border-color: @focus-border-color;
+	
+		.cl-searchinput-search{
+	
+		}
+	
+		.cl-searchinput-clear{
+	
+		}
+	}
+}

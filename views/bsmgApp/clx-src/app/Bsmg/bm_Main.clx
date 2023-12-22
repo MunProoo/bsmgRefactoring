@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:cl="http://tomatosystem.co.kr/cleopatra" xmlns:std="http://tomatosystem.co.kr/cleopatra/studio" std:sid="html-eaf9626b" version="1.0.0.0">
+  <head std:sid="head-604558b6">
+    <title>bm_Main</title>
+    <screen std:sid="screen-c0e8d6f0" id="default" name="default" minwidth="1024px" width="1024px" height="768px" useCustomWidth="true" useCustomHeight="true" customHeight="937" customWidth="1920"/>
+    <screen std:sid="screen-6c109d44" id="tablet" name="tablet" minwidth="500px" maxwidth="1023px" width="500px" height="667px"/>
+    <screen std:sid="screen-1c450139" id="mobile" name="mobile" maxwidth="499px" width="350px" height="525px"/>
+    <cl:model std:sid="model-063af437">
+      <cl:dataset std:sid="d-set-47ec1824" id="ds_List">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-534bd552" name="label"/>
+          <cl:datacolumn std:sid="d-column-1b7faba5" name="value"/>
+          <cl:datacolumn std:sid="d-column-8c3b66c2" name="parent"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:dataset std:sid="d-set-663b3e6b" id="ds_rank">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-ed34bb65" name="rank_name"/>
+          <cl:datacolumn std:sid="d-column-79471cf9" name="rank_idx" datatype="number"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:dataset std:sid="d-set-9cdb67c6" id="ds_part">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-2df979df" name="part_name"/>
+          <cl:datacolumn std:sid="d-column-e04d0354" name="part_idx" datatype="number"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:datamap std:sid="d-map-b32f0173" id="dm_memberInfo">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-5e5f3e92" name="mem_id"/>
+          <cl:datacolumn std:sid="d-column-5864d68d" name="mem_name"/>
+          <cl:datacolumn std:sid="d-column-dea1aa38" name="mem_rank" datatype="number"/>
+          <cl:datacolumn std:sid="d-column-6bb3c9d3" name="mem_part" datatype="number"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-84b3e7d0" id="Result">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-990b5bc2" name="ResultCode"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:submission std:sid="submission-b1a8d08f" id="sms_logout" action="/bsmg/login/logout">
+        <cl:listener std:sid="listener-cd87f10a" name="submit-done" handler="onSms_logoutSubmitDone"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-2f62b1b9" id="sms_chkLogin" method="get" action="/bsmg/login/chkLogin">
+        <cl:listener std:sid="listener-c2c30364" name="submit-done" handler="onSms_chkLoginSubmitDone"/>
+        <cl:responsedata dataid="Result"/>
+        <cl:responsedata dataid="dm_memberInfo"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-3c6c43ba" id="sms_setRankPart" async="true" method="get" action="/bsmg/setting/rankPart">
+        <cl:listener std:sid="listener-b5960f4e" name="submit-done" handler="onSms_setRankPartSubmitDone"/>
+        <cl:responsedata dataid="ds_rank"/>
+        <cl:responsedata dataid="ds_part"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+    </cl:model>
+    <cl:appspec/>
+  </head>
+  <body std:sid="body-19519e06" style="border-right-style:none; top:0px; left:0px; border-left-style:none; width:800px; border-bottom-style:none; border-top-style:none; height:600px;">
+    <cl:listener std:sid="listener-886c78aa" name="load" handler="onBodyLoad"/>
+    <cl:output std:sid="output-3bef4c78" id="out1" style="border-right-style:dashed; font-weight:bold; border-left-style:dashed; border-bottom-style:dashed; border-top-style:dashed; text-align:center;">
+      <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_memberInfo" columnname="mem_name"/>
+      <cl:responsivexylayoutdata std:sid="rxyl-data-4b8a1e2c">
+        <cl:xylayoutdata std:sid="sxyl-data-c4b3c8ec" top="20px" left="430px" width="92px" height="45px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+    </cl:output>
+    <cl:output std:sid="output-ae4ab8de" style="background-color:#ddecd9; font-weight:bold;" value="사용자">
+      <cl:responsivexylayoutdata std:sid="rxyl-data-214395b6">
+        <cl:xylayoutdata std:sid="sxyl-data-ee87b858" top="20px" left="383px" width="48px" height="45px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+    </cl:output>
+    <cl:output std:sid="output-01b5a3b7" style="background-color:#ddecd9; font-weight:bold; text-align:center;" value="직급">
+      <cl:responsivexylayoutdata std:sid="rxyl-data-05c391c8">
+        <cl:xylayoutdata std:sid="sxyl-data-1b332878" top="20px" left="521px" width="48px" height="45px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+    </cl:output>
+    <cl:output std:sid="output-f8f9cef7" style="background-color:#ddecd9; font-weight:bold; text-align:center;" value="부서">
+      <cl:responsivexylayoutdata std:sid="rxyl-data-6b5b7ac2">
+        <cl:xylayoutdata std:sid="sxyl-data-fdf13137" top="20px" left="663px" width="48px" height="45px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+    </cl:output>
+    <cl:output std:sid="output-64f0b8e0" id="Main_RankOpb" style="border-right-style:dashed; font-weight:bold; border-left-style:dashed; border-bottom-style:dashed; border-top-style:dashed; text-align:center;">
+      <cl:responsivexylayoutdata std:sid="rxyl-data-458b4ef9">
+        <cl:xylayoutdata std:sid="sxyl-data-7b258bde" top="20px" left="568px" width="96px" height="45px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+    </cl:output>
+    <cl:output std:sid="output-45938082" id="Main_PartOpb" style="border-right-style:dashed; border-bottom-color:#000000; font-weight:bolder; border-left-style:dashed; border-left-color:#000000; border-top-color:#000000; border-right-color:#000000; border-bottom-style:dashed; border-top-style:dashed; text-align:center;">
+      <cl:responsivexylayoutdata std:sid="rxyl-data-7d97b156">
+        <cl:xylayoutdata std:sid="sxyl-data-caab36a6" top="20px" left="710px" width="94px" height="45px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+    </cl:output>
+    <cl:button std:sid="button-76ec0f00" id="user_regist" style="background-color:#5497da; background-image:linear-gradient(#fcfeff,#e0e1e2);" visible="false" value="사용자 등록">
+      <cl:listener std:sid="listener-92dbb8ee" name="click" handler="onUser_registClick"/>
+      <cl:responsivexylayoutdata std:sid="rxyl-data-82c294ed">
+        <cl:xylayoutdata std:sid="sxyl-data-863801b3" top="20px" left="1108px" width="126px" height="31px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+    </cl:button>
+    <cl:button std:sid="button-e7bfb8c9" id="logout" value="로그아웃">
+      <cl:listener std:sid="listener-91fe6e3b" name="click" handler="onLogoutClick"/>
+      <cl:responsivexylayoutdata std:sid="rxyl-data-819d5884">
+        <cl:xylayoutdata std:sid="sxyl-data-03a0d2e9" top="20px" left="916px" width="126px" height="31px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+    </cl:button>
+    <cl:output std:sid="output-fc6c26c1" style="color:darkGreen; font-weight:bold; font-size:20px; font-style:normal;" value="기술 연구소">
+      <cl:responsivexylayoutdata std:sid="rxyl-data-44c849c1">
+        <cl:xylayoutdata std:sid="sxyl-data-5ef4e926" top="18px" left="191px" width="113px" height="50px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+    </cl:output>
+    <cl:output std:sid="output-90c72759" style="background-repeat:no-repeat; background-size:cover; color:darkGreen; font-weight:bold; font-size:20px; font-style:normal; background-position:center; background-origin:padding-box; background-image:url('../../images/UNIONCOMMUNITY-logo-_Eng_.gif');">
+      <cl:responsivexylayoutdata std:sid="rxyl-data-15f999d8">
+        <cl:xylayoutdata std:sid="sxyl-data-8565faad" top="-27px" left="-33px" width="267px" height="139px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+    </cl:output>
+    <cl:button std:sid="button-d10bd5bd" id="userManagement" style="background-color:#5497da; background-image:linear-gradient(#fcfeff,#e0e1e2);" visible="false" value="사용자 관리">
+      <cl:listener std:sid="listener-c4f7284c" name="click" handler="onUserManagementClick"/>
+      <cl:responsivexylayoutdata std:sid="rxyl-data-35326c93">
+        <cl:xylayoutdata std:sid="sxyl-data-e4096867" top="20px" left="1244px" width="126px" height="31px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+    </cl:button>
+    <cl:tabfolder std:sid="t-folder-87fa880d">
+      <cl:responsivexylayoutdata std:sid="rxyl-data-b87afba0">
+        <cl:xylayoutdata std:sid="sxyl-data-999dc86d" top="85px" left="0px" width="1403px" height="839px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+      </cl:responsivexylayoutdata>
+      <cl:tabitem std:sid="t-item-1508b52c" selected="true" text="일일 업무보고">
+        <std:metadata>
+          <std:property key="is-active-item" value="true"/>
+        </std:metadata>
+        <cl:group std:sid="group-05dbd10b">
+          <std:metadata>
+            <std:property key="locked" value="true"/>
+          </std:metadata>
+          <cl:embeddedapp std:sid="e-app-20edc111" id="ea1" src="bm_list.clx">
+            <cl:xylayoutdata std:sid="xyl-data-3931f060" top="1px" left="2px" width="1393px" height="800px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+          </cl:embeddedapp>
+          <cl:xylayout std:sid="xylayout-64dcc285"/>
+        </cl:group>
+      </cl:tabitem>
+      <cl:tabitem std:sid="t-item-284a6b38" text="주간 업무보고">
+        <cl:group std:sid="group-b56fbd08">
+          <std:metadata>
+            <std:property key="locked" value="true"/>
+          </std:metadata>
+          <cl:embeddedapp std:sid="e-app-6983c67b" id="ea2" src="bm_weekRptList.clx">
+            <cl:xylayoutdata std:sid="xyl-data-8eed9323" top="1px" left="2px" width="1393px" height="800px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+          </cl:embeddedapp>
+          <cl:xylayout std:sid="xylayout-db44cd34"/>
+        </cl:group>
+      </cl:tabitem>
+    </cl:tabfolder>
+    <cl:responsivexylayout std:sid="r-xylayout-e549ed7e"/>
+  </body>
+  <std:studiosetting>
+    <std:hruler/>
+    <std:vruler/>
+  </std:studiosetting>
+</html>

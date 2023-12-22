@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:cl="http://tomatosystem.co.kr/cleopatra" xmlns:std="http://tomatosystem.co.kr/cleopatra/studio" std:sid="html-3009e61f" version="1.0.0.0">
+  <head std:sid="head-69ca6144">
+    <title>bm_weekRptList</title>
+    <screen std:sid="screen-4e542848" id="default" name="default" minwidth="1024px" width="1024px" height="768px"/>
+    <screen std:sid="screen-cd71a7b5" id="tablet" name="tablet" minwidth="500px" maxwidth="1023px" width="500px" height="667px"/>
+    <screen std:sid="screen-0e8026ce" id="mobile" name="mobile" maxwidth="499px" width="350px" height="525px"/>
+    <cl:model std:sid="model-f76fbbab">
+      <cl:dataset std:sid="d-set-2552b120" id="ds_weekRptList">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-2a6b11be" name="wRpt_idx"/>
+          <cl:datacolumn std:sid="d-column-c5cf8b59" name="wRpt_title"/>
+          <cl:datacolumn std:sid="d-column-54f9fdd7" name="wRpt_content"/>
+          <cl:datacolumn std:sid="d-column-9d571377" name="wRpt_toRpt"/>
+          <cl:datacolumn std:sid="d-column-9056d395" name="wRpt_reporter" datatype="string"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:dataset std:sid="d-set-4ee1c610" id="ds_partTree">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-b6f4eeba" name="label"/>
+          <cl:datacolumn std:sid="d-column-ba94f9ea" name="value"/>
+          <cl:datacolumn std:sid="d-column-3071104b" name="parent"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:datamap std:sid="d-map-f30574ff" id="Result">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-cb0413a6" name="ResultCode"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-da44d7fd" id="dm_page">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-9074813c" name="offset"/>
+          <cl:datacolumn std:sid="d-column-9f049ed7" name="limit"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-5d7c56c6" id="totalCount">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-453f601b" name="Count"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-4724e1b4" id="dm_search">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-78988679" name="search_input"/>
+          <cl:datacolumn std:sid="d-column-93649663" name="search_combo"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-15395953" id="dm_part">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-16bf7b56" name="part_value"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:submission std:sid="submission-374fca49" id="sms_getWeekRptList" method="get" action="/bsmg/report/getWeekRptList">
+        <cl:listener std:sid="listener-f9f66cc9" name="submit-done" handler="onSms_getWeekRptListSubmitDone"/>
+        <cl:requestdata dataid="dm_page"/>
+        <cl:responsedata dataid="ds_weekRptList"/>
+        <cl:responsedata dataid="totalCount"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-849ad79b" id="sms_getCategoryList" method="get" action="/bsmg/setting/weekRptCategory">
+        <cl:listener std:sid="listener-1c46f82f" name="submit-done" handler="onSms_getCategoryListSubmitDone"/>
+        <cl:responsedata dataid="Result"/>
+        <cl:responsedata dataid="ds_partTree"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-a89e5247" id="sms_getWeekRptSearch" async="true" method="get" action="/bsmg/report/getWeekRptSearch">
+        <cl:listener std:sid="listener-41a7b566" name="submit-done" handler="onSms_getWeekRptSearchSubmitDone"/>
+        <cl:requestdata dataid="dm_search"/>
+        <cl:requestdata dataid="dm_page"/>
+        <cl:responsedata dataid="ds_weekRptList"/>
+        <cl:responsedata dataid="totalCount"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-2e326116" id="sms_getWeekRptCategory" method="get" action="/bsmg/report/getWeekRptCategory">
+        <cl:listener std:sid="listener-20528c66" name="submit-done" handler="onSms_getWeekRptCategorySubmitDone"/>
+        <cl:requestdata dataid="dm_part"/>
+        <cl:requestdata dataid="dm_page"/>
+        <cl:responsedata dataid="ds_weekRptList"/>
+        <cl:responsedata dataid="totalCount"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+    </cl:model>
+    <cl:appspec/>
+  </head>
+  <body std:sid="body-cf88929a" style="top:0px; left:0px; width:800px; height:600px;">
+    <cl:listener std:sid="listener-d92221ef" name="load" handler="onBodyLoad"/>
+    <cl:group std:sid="group-cb60e773" style="background-color:#fbfce9; border-radius:15px; border-right-style:solid; border-left-style:solid; border-bottom-style:solid; border-top-style:solid;">
+      <cl:xylayoutdata std:sid="xyl-data-17cc53a8" top="4px" left="364px" width="1024px" height="668px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+      <cl:output std:sid="output-fc6c26c1" style="color:#000000; font-weight:bold; font-size:20px; font-style:normal;" value="주간 업무보고 리스트">
+        <cl:responsivexylayoutdata std:sid="rxyl-data-3571e721">
+          <cl:xylayoutdata std:sid="sxyl-data-fbc4c561" top="5px" left="5px" width="217px" height="43px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+      </cl:output>
+      <cl:button std:sid="button-9416d9b1" style="border-radius:45px; background-repeat:no-repeat; background-position:center; background-image:url('../../images/arrow-clockwise.svg');">
+        <cl:listener std:sid="listener-764e8608" name="click" handler="onButtonClick"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-f51626d8">
+          <cl:xylayoutdata std:sid="sxyl-data-9453a79f" top="83px" left="738px" width="41px" height="35px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+      </cl:button>
+      <cl:combobox std:sid="c-box-2eb1dfdc" id="cmb1" value="0" fixedlistwidth="true" placeholder="전체" preventinput="true">
+        <cl:responsivexylayoutdata std:sid="rxyl-data-f315ca75">
+          <cl:xylayoutdata std:sid="sxyl-data-d491626d" top="92px" left="221px" width="120px" height="28px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+        <cl:item std:sid="item-b55bc07a" label="전체" value="0"/>
+        <cl:item std:sid="item-7e937ffd" label="제목" value="1"/>
+        <cl:item std:sid="item-29c3db48" label="내용" value="2"/>
+        <cl:item std:sid="item-2f7401e3" label="보고자" value="4"/>
+      </cl:combobox>
+      <cl:searchinput std:sid="s-input-0b9ccfc8" id="ipb1">
+        <cl:listener std:sid="listener-3f82031b" name="search" handler="onIpb1Search"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-6901f444">
+          <cl:xylayoutdata std:sid="sxyl-data-c718722d" top="92px" left="341px" width="361px" height="28px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+      </cl:searchinput>
+      <cl:pageindexer std:sid="p-indexer-753f5728" id="pageIndex">
+        <cl:listener std:sid="listener-d7f0d941" name="selection-change" handler="onPageIndexSelectionChange"/>
+        <cl:listener std:sid="listener-bc8e4cff" name="before-selection-change" handler="onPageIndexBeforeSelectionChange"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-b59bd937">
+          <cl:xylayoutdata std:sid="sxyl-data-5bc98c67" top="614px" left="269px" width="505px" height="37px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+      </cl:pageindexer>
+      <cl:grid std:sid="grid-1393a396" id="grd1" readonly="true" datasetid="ds_weekRptList" autorowheight="none" wheelrowcount="1" resizablecolumns="all">
+        <cl:listener std:sid="listener-bdf47797" name="row-dblclick" handler="onGrd1RowDblclick"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-a10d15b0">
+          <cl:xylayoutdata std:sid="sxyl-data-96293ddb" top="128px" left="20px" width="984px" height="487px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+        <cl:gridcolumn std:sid="g-column-e2bccc69" width="34px"/>
+        <cl:gridcolumn std:sid="g-column-395ab2cd" width="154px"/>
+        <cl:gridcolumn std:sid="g-column-0057894b" width="371px"/>
+        <cl:gridcolumn std:sid="g-column-b03376c0" width="44px"/>
+        <cl:gridcolumn std:sid="g-column-8053ebb4" width="46px"/>
+        <cl:gridheader std:sid="gh-band-b244d0df">
+          <cl:gridrow std:sid="g-row-ca807b5d"/>
+          <cl:gridcell std:sid="gh-cell-47a5304f" rowindex="0" colindex="0" sortable="false" filterable="false"/>
+          <cl:gridcell std:sid="gh-cell-5957f04a" rowindex="0" colindex="1" targetcolumnname="wRpt_title" sortable="false" filterable="false" text="제목"/>
+          <cl:gridcell std:sid="gh-cell-8790d6b1" rowindex="0" colindex="2" targetcolumnname="wRpt_content" sortable="false" filterable="false" text="내용"/>
+          <cl:gridcell std:sid="gh-cell-71f17b4d" rowindex="0" colindex="3" targetcolumnname="wRpt_toRpt" sortable="false" filterable="false" text="보고대상"/>
+          <cl:gridcell std:sid="gh-cell-75dbacd2" rowindex="0" colindex="4" targetcolumnname="wRpt_reporter" sortable="false" filterable="false" text="보고자"/>
+        </cl:gridheader>
+        <cl:griddetail std:sid="gd-band-41bf2b4d">
+          <cl:gridrow std:sid="g-row-2d1c55bc" height="146px"/>
+          <cl:gridcell std:sid="gd-cell-3056a19d" rowindex="0" colindex="0" style="background-color:transparent; color:#000000;" columntype="rowindex"/>
+          <cl:gridcell std:sid="gd-cell-2721cb39" rowindex="0" colindex="1" style="background-color:transparent; color:#000000;" columnname="wRpt_title"/>
+          <cl:gridcell std:sid="gd-cell-44ea37b6" rowindex="0" colindex="2" style="background-color:transparent; color:#000000;" columnname="wRpt_content">
+            <cl:textarea std:sid="t-area-6024b158" id="txa1" style="padding-left:5px;"/>
+          </cl:gridcell>
+          <cl:gridcell std:sid="gd-cell-08399a0a" rowindex="0" colindex="3" style="background-color:transparent; color:#000000;" columnname="wRpt_toRpt"/>
+          <cl:gridcell std:sid="gd-cell-deeec300" rowindex="0" colindex="4" style="background-color:transparent; color:#000000;" columnname="wRpt_reporter"/>
+        </cl:griddetail>
+      </cl:grid>
+      <cl:radiobutton std:sid="r-button-06c3601f" id="rdb1" value="0">
+        <cl:listener std:sid="listener-5c332f57" name="selection-change" handler="onRdb1SelectionChange"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-31db7306">
+          <cl:xylayoutdata std:sid="sxyl-data-02fae0ef" top="81px" left="20px" width="152px" height="40px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+        <cl:item std:sid="item-cea07fc5" label="작게" value="0"/>
+        <cl:item std:sid="item-97915e6f" label="크게" value="1"/>
+      </cl:radiobutton>
+      <cl:responsivexylayout std:sid="r-xylayout-4820a8a3"/>
+    </cl:group>
+    <cl:output std:sid="output-97800bf8" style="font-weight:bold;" value="주간 업무보고 카테고리">
+      <cl:xylayoutdata std:sid="xyl-data-e6aa68ea" top="16px" left="10px" width="259px" height="45px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+    </cl:output>
+    <cl:tree std:sid="tree-21554ba1" id="tre1" style="border-right-style:solid; border-radius:15px; background-color:#fbfce9; border-left-style:solid; border-bottom-style:solid; border-top-style:solid;">
+      <cl:listener std:sid="listener-bd244b2e" name="item-dblclick" handler="onTre1ItemDblclick"/>
+      <cl:xylayoutdata std:sid="xyl-data-b7fc9570" top="60px" left="10px" width="344px" height="606px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+      <cl:treeitemset datasetid="ds_partTree" label="label" value="value" parent="parent"/>
+    </cl:tree>
+    <cl:xylayout std:sid="xylayout-e2b531dd"/>
+  </body>
+  <std:studiosetting>
+    <std:hruler/>
+    <std:vruler/>
+  </std:studiosetting>
+</html>

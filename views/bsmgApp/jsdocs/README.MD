@@ -1,0 +1,1 @@
+Place js files that contains JSDoc to enable content assistant only.

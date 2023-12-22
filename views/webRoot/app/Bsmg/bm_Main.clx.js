@@ -18,6 +18,8 @@
 			 * @author SW2Team
 			 ************************************************/
 			
+			var dataManager = cpr.core.Module.require("lib/DataManager");
+			
 			exports.setMemberInfo = function(dm_memberInfo){
 				var dmMemberInfo = app.lookup("dm_memberInfo");
 				dmMemberInfo.build(dm_memberInfo);
@@ -28,6 +30,7 @@
 			 * 앱이 최초 구성된후 최초 랜더링 직후에 발생하는 이벤트 입니다.
 			 */
 			function onBodyLoad(/* cpr.events.CEvent */ e){
+				dataManager = getDataManager();
 				app.lookup("sms_chkLogin").send();
 			}
 			
@@ -180,15 +183,22 @@
 					}
 					
 					
-					var rankString = app.lookup("ds_rank");
-					var rankRow = rankString.findFirstRow("rank_idx == " + mem_rank);
+					var dsRankList = app.lookup("ds_rank");
+					var rankRow = dsRankList.findFirstRow("rank_idx == " + mem_rank);
 					var rankName = rankRow.getValue("rank_name");
 					app.lookup("Main_RankOpb").value = rankName;
 					
-					var partString = app.lookup("ds_part");
-					var partRow = partString.findFirstRow("part_idx == " + mem_part);
+					var dsPartList = app.lookup("ds_part");
+					var partRow = dsPartList.findFirstRow("part_idx == " + mem_part);
 					var partName = partRow.getValue("part_name");
 					app.lookup("Main_PartOpb").value = partName;
+					
+					
+					// 직급, 부서 dataManager에 저장
+					dataManager.setRankList(dsRankList);
+					dataManager.setPartList(dsPartList);
+					
+					console.log("하하");
 				} 
 				app.getContainer().redraw();
 				

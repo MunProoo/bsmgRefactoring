@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:cl="http://tomatosystem.co.kr/cleopatra" xmlns:std="http://tomatosystem.co.kr/cleopatra/studio" std:sid="html-6a244fb8" version="1.0.0.0">
+  <head std:sid="head-48d7540d">
+    <title>bm_list</title>
+    <screen std:sid="screen-8cb6ad64" id="default" name="default" minwidth="1024px" width="1024px" height="768px" customHeight="600" customWidth="800"/>
+    <screen std:sid="screen-43f41040" id="tablet" name="tablet" minwidth="500px" maxwidth="1023px" width="500px" height="667px" customHeight="600" customWidth="800"/>
+    <screen std:sid="screen-ceed1a51" id="mobile" name="mobile" maxwidth="499px" width="350px" height="525px" customHeight="600" customWidth="800"/>
+    <cl:model std:sid="model-379ce48c">
+      <cl:dataset std:sid="d-set-84244cb9" id="ds_rptList">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-0e244152" name="rpt_idx"/>
+          <cl:datacolumn std:sid="d-column-16d9c0e6" name="rpt_title"/>
+          <cl:datacolumn std:sid="d-column-8b5afd79" name="rpt_content"/>
+          <cl:datacolumn std:sid="d-column-236e43a1" name="rpt_reporter"/>
+          <cl:datacolumn std:sid="d-column-ec5e9e6d" name="rpt_date"/>
+          <cl:datacolumn std:sid="d-column-94bad066" name="rpt_attr1"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:dataset std:sid="d-set-47ec1824" id="ds_List">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-534bd552" name="label"/>
+          <cl:datacolumn std:sid="d-column-1b7faba5" name="value"/>
+          <cl:datacolumn std:sid="d-column-8c3b66c2" name="parent"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:datamap std:sid="d-map-887a20ce" id="Result">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-1adc960e" name="ResultCode"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-6345da33" id="totalCount">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-245e29e7" name="Count"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-d88da184" id="dm_page">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-9a613a0f" name="offset"/>
+          <cl:datacolumn std:sid="d-column-67ede394" name="limit"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-4f475e87" id="dm_search">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-72161263" name="search_combo"/>
+          <cl:datacolumn std:sid="d-column-638d4d6e" name="search_input"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-43820692" id="dm_attr">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-6b385283" name="attrValue"/>
+          <cl:datacolumn std:sid="d-column-58f51d33" name="attrCategory"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:submission std:sid="submission-7bf698c3" id="sms_getRptList" method="get" action="/bsmg/report/reportList">
+        <cl:listener std:sid="listener-d510981c" name="submit-done" handler="onSms_getRptListSubmitDone"/>
+        <cl:requestdata dataid="dm_page"/>
+        <cl:responsedata dataid="ds_rptList"/>
+        <cl:responsedata dataid="Result"/>
+        <cl:responsedata dataid="totalCount"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-f8900341" id="sms_getRptSearch" method="get" action="/bsmg/report/reportSearch">
+        <cl:listener std:sid="listener-11936f69" name="submit-done" handler="onSms_getRptSearchSubmitDone"/>
+        <cl:requestdata dataid="dm_search"/>
+        <cl:requestdata dataid="dm_page"/>
+        <cl:responsedata dataid="ds_rptList"/>
+        <cl:responsedata dataid="Result"/>
+        <cl:responsedata dataid="totalCount"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-54b4ea5e" id="sms_setTree" method="get" action="/bsmg/setting/attrTree">
+        <cl:listener std:sid="listener-8fc0d570" name="submit-done" handler="onSms_setTreeSubmitDone"/>
+        <cl:responsedata dataid="ds_List"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-7783acc3" id="sms_rptAttrSearch" method="get" action="/bsmg/report/reportAttrSearch">
+        <cl:listener std:sid="listener-adc87a0c" name="submit-done" handler="onSms_rptAttrSearchSubmitDone"/>
+        <cl:requestdata dataid="dm_attr"/>
+        <cl:requestdata dataid="dm_page"/>
+        <cl:responsedata dataid="ds_rptList"/>
+        <cl:responsedata dataid="Result"/>
+        <cl:responsedata dataid="totalCount"/>
+      </cl:submission>
+    </cl:model>
+    <cl:appspec/>
+  </head>
+  <body std:sid="body-dedf82f0" style="top:0px; left:0px; width:800px; height:600px;">
+    <cl:listener std:sid="listener-2f27c0ba" name="load" handler="onBodyLoad"/>
+    <cl:group std:sid="group-cb60e773" style="background-color:#f9fbf0; border-radius:15px; border-right-style:solid; border-left-style:solid; border-bottom-style:solid; border-top-style:solid;">
+      <cl:xylayoutdata std:sid="xyl-data-93d10ef7" top="4px" left="364px" width="1024px" height="668px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+      <cl:output std:sid="output-fc6c26c1" style="color:#000000; font-weight:bold; font-size:20px; font-style:normal;" value="일일 업무보고 리스트">
+        <cl:responsivexylayoutdata std:sid="rxyl-data-3571e721">
+          <cl:xylayoutdata std:sid="sxyl-data-fbc4c561" top="5px" left="5px" width="217px" height="43px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+      </cl:output>
+      <cl:button std:sid="button-9416d9b1" style="border-radius:45px; background-repeat:no-repeat; background-position:center; background-image:url('../../images/arrow-clockwise.svg');">
+        <cl:listener std:sid="listener-9d99d106" name="click" handler="onButtonClick2"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-f51626d8">
+          <cl:xylayoutdata std:sid="sxyl-data-9453a79f" top="83px" left="738px" width="41px" height="35px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+      </cl:button>
+      <cl:grid std:sid="grid-d4000158" id="grd1" style="font-weight:normal;" readonly="true" datasetid="ds_rptList" autorowheight="none" wheelrowcount="1" resizablecolumns="all">
+        <cl:listener std:sid="listener-92659111" name="row-dblclick" handler="onGrd1RowDblclick"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-a920c313">
+          <cl:xylayoutdata std:sid="sxyl-data-e3c755da" top="128px" left="20px" width="984px" height="487px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+        <cl:gridcolumn std:sid="g-column-74670c87" width="37px"/>
+        <cl:gridcolumn std:sid="g-column-a1409073" width="168px"/>
+        <cl:gridcolumn std:sid="g-column-b795e7bb" width="269px"/>
+        <cl:gridcolumn std:sid="g-column-f4aea0e8" width="51px"/>
+        <cl:gridcolumn std:sid="g-column-0e29b6ee" width="40px"/>
+        <cl:gridcolumn std:sid="g-column-585b5bf9"/>
+        <cl:gridheader std:sid="gh-band-bcffbb66">
+          <cl:gridrow std:sid="g-row-93f5159e"/>
+          <cl:gridcell std:sid="gh-cell-b9dfc441" rowindex="0" colindex="0" sortable="false" filterable="false"/>
+          <cl:gridcell std:sid="gh-cell-bd0a7306" rowindex="0" colindex="1" targetcolumnname="rpt_title" sortable="false" filterable="false" text="제목"/>
+          <cl:gridcell std:sid="gh-cell-fefe9d9c" rowindex="0" colindex="2" targetcolumnname="rpt_content" sortable="false" filterable="false" text="내용"/>
+          <cl:gridcell std:sid="gh-cell-96dedd12" rowindex="0" colindex="3" targetcolumnname="rpt_reporter" sortable="false" filterable="false" text="보고자"/>
+          <cl:gridcell std:sid="gh-cell-9892cca6" rowindex="0" colindex="4" targetcolumnname="rpt_attr1" sortable="false" filterable="false" text="업무 속성"/>
+          <cl:gridcell std:sid="gh-cell-d762f80f" rowindex="0" colindex="5" targetcolumnname="rpt_date" visible="false"/>
+        </cl:gridheader>
+        <cl:griddetail std:sid="gd-band-d7c9063c">
+          <cl:gridrow std:sid="g-row-d3bfbcf4" height="64px"/>
+          <cl:gridcell std:sid="gd-cell-a3811207" rowindex="0" colindex="0" style="background-color:transparent; color:#000000; font-weight:normal;" columntype="rowindex"/>
+          <cl:gridcell std:sid="gd-cell-80e4d61d" rowindex="0" colindex="1" style="background-color:transparent; color:#000000; font-weight:normal;" columnname="rpt_title"/>
+          <cl:gridcell std:sid="gd-cell-16944d23" rowindex="0" colindex="2" style="background-color:transparent; color:#000000; font-weight:normal; padding-left:5px; text-align:left;" columnname="rpt_content">
+            <cl:textarea std:sid="t-area-c7c04c2e" id="txa1" style="font-weight:normal;"/>
+          </cl:gridcell>
+          <cl:gridcell std:sid="gd-cell-5b0157f6" rowindex="0" colindex="3" style="background-color:transparent; color:#000000; font-weight:normal;" columnname="rpt_reporter"/>
+          <cl:gridcell std:sid="gd-cell-f7f95192" rowindex="0" colindex="4" style="background-color:transparent; color:#000000; font-weight:normal;" columnname="rpt_attr1"/>
+          <cl:gridcell std:sid="gd-cell-1e5cd6e0" rowindex="0" colindex="5" columnname="rpt_date"/>
+        </cl:griddetail>
+      </cl:grid>
+      <cl:button std:sid="button-bda96333" value="일일 업무보고 작성">
+        <cl:listener std:sid="listener-114aa2a9" name="click" handler="onButtonClick"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-d28b05ad">
+          <cl:xylayoutdata std:sid="sxyl-data-14d87672" top="81px" left="825px" width="141px" height="39px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+      </cl:button>
+      <cl:combobox std:sid="c-box-2eb1dfdc" id="cmb1" value="0" fixedlistwidth="true" placeholder="전체" preventinput="true">
+        <cl:responsivexylayoutdata std:sid="rxyl-data-f315ca75">
+          <cl:xylayoutdata std:sid="sxyl-data-d491626d" top="92px" left="221px" width="120px" height="28px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+        <cl:item std:sid="item-b55bc07a" label="전체" value="0"/>
+        <cl:item std:sid="item-7e937ffd" label="제목" value="1"/>
+        <cl:item std:sid="item-29c3db48" label="내용" value="2"/>
+        <cl:item std:sid="item-2f7401e3" label="보고자" value="3"/>
+      </cl:combobox>
+      <cl:searchinput std:sid="s-input-0b9ccfc8" id="ipb1">
+        <cl:listener std:sid="listener-3a692f50" name="search" handler="onSearchInputSearch"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-6901f444">
+          <cl:xylayoutdata std:sid="sxyl-data-c718722d" top="92px" left="341px" width="361px" height="28px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+      </cl:searchinput>
+      <cl:pageindexer std:sid="p-indexer-753f5728" id="pageIndex">
+        <cl:listener std:sid="listener-2b0f914f" name="selection-change" handler="onPageIndexSelectionChange"/>
+        <cl:listener std:sid="listener-a744f5f2" name="before-selection-change" handler="onPageIndexBeforeSelectionChange"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-b59bd937">
+          <cl:xylayoutdata std:sid="sxyl-data-5bc98c67" top="614px" left="269px" width="505px" height="37px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+      </cl:pageindexer>
+      <cl:radiobutton std:sid="r-button-06c3601f" id="rdb1" value="0">
+        <cl:listener std:sid="listener-b0c86b1b" name="selection-change" handler="onRdb1SelectionChange"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-7ee1bb23">
+          <cl:xylayoutdata std:sid="sxyl-data-02e838e2" top="81px" left="20px" width="152px" height="40px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+        <cl:item std:sid="item-cea07fc5" label="작게" value="0"/>
+        <cl:item std:sid="item-97915e6f" label="크게" value="1"/>
+      </cl:radiobutton>
+      <cl:responsivexylayout std:sid="r-xylayout-4820a8a3"/>
+    </cl:group>
+    <cl:output std:sid="output-97800bf8" style="font-weight:bold;" value="일일 업무보고 카테고리">
+      <cl:xylayoutdata std:sid="xyl-data-1174c063" top="16px" left="10px" width="259px" height="45px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+    </cl:output>
+    <cl:tree std:sid="tree-21554ba1" id="tre1" style="border-right-style:solid; background-size:cover; border-bottom-color:#000000; border-left-color:#000000; border-right-color:#000000; border-top-style:solid; border-radius:15px; background-color:#f9fbf0; background-repeat:no-repeat; border-left-style:solid; border-top-color:#000000; border-bottom-style:solid; background-image:none;">
+      <cl:listener std:sid="listener-986e1562" name="item-dblclick" handler="onTre1ItemDblclick"/>
+      <cl:xylayoutdata std:sid="xyl-data-07e4bde2" top="60px" left="10px" width="344px" height="606px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+      <cl:treeitemset datasetid="ds_List" label="label" value="value" parent="parent"/>
+      <cl:itemstyle style="background-repeat:no-repeat; background-size:auto; background-image:none; background-position:top left; background-origin:content-box;"/>
+    </cl:tree>
+    <cl:xylayout std:sid="xylayout-194a78bd"/>
+  </body>
+  <std:studiosetting>
+    <std:hruler>
+      <std:guide position="1391"/>
+    </std:hruler>
+    <std:vruler/>
+  </std:studiosetting>
+</html>

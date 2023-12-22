@@ -19,6 +19,7 @@
 			 ************************************************/
 			
 			var selectUserIDMap; // 선택된 유저객체 map
+			var dataManager = cpr.core.Module.require("lib/DataManager");
 			
 			/*
 			 * 루트 컨테이너에서 load 이벤트 발생 시 호출.
@@ -31,6 +32,19 @@
 				app.lookup("sms_chkLogin").send();
 				
 				selectUserIDMap = new Map();
+				
+				dataManager = getDataManager();
+				
+				var dsRank = dataManager.getRankList();
+				var dsRankList = app.lookup("ds_rank");
+				dsRank.copyToDataSet(dsRankList);
+				
+				var dsPart = dataManager.getPartList();
+				var dsPartList = app.lookup("ds_part");
+				dsPart.copyToDataSet(dsPartList);
+				
+				app.getContainer().redraw();
+				
 				
 			}
 			
@@ -63,7 +77,6 @@
 					}
 					grd.sort("mem_part ASC");
 					grd.redraw();
-					
 				}
 				 
 			}
@@ -543,8 +556,14 @@
 				"columns" : [
 					{"name": "mem_id"},
 					{"name": "mem_name"},
-					{"name": "mem_rank"},
-					{"name": "mem_part"}
+					{
+						"name": "mem_rank",
+						"dataType": "number"
+					},
+					{
+						"name": "mem_part",
+						"dataType": "number"
+					}
 				]
 			});
 			app.register(dataSet_1);
@@ -554,8 +573,14 @@
 				"columns" : [
 					{"name": "mem_id"},
 					{"name": "mem_name"},
-					{"name": "mem_rank"},
-					{"name": "mem_part"}
+					{
+						"name": "mem_rank",
+						"dataType": "number"
+					},
+					{
+						"name": "mem_part",
+						"dataType": "number"
+					}
 				]
 			});
 			app.register(dataSet_2);
@@ -565,11 +590,41 @@
 				"columns" : [
 					{"name": "mem_id"},
 					{"name": "mem_name"},
-					{"name": "mem_rank"},
-					{"name": "mem_part"}
+					{
+						"name": "mem_rank",
+						"dataType": "number"
+					},
+					{
+						"name": "mem_part",
+						"dataType": "number"
+					}
 				]
 			});
 			app.register(dataSet_3);
+			
+			var dataSet_4 = new cpr.data.DataSet("ds_rank");
+			dataSet_4.parseData({
+				"columns" : [
+					{"name": "rank_name"},
+					{
+						"name": "rank_idx",
+						"dataType": "number"
+					}
+				]
+			});
+			app.register(dataSet_4);
+			
+			var dataSet_5 = new cpr.data.DataSet("ds_part");
+			dataSet_5.parseData({
+				"columns" : [
+					{"name": "part_name"},
+					{
+						"name": "part_idx",
+						"dataType": "number"
+					}
+				]
+			});
+			app.register(dataSet_5);
 			var dataMap_1 = new cpr.data.DataMap("Result");
 			dataMap_1.parseData({
 				"columns" : [{"name": "ResultCode"}]
@@ -855,6 +910,17 @@
 							"constraint": {"rowIndex": 0, "colIndex": 2},
 							"configurator": function(cell){
 								cell.columnName = "mem_rank";
+								cell.control = (function(){
+									var comboBox_2 = new cpr.controls.ComboBox("cmb2");
+									(function(comboBox_2){
+										comboBox_2.setItemSet(app.lookup("ds_rank"), {
+											"label": "rank_name",
+											"value": "rank_idx"
+										})
+									})(comboBox_2);
+									comboBox_2.bind("value").toDataColumn("mem_rank");
+									return comboBox_2;
+								})();
 							}
 						}
 					]
@@ -1041,6 +1107,17 @@
 							"constraint": {"rowIndex": 0, "colIndex": 2},
 							"configurator": function(cell){
 								cell.columnName = "mem_rank";
+								cell.control = (function(){
+									var comboBox_3 = new cpr.controls.ComboBox("cmb3");
+									(function(comboBox_3){
+										comboBox_3.setItemSet(app.lookup("ds_rank"), {
+											"label": "rank_name",
+											"value": "rank_idx"
+										})
+									})(comboBox_3);
+									comboBox_3.bind("value").toDataColumn("mem_rank");
+									return comboBox_3;
+								})();
 							}
 						}
 					]
@@ -1149,12 +1226,34 @@
 							"constraint": {"rowIndex": 0, "colIndex": 3},
 							"configurator": function(cell){
 								cell.columnName = "mem_rank";
+								cell.control = (function(){
+									var comboBox_4 = new cpr.controls.ComboBox("cmb_rank");
+									(function(comboBox_4){
+										comboBox_4.setItemSet(app.lookup("ds_rank"), {
+											"label": "rank_name",
+											"value": "rank_idx"
+										})
+									})(comboBox_4);
+									comboBox_4.bind("value").toDataColumn("mem_rank");
+									return comboBox_4;
+								})();
 							}
 						},
 						{
 							"constraint": {"rowIndex": 0, "colIndex": 4},
 							"configurator": function(cell){
 								cell.columnName = "mem_part";
+								cell.control = (function(){
+									var comboBox_5 = new cpr.controls.ComboBox("cmb_part");
+									(function(comboBox_5){
+										comboBox_5.setItemSet(app.lookup("ds_part"), {
+											"label": "part_name",
+											"value": "part_idx"
+										})
+									})(comboBox_5);
+									comboBox_5.bind("value").toDataColumn("mem_part");
+									return comboBox_5;
+								})();
 							}
 						}
 					]

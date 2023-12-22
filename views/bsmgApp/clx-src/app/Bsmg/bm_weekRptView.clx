@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:cl="http://tomatosystem.co.kr/cleopatra" xmlns:std="http://tomatosystem.co.kr/cleopatra/studio" std:sid="html-4cfe0632" version="1.0.0.0">
+  <head std:sid="head-44695278">
+    <title>bm_weekRptView</title>
+    <screen std:sid="screen-7d56c971" id="default" name="default" minwidth="1024px" width="1024px" height="768px"/>
+    <screen std:sid="screen-9bb04ae9" id="tablet" name="tablet" minwidth="500px" maxwidth="1023px" width="500px" height="667px"/>
+    <screen std:sid="screen-1b2e1308" id="mobile" name="mobile" maxwidth="499px" width="350px" height="525px"/>
+    <cl:model std:sid="model-8d81c0e0">
+      <cl:dataset std:sid="d-set-686e512a" id="ds_part">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-257443fd" name="part_name"/>
+          <cl:datacolumn std:sid="d-column-44a72f16" name="part_idx"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
+      <cl:datamap std:sid="d-map-88dfa158" id="dm_weekRptInfo">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-f3c78193" name="wRpt_idx"/>
+          <cl:datacolumn std:sid="d-column-8ee30191" name="wRpt_reporter"/>
+          <cl:datacolumn std:sid="d-column-bdb6e1b0" name="wRpt_date"/>
+          <cl:datacolumn std:sid="d-column-09f6b05a" name="wRpt_toRpt"/>
+          <cl:datacolumn std:sid="d-column-8ec9478b" name="wRpt_title"/>
+          <cl:datacolumn std:sid="d-column-f2a323f9" name="wRpt_content"/>
+          <cl:datacolumn std:sid="d-column-3dfd35a3" name="wRpt_part"/>
+          <cl:datacolumn std:sid="d-column-fa6f9a88" name="wRpt_omissionDate"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-9c6bd4b2" id="dm_wRptIdx">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-90a5a2e2" name="wRpt_idx"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-daf52b9e" id="dm_weekRptInfoSrc">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-aec544fe" name="wRpt_idx"/>
+          <cl:datacolumn std:sid="d-column-7b011067" name="wRpt_reporter"/>
+          <cl:datacolumn std:sid="d-column-1aa8bea3" name="wRpt_date"/>
+          <cl:datacolumn std:sid="d-column-d857bf64" name="wRpt_toRpt"/>
+          <cl:datacolumn std:sid="d-column-46d772fc" name="wRpt_title"/>
+          <cl:datacolumn std:sid="d-column-27f7b0f0" name="wRpt_content"/>
+          <cl:datacolumn std:sid="d-column-2d78ad31" name="wRpt_part"/>
+          <cl:datacolumn std:sid="d-column-8f68ee7e" name="wRpt_omissionDate"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-bfc68de4" id="Result">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-79663238" name="ResultCode"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-34a14bd1" id="dm_part">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-dcbffaa6" name="part_idx"/>
+          <cl:datacolumn std:sid="d-column-84a3081b" name="team_leader"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-35bc4199" id="dm_memberInfo">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-748505f4" name="mem_id"/>
+          <cl:datacolumn std:sid="d-column-d79b8608" name="mem_pw"/>
+          <cl:datacolumn std:sid="d-column-bb6dcca0" name="mem_name"/>
+          <cl:datacolumn std:sid="d-column-bffbe21f" name="mem_rank"/>
+          <cl:datacolumn std:sid="d-column-3aac1b5b" name="mem_part"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:submission std:sid="submission-c49f34e3" id="sms_getWeekRptInfo" async="false" method="get" action="/bsmg/report/getWeekRptInfo">
+        <cl:listener std:sid="listener-289f08c5" name="submit-done" handler="onSms_getWeekRptInfoSubmitDone"/>
+        <cl:requestdata dataid="dm_wRptIdx"/>
+        <cl:responsedata dataid="dm_weekRptInfo"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-115f6e02" id="sms_putWeekRpt" async="false" method="put" action="/bsmg/report/putWeekRpt" mediatype="application/json">
+        <cl:listener std:sid="listener-9329779b" name="submit-done" handler="onSms_putWeekRptSubmitDone"/>
+        <cl:requestdata dataid="dm_weekRptInfo"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-636f0ba6" id="sms_setPart" async="false" method="get" action="/bsmg/setting/rankPart">
+        <cl:listener std:sid="listener-89d172b8" name="submit-done" handler="onSms_setPartSubmitDone"/>
+        <cl:responsedata dataid="ds_part"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-87f6e8a9" id="sms_getToRpt" async="false" method="get" action="/bsmg/setting/getToRpt">
+        <cl:listener std:sid="listener-424f3f55" name="submit-done" handler="onSms_getToRptSubmitDone"/>
+        <cl:requestdata dataid="dm_part"/>
+        <cl:responsedata dataid="dm_part"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-f6be7aa2" id="sms_deleteWeekRpt" method="delete" action="/bsmg/report/deleteWeekRpt">
+        <cl:listener std:sid="listener-01303867" name="submit-done" handler="onSms_deleteWeekRptSubmitDone"/>
+        <cl:requestdata dataid="dm_wRptIdx"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
+      <cl:submission std:sid="submission-2f62b1b9" id="sms_chkLogin" method="get" action="/bsmg/login/chkLogin">
+        <cl:listener std:sid="listener-cd1f6266" name="submit-done" handler="onSms_chkLoginSubmitDone"/>
+        <cl:responsedata dataid="Result"/>
+        <cl:responsedata dataid="dm_memberInfo"/>
+      </cl:submission>
+    </cl:model>
+    <cl:appspec/>
+  </head>
+  <body std:sid="body-2a5c6a56" style="top:0px; left:0px; width:800px; height:600px;">
+    <cl:listener std:sid="listener-58e01f25" name="init" handler="onBodyInit"/>
+    <cl:listener std:sid="listener-6c294bec" name="load" handler="onBodyLoad"/>
+    <cl:button std:sid="button-58216bf2" id="update" style="background-color:#52c183; color:#ffffff; background-image:none;" visible="false" value="수정">
+      <cl:listener std:sid="listener-aab3e702" name="click" handler="onUpdateClick"/>
+      <cl:xylayoutdata std:sid="xyl-data-1c16dafa" top="593px" left="48px" width="149px" height="43px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+    </cl:button>
+    <cl:button std:sid="button-bed23944" value="닫기">
+      <cl:listener std:sid="listener-d1c72963" name="click" handler="onButtonClick"/>
+      <cl:xylayoutdata std:sid="xyl-data-52248212" top="593px" left="648px" width="149px" height="43px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+    </cl:button>
+    <cl:group std:sid="group-eff82f26" class="cl-form-group">
+      <cl:xylayoutdata std:sid="xyl-data-d3ff065e" top="10px" left="10px" width="820px" height="80px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+      <cl:output std:sid="output-c012cebd" style="font-weight:bolder; text-align:center;" value="구분">
+        <cl:formdata std:sid="f-data-1e260740" row="0" col="0"/>
+      </cl:output>
+      <cl:output std:sid="output-d6d31365" style="font-weight:bolder; text-align:center;" value="보고일자">
+        <cl:formdata std:sid="f-data-439afceb" row="0" col="2"/>
+      </cl:output>
+      <cl:output std:sid="output-36e5e126" style="padding-left:3px; text-align:left;" readonly="true" value="주간 업무보고">
+        <cl:formdata std:sid="f-data-ea94246d" row="0" col="1"/>
+      </cl:output>
+      <cl:group std:sid="group-46a8c37d" class="cl-form-group">
+        <cl:formdata std:sid="f-data-879b9c2c" row="1" col="0" rowspan="1" colspan="4"/>
+        <cl:output std:sid="output-5731dfe9" style="font-weight:bold; text-align:center;" value="보고대상">
+          <cl:formdata std:sid="f-data-58d4e953" row="0" col="0"/>
+        </cl:output>
+        <cl:output std:sid="output-07747cce" id="teamLeader" style="background-color:#e4eff8; padding-left:3px; text-align:left;" readonly="true">
+          <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_weekRptInfo" columnname="wRpt_toRpt"/>
+          <cl:formdata std:sid="f-data-ea21548f" row="0" col="1"/>
+        </cl:output>
+        <cl:output std:sid="output-2b3f0991" style="font-weight:bold; text-align:center;" value="보고자">
+          <cl:formdata std:sid="f-data-d9ec0962" row="0" col="2"/>
+        </cl:output>
+        <cl:output std:sid="output-13170a19" id="toRpt" style="background-color:#f8e4e4; padding-left:3px; text-align:left;" readonly="true">
+          <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_weekRptInfo" columnname="wRpt_reporter"/>
+          <cl:formdata std:sid="f-data-1f238b69" row="0" col="3"/>
+        </cl:output>
+        <cl:formlayout std:sid="f-layout-8651be0c" hspace="0px" vspace="0px" top-margin="0px" right-margin="0px" bottom-margin="0px" left-margin="0px" hseparatorwidth="1" hseparatortype="BY_CLASS" vseparatorwidth="1" vseparatortype="BY_CLASS">
+          <cl:rows length="1" unit="FRACTION"/>
+          <cl:columns length="100" unit="PIXEL" shadetype="BY_CLASS"/>
+          <cl:columns length="1" unit="FRACTION"/>
+          <cl:columns length="100" unit="PIXEL" shadetype="BY_CLASS"/>
+          <cl:columns length="1" unit="FRACTION"/>
+        </cl:formlayout>
+      </cl:group>
+      <cl:output std:sid="output-95a54a6d" id="wRpt_date" style="padding-left:3px;" readonly="true">
+        <cl:formdata std:sid="f-data-9cfb5ddd" row="0" col="3"/>
+      </cl:output>
+      <cl:formlayout std:sid="f-layout-e54b00f1" hspace="0px" vspace="0px" top-margin="0px" right-margin="0px" bottom-margin="0px" left-margin="0px" hseparatorwidth="1" hseparatortype="BY_CLASS" vseparatorwidth="1" vseparatortype="BY_CLASS">
+        <cl:rows length="1" unit="FRACTION" autoSizing="false" shadetype="NONE" shadecolor="#000000" minlength="10"/>
+        <cl:rows length="1" unit="FRACTION" autoSizing="false" shadetype="NONE" shadecolor="#000000" minlength="0"/>
+        <cl:columns length="100" unit="PIXEL" autoSizing="false" shadetype="BY_CLASS" shadecolor="#000000" minlength="0"/>
+        <cl:columns length="1" unit="FRACTION"/>
+        <cl:columns length="100" unit="PIXEL" autoSizing="false" shadetype="BY_CLASS" shadecolor="#000000" minlength="0"/>
+        <cl:columns length="1" unit="FRACTION"/>
+      </cl:formlayout>
+    </cl:group>
+    <cl:button std:sid="button-25ed50de" id="cancel" style="background-color:#63abf3; color:#ffffff; background-image:none;" visible="false" value="취소">
+      <cl:listener std:sid="listener-27da58b4" name="click" handler="onButtonClick2"/>
+      <cl:xylayoutdata std:sid="xyl-data-bb8be274" top="593px" left="248px" width="149px" height="43px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+    </cl:button>
+    <cl:button std:sid="button-3e1f594c" id="delete" style="background-color:#de004b; color:#fff7f7; background-image:none;" visible="false" value="삭제">
+      <cl:listener std:sid="listener-95c1c610" name="click" handler="onButtonClick3"/>
+      <cl:xylayoutdata std:sid="xyl-data-b5bf5a01" top="593px" left="448px" width="149px" height="43px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+    </cl:button>
+    <cl:group std:sid="group-d4a61b60" id="gr1" class="cl-form-group" readonly="true">
+      <cl:xylayoutdata std:sid="xyl-data-ddeb6e2e" top="89px" left="10px" width="820px" height="494px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
+      <cl:output std:sid="output-60bf385d" style="font-weight:bolder; text-align:center;" value="부서">
+        <cl:formdata std:sid="f-data-c641289c" row="0" col="0"/>
+      </cl:output>
+      <cl:output std:sid="output-d2ded5ae" style="font-weight:bolder; text-align:center;" value="주간업무제목">
+        <cl:formdata std:sid="f-data-fe8634f4" row="1" col="0"/>
+      </cl:output>
+      <cl:inputbox std:sid="i-box-4d0be628" id="wRpt_title" style="padding-left:3px;" placeholder="주간 업무보고 제목을 입력하세요.">
+        <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_weekRptInfo" columnname="wRpt_title"/>
+        <cl:formdata std:sid="f-data-3a778b8c" row="1" col="1"/>
+      </cl:inputbox>
+      <cl:output std:sid="output-8adf7c04" style="font-weight:bolder; text-align:center;" value="주간업무 내용">
+        <cl:formdata std:sid="f-data-508100e4" row="2" col="0"/>
+      </cl:output>
+      <cl:textarea std:sid="t-area-7549777d" id="wRpt_content" style="padding-left:3px;" placeholder="주간업무 내용을 입력하세요.">
+        <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_weekRptInfo" columnname="wRpt_content"/>
+        <cl:formdata std:sid="f-data-2b7263c2" row="2" col="1"/>
+      </cl:textarea>
+      <cl:output std:sid="output-d264ff0f" style="font-weight:bolder; text-align:center;" value="보고가 없는 날짜">
+        <cl:formdata std:sid="f-data-7eb5f356" row="3" col="0"/>
+      </cl:output>
+      <cl:inputbox std:sid="i-box-eb9ea290" id="wRpt_omissionDate" style="padding-left:3px;">
+        <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_weekRptInfo" columnname="wRpt_omissionDate"/>
+        <cl:formdata std:sid="f-data-6e39e1ab" row="3" col="1"/>
+      </cl:inputbox>
+      <cl:combobox std:sid="c-box-1e984f4b" id="cmb1" style="background-color:none; padding-left:3px;" preventinput="true">
+        <cl:listener std:sid="listener-7ca1cb79" name="item-click" handler="onCmb1ItemClick"/>
+        <cl:formdata std:sid="f-data-29f085ec" row="0" col="1" rowspan="1" colspan="1"/>
+        <cl:itemset datasetid="ds_part" label="part_name" value="part_idx"/>
+      </cl:combobox>
+      <cl:formlayout std:sid="f-layout-489f1761" hspace="0px" vspace="0px" top-margin="0px" right-margin="0px" bottom-margin="0px" left-margin="0px" hseparatorwidth="1" hseparatortype="BY_CLASS" vseparatorwidth="1" vseparatortype="BY_CLASS">
+        <cl:rows length="35" unit="PIXEL" autoSizing="false" shadetype="NONE" shadecolor="#000000" minlength="0"/>
+        <cl:rows length="35" unit="PIXEL" autoSizing="false" shadetype="NONE" shadecolor="#000000" minlength="0"/>
+        <cl:rows length="1" unit="FRACTION" autoSizing="false" shadetype="NONE" shadecolor="#000000" minlength="0"/>
+        <cl:rows length="40" unit="PIXEL" autoSizing="false" shadetype="NONE" shadecolor="#000000" minlength="0"/>
+        <cl:columns length="100" unit="PIXEL" shadetype="BY_CLASS"/>
+        <cl:columns length="1" unit="FRACTION"/>
+      </cl:formlayout>
+    </cl:group>
+    <cl:xylayout std:sid="xylayout-ff22671a"/>
+  </body>
+  <std:studiosetting>
+    <std:hruler/>
+    <std:vruler/>
+  </std:studiosetting>
+</html>

@@ -30,7 +30,7 @@ func (dbManager *DatabaseManager) InitDBManager() (err error) {
 		DBConfig: define.DBConfig{
 			DatabaseIP:   "127.0.0.1",
 			DatabaseID:   "root",
-			DatabasePW:   "0000",
+			DatabasePW:   "12345",
 			DatabasePort: "3306",
 		},
 	}
@@ -56,6 +56,7 @@ func (dbManager *DatabaseManager) InitDBManager() (err error) {
 			log.Printf("CreateDataBase Failed . err = %v\n", err)
 		}
 		dbManager.DBGorm.InsertDefaultAttr1()
+		dbManager.DBGorm.InsertDefaultAttr2()
 	}
 
 	// database 연결

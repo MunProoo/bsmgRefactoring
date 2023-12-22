@@ -51,8 +51,8 @@ func postLoginRequest(c echo.Context) error {
 	response.Result.ResultCode = define.Success
 	response.MemberInfo.Mem_ID = request.Data.MemberInfo.Mem_ID
 	response.MemberInfo.Mem_Name = "뀨뀨"
-	response.MemberInfo.Mem_Rank = 0
-	response.MemberInfo.Mem_Part = 0
+	response.MemberInfo.Mem_Rank = 1
+	response.MemberInfo.Mem_Part = 1
 
 	// 세션 생성
 	createSession(c, &response.MemberInfo)

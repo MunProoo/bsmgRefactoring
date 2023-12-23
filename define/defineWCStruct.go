@@ -20,7 +20,7 @@ type Result struct {
 }
 
 type SearchData struct {
-	SearchCombo string
+	SearchCombo int32
 	SearchInput string
 }
 
@@ -53,10 +53,10 @@ type BsmgRankPartResult struct {
 
 // 부서 변경시 보고대상 바로 해당 팀의 팀장급으로
 type BsmgTeamLeaderResult struct {
-	Part   Part   `json:"dm_part"`
-	Result Result `json:"Result"`
+	Part   PartStruct `json:"dm_part"`
+	Result Result     `json:"Result"`
 }
-type Part struct {
+type PartStruct struct {
 	PartIdx    int32  `json:"part_idx"`
 	TeamLeader string `json:"team_leader"`
 }
@@ -67,15 +67,6 @@ type PageInfo struct {
 	Limit  int32 `json:"limit"`
 }
 
-// 일일 업무보고 조회시
-type BsmgReportResult struct {
-	ReportList   []BsmgReportInfo   `json:"ds_rptList"`
-	ScheduleList []BsmgScheduleInfo `json:"ds_schedule"`
-	ReportInfo   *BsmgReportInfo    `json:"dm_reportInfo"`
-	TotalCount   TotalCountData     `json:"totalCount"`
-	Result       Result             `json:"Result"`
-}
-
 // 주간 업무보고 조회시
 type BsmgWeekRptResult struct {
 	WeekReportList []BsmgWeekRptInfo `json:"ds_weekRptList"`
@@ -84,57 +75,23 @@ type BsmgWeekRptResult struct {
 	Result         Result            `json:"Result"`
 }
 
-type BsmgMemberRequest struct {
-	Data struct {
-		MemberList []BsmgMemberInfo `json:"Src_memberList"` // ds_memberList
-		MemberInfo BsmgMemberInfo   `json:"dm_memberInfo"`
-		TotalCount TotalCountData   `json:"TotalCount"`
-		Result     Result           `json:"Result"`
-	} `json:"data"`
-}
-
-type BsmgMemberResponse struct {
-	MemberList []BsmgMemberInfo `json:"Src_memberList"` // ds_memberList
-	MemberInfo BsmgMemberInfo   `json:"dm_memberInfo"`
-	TotalCount TotalCountData   `json:"TotalCount"`
-	Result     Result           `json:"Result"`
-}
-
-// mac에선 json을 binding하려면 무조건 String이어야 함
-// request binding용으로 전부 string인 구조체 선언 필요
-type BsmgMemberInfoStringField struct {
-	Mem_Idx      string `json:"mem_idx" gorm:"type:int;AUTO_INCREMENT;primary_key"`
-	Mem_ID       string `json:"mem_id" gorm:"type:varchar(20);unique_key"`
-	Mem_Password string `json:"mem_pw" gorm:"type:varchar(50)"`
-	Mem_Name     string `json:"mem_name" gorm:"type:nvarchar(50)"`
-	Mem_Rank     string `json:"mem_rank" gorm:"type:int"`
-	Mem_Part     string `json:"mem_part" gorm:"type:int"`
-}
-
-type BsmgPutMemberRequest struct {
-	Data struct {
-		MemberList []BsmgMemberInfoStringField `json:"ds_putMember"` // ds_putMember
-	} `json:"data"`
-}
-
 type BsmgReportInfoStringField struct {
-	Rpt_date    string `json:"rpt_date" gorm:"type:varchar(30)"`   // 보고 일자
-	Rpt_toRpt   string `json:"rpt_toRpt" gorm:"type:nvarchar(20)"` // 보고 대상
-	Rpt_ref     string `json:"rpt_ref" gorm:"type:nvarchar(100)"`  // 참조 대상
-	Rpt_title   string `json:"rpt_title" gorm:"type:nvarchar(40)"` // 업무보고 제목
-	Rpt_content string `json:"rpt_content" gorm:"type:text"`       // 업무보고 내용
-	Rpt_attr1   string `json:"rpt_attr1" gorm:"type:int"`          // 업무속성1(솔루션/제품)
-	Rpt_attr2   string `json:"rpt_attr2" gorm:"type:int"`          // 업무속성2 (이름)
-	Rpt_etc     string `json:"rpt_etc" gorm:"type:nvarchar(50)"`   // 기타 특이사항
-}
-
-type BsmgPostReportRequest struct {
-	Data struct {
-		BsmgReportInfo BsmgReportInfoStringField `json:"dm_reportInfo"`
-	} `json:"data"`
+	Rpt_idx      string `json:"rpt_idx"`
+	Rpt_Reporter string `json:"rpt_reporter"`
+	Rpt_date     string `json:"rpt_date" gorm:"type:varchar(30)"`   // 보고 일자
+	Rpt_toRpt    string `json:"rpt_toRpt" gorm:"type:nvarchar(20)"` // 보고 대상
+	Rpt_ref      string `json:"rpt_ref" gorm:"type:nvarchar(100)"`  // 참조 대상
+	Rpt_title    string `json:"rpt_title" gorm:"type:nvarchar(40)"` // 업무보고 제목
+	Rpt_content  string `json:"rpt_content" gorm:"type:text"`       // 업무보고 내용
+	Rpt_attr1    string `json:"rpt_attr1" gorm:"type:int"`          // 업무속성1(솔루션/제품)
+	Rpt_attr2    string `json:"rpt_attr2" gorm:"type:int"`          // 업무속성2 (이름)
+	Rpt_etc      string `json:"rpt_etc" gorm:"type:nvarchar(50)"`   // 기타 특이사항
 }
 
 func (stringReport *BsmgReportInfoStringField) ParseReport() (report BsmgReportInfo) {
+	idx, _ := strconv.Atoi(stringReport.Rpt_idx)
+	report.Rpt_Idx = int32(idx)
+	report.Rpt_Reporter = stringReport.Rpt_Reporter
 	report.Rpt_date = stringReport.Rpt_date
 	report.Rpt_toRpt = stringReport.Rpt_toRpt
 	report.Rpt_ref = stringReport.Rpt_ref
@@ -148,5 +105,17 @@ func (stringReport *BsmgReportInfoStringField) ParseReport() (report BsmgReportI
 	report.Rpt_attr2 = int32(attr2)
 	report.Rpt_etc = stringReport.Rpt_etc
 
+	return
+}
+
+type BsmgScheduleInfoString struct {
+	Rpt_Idx    string `json:"rpt_idx"`
+	Sc_Content string `json:"sc_content"`
+}
+
+func (bs *BsmgScheduleInfoString) ParseSchedule() (schedule BsmgScheduleInfo) {
+	idx, _ := strconv.Atoi(bs.Rpt_Idx)
+	schedule.Rpt_Idx = int32(idx)
+	schedule.Sc_Content = bs.Sc_Content
 	return
 }

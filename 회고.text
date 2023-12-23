@@ -39,3 +39,10 @@ windows에서는 그냥 넘어갈 수 있는 부분들이 Mac에선 안넘어가
 아니 근데 auto_increment 왜안됨? 애초에 인덱스 안넣어도 알아서 증가해야지?
 
 gorm mariadb auto_increment는 왜 안먹는걸까... 그냥 테이블에서 바꿔버림
+
+5. Table 설계
+생각보다 이전 table들의 타입 설계가 별로였다. 
+MSSQL을 사용하다 mariadb로 변경을 하고 있어서..
+report의 rpt_confirm 컬럼은 0과 1만 쓸거면 bool을 쓰던가 tinyint를 썼으면 좋았을텐데
+괜히 bit를 써서 gorm 사용에 있어 불편함을 불러왔다.
+(golang의 슬라이스에 바로 converting 해주는 find함수에서 golang의 byte, int8 등과 호환 안됨)

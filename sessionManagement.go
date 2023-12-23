@@ -101,7 +101,7 @@ func checkSession(c echo.Context) bool {
 
 	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
 		result := define.OnlyResult{}
-		result.Result.ResultCode = define.NotAuthorizedUser
+		result.Result.ResultCode = define.ErrorNotAuthorizedUser
 		return false
 	}
 	return true

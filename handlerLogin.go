@@ -25,40 +25,37 @@ func getChkLoginRequest(c echo.Context) error {
 func postLoginRequest(c echo.Context) error {
 
 	log.Println("postLoginRequest")
-	request := &define.BsmgMemberRequest{}
-	response := &define.BsmgMemberResponse{}
+	apiRequest := &define.BsmgMemberLoginRequest{}
+	apiResponse := &define.BsmgMemberResponse{}
 
-	err := c.Bind(request)
-	if err != nil && err.(*echo.HTTPError).Code != 400 {
-		// MacOS의 경우 Bind시 type이 다르다고 err뜨는데 안쓰는 필드라서 일단 skip
+	err := c.Bind(apiRequest)
+	if err != nil {
 		log.Printf("%v \n", err)
-		response.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, response)
+		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, apiResponse)
 	}
-	// value, err := c.FormParams()
-	// if err != nil {
-	// 	log.Printf("%v \n", err)
-	// 	result.Data.Result.ResultCode = define.ErrorInvalidParameter
-	// 	return c.JSON(http.StatusOK, result)
-	// }
 
-	// parser := initFormParser(value)
-	// if parser == nil {
-	// 	result.Data.Result.ResultCode = define.ErrorInvalidParameter
-	// 	return c.JSON(http.StatusOK, result)
-	// }
+	// member := request.Data.MemberInfo.ParseMember()
+	member := apiRequest.Data.MemberInfo
 
-	response.Result.ResultCode = define.Success
-	response.MemberInfo.Mem_ID = request.Data.MemberInfo.Mem_ID
-	response.MemberInfo.Mem_Name = "뀨뀨"
-	response.MemberInfo.Mem_Rank = 1
-	response.MemberInfo.Mem_Part = 1
+	// member 바뀌는지 확인 필요
+	err = server.dbManager.DBGorm.Login(&member)
+	if err != nil {
+		if err.Error() == "record not found" {
+			// 웹에서 에러코드 통해서 아이디 혹은 비밀번호가 틀립니다로
+			apiResponse.Result.ResultCode = define.ErrorLoginFailed
+			return c.JSON(http.StatusOK, apiResponse)
+		}
+	}
+
+	apiResponse.Result.ResultCode = define.Success
+	apiResponse.MemberInfo = member
 
 	// 세션 생성
-	createSession(c, &response.MemberInfo)
+	createSession(c, &apiResponse.MemberInfo)
 
 	// 테스트용으로 무조건 통과되게
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 func postLogoutRequest(c echo.Context) error {

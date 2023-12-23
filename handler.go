@@ -36,7 +36,7 @@ func initUserRoute(userGroup *echo.Group) {
 	userGroup.PUT("", putUserReq)
 
 	// 사용자 삭제
-	userGroup.DELETE("/", deleteUserReq)
+	userGroup.DELETE("/deleteUser/:memID", deleteUserReq)
 }
 
 // Setting Group
@@ -62,14 +62,14 @@ func initReportRoute(reportGroup *echo.Group) {
 
 	// POST
 	reportGroup.POST("/report", postReportReq)
-	// reportGroup.POST("/registSch", postRegistScheduleReq)
+	reportGroup.POST("/registSch", postRegistScheduleReq)
 
 	// PUT
-	// reportGroup.PUT("/putRpt", putReportReq)
-	// reportGroup.PUT("/putSchedule", putScheduleReq)
+	reportGroup.PUT("/putRpt", putReportReq)
+	reportGroup.PUT("/putSchedule", putScheduleReq)
 	// reportGroup.PUT("/putWeekRpt", putWeekRptReq)
 
 	// DELETE
-	// reportGroup.DELETE("/deleteRpt", deleteReportReq)
+	reportGroup.DELETE("/deleteRpt/:rptIdx", deleteReportReq)
 	// reportGroup.DELETE("/deleteWeekRpt", deleteWeekRptReq)
 }

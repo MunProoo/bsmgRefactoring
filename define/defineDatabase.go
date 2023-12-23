@@ -10,7 +10,7 @@ type DBConfig struct {
 
 // 멤버 구조체 객체
 type BsmgMemberInfo struct {
-	Mem_Idx      int32  `json:"mem_idx" gorm:"type:int;AUTO_INCREMENT;primary_key"`
+	Mem_Idx      int32  `json:"mem_idx" gorm:"type:int;AUTO_INCREMENT;primary_key"` // 추후 서버 메모리에 담을때 사용할 예정
 	Mem_ID       string `json:"mem_id" gorm:"type:varchar(20);unique_key"`
 	Mem_Password string `json:"mem_pw" gorm:"type:varchar(50)"`
 	Mem_Name     string `json:"mem_name" gorm:"type:nvarchar(50)"`
@@ -55,7 +55,7 @@ type BsmgReportInfo struct {
 	Rpt_attr1    int32  `json:"rpt_attr1" gorm:"type:int"`                                   // 업무속성1(솔루션/제품)
 	Rpt_attr2    int32  `json:"rpt_attr2" gorm:"type:int"`                                   // 업무속성2 (이름)
 	Rpt_etc      string `json:"rpt_etc" gorm:"type:nvarchar(50)"`                            // 기타 특이사항
-	Rpt_confirm  byte   `json:"rpt_confirm" gorm:"type:bit"`                                 // 보고서 확정 상태
+	Rpt_confirm  bool   `json:"rpt_confirm" gorm:"type:tinyint(1)"`                          // 보고서 확정 상태
 }
 
 // 일일 업무보고서 일정 객체

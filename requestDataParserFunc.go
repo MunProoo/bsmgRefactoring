@@ -24,22 +24,6 @@ import (
 // 	return
 // }
 
-func parseSearchRequest(parser *FormParser) (search *define.SearchData) {
-	var err error
-	search = &define.SearchData{}
-	search.SearchCombo, err = parser.getStringValue(0, "search_combo", 0)
-	if err != nil {
-		log.Printf("%v \n ", err)
-		return
-	}
-
-	search.SearchInput, err = parser.getStringValue(0, "search_input", 0)
-	if err != nil {
-		log.Printf("%v \n ", err)
-		return
-	}
-	return
-}
 func parseUserRegistRequest(parser *FormParser) (member *define.BsmgMemberInfo, err error) {
 	member = &define.BsmgMemberInfo{}
 	member.Mem_ID, err = parser.getStringValue(0, "mem_id", 0)

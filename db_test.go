@@ -25,7 +25,9 @@ func TestTableSturctureUpdate(t *testing.T) {
 	server.ConnectDataBase()
 	defer server.dbManager.DBGorm.Release()
 
-	server.dbManager.DBGorm.CreateDailyReportTable()
+	err := server.dbManager.DBGorm.CreateDailyReportTable()
+	fmt.Printf("%v \n ", err)
+	assert.NoError(t, err, "err있나본데")
 
 }
 

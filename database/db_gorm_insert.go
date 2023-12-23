@@ -104,18 +104,22 @@ func (dbm *DBGormMaria) InsertMember(member define.BsmgMemberInfo) (err error) {
 	return
 }
 
-func (dbm *DBGormMaria) CreateDailyReport(report define.BsmgReportInfo) (err error) {
-	nextIdx := dbm.FindMinIdx()
-	if nextIdx == 0 {
-		// 0은 INSERT 에러, doesn't have a default value
-		nextIdx++
-	}
-	report.Rpt_Idx = nextIdx
-
+func (dbm *DBGormMaria) InsertDailyReport(report define.BsmgReportInfo) (err error) {
 	dbWhere := dbm.DB.Model(define.BsmgReportInfo{})
 	err = dbWhere.Debug().Create(&report).Error
 	if err != nil {
 		log.Printf("CreateDailyReport : %v \n", err)
+		return
+	}
+
+	return
+}
+
+func (dbm *DBGormMaria) InsertSchedule(schedule define.BsmgScheduleInfo) (err error) {
+	dbWhere := dbm.DB.Model(define.BsmgScheduleInfo{})
+	err = dbWhere.Debug().Create(&schedule).Error
+	if err != nil {
+		log.Printf("InsertSchedule : %v \n", err)
 		return
 	}
 

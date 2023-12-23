@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -13,12 +12,12 @@ import (
 func getUserListRequest(c echo.Context) error {
 	log.Println("getUserList Req")
 
-	result := &define.BsmgMemberResponse{}
+	result := &define.BsmgMemberListResponse{}
 
 	// DB에서 가져오는거로 변경
 	userList, err := server.dbManager.DBGorm.SelectUserList()
 	if err != nil {
-		result.Result.ResultCode = define.DataBaseError
+		result.Result.ResultCode = define.ErrorDataBase
 		return c.JSON(http.StatusOK, result)
 	}
 	count := len(userList)
@@ -34,49 +33,55 @@ func getUserListRequest(c echo.Context) error {
 }
 
 // 아이디 중복체크 확인
-func getIdCheckRequest(c echo.Context) error {
+func getIdCheckRequest(c echo.Context) (err error) {
 	log.Println("getIdCheckRequest")
 
-	var result define.BsmgMemberRequest
+	var apiResponse define.OnlyResult
 
-	value, err := c.FormParams()
+	// dm에 넣어서 전송중이므로 이렇게 받아야함.
+	// TODO : parameter로 추가 (offset처럼)
+	memID := c.Request().FormValue("@d1#mem_id")
+
+	isExist, err := server.dbManager.DBGorm.CheckMemberIDDuplicate(memID)
 	if err != nil {
-		log.Printf("%v \n", err)
-		result.Data.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		// record not found는 nil로 오도록 처리함. 그외 문제만 DB에러로
+		apiResponse.Result.ResultCode = define.ErrorDataBase
+		return c.JSON(http.StatusOK, apiResponse)
 	}
-	parser := initFormParser(value)
-	mem_id, err := parser.getStringValue(0, "mem_id", 0)
 
-	// db에 있는지 확인
+	if isExist {
+		apiResponse.Result.ResultCode = define.ErrorDuplicatedID
+		return c.JSON(http.StatusOK, apiResponse)
+	}
 
-	fmt.Println(mem_id)
-
-	result.Data.Result.ResultCode = define.Success
-
-	// 테스트용으로 무조건 통과되게
-	return c.JSON(http.StatusOK, result)
+	apiResponse.Result.ResultCode = define.Success
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 // 사용자 검색
 func getUserSearchRequest(c echo.Context) error {
 	log.Println("getUserSearchRequest")
 
-	var result define.BsmgMemberResponse
-	var search *define.SearchData
+	var apiResponse define.BsmgMemberListResponse
+	var searchData define.SearchData
 
-	value, err := c.FormParams()
+	searchCombo := c.Request().FormValue("@d1#search_combo")
+	combo, _ := strconv.Atoi(searchCombo)
+	searchData.SearchCombo = int32(combo)
+	searchData.SearchInput = c.Request().FormValue("@d1#search_input")
+
+	memberList, err := server.dbManager.DBGorm.SelectMemberListSearch(searchData)
 	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		apiResponse.Result.ResultCode = define.ErrorDataBase
+		return c.JSON(http.StatusOK, apiResponse)
 	}
-	parser := initFormParser(value)
-	search = parseSearchRequest(parser)
 
-	fmt.Printf("%v ", search)
+	apiResponse.MemberList = memberList
+	apiResponse.TotalCount.Count = int32(len(memberList))
+	apiResponse.Result.ResultCode = define.Success
 
-	return c.JSON(http.StatusOK, result)
+	fmt.Println(memberList, err)
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 // 사용자 등록 -> 통신 json으로 변경필요
@@ -106,7 +111,7 @@ func postUserReq(c echo.Context) error {
 	err = server.dbManager.DBGorm.InsertMember(*member)
 	if err != nil {
 		log.Printf("%v \n", err)
-		apiResponse.Result.ResultCode = define.DataBaseError
+		apiResponse.Result.ResultCode = define.ErrorDataBase
 		return c.JSON(http.StatusOK, apiResponse)
 	}
 
@@ -131,19 +136,8 @@ func putUserReq(c echo.Context) error {
 	server := c.Get("Server").(*ServerProcessor)
 
 	for _, reqMember := range apiRequest.Data.MemberList {
-		member.Mem_ID = reqMember.Mem_ID
-		// member.Mem_Name = reqMember.Mem_Name
-		rank, _ := strconv.Atoi(reqMember.Mem_Rank)
-		member.Mem_Rank = int32(rank)
-		part, _ := strconv.Atoi(reqMember.Mem_Part)
-		member.Mem_Part = int32(part)
-
-		setVal := make(map[string]interface{})
-		setVal["mem_name"] = reqMember.Mem_Name
-		setVal["mem_rank"] = rank
-		setVal["mem_part"] = part
-
-		server.dbManager.DBGorm.UpdateUser(setVal, member.Mem_ID)
+		member = reqMember.ParseMember()
+		server.dbManager.DBGorm.UpdateUser(member)
 	}
 
 	apiResponse.Result.ResultCode = define.Success
@@ -152,20 +146,21 @@ func putUserReq(c echo.Context) error {
 }
 
 // 사용자 삭제
-func deleteUserReq(c echo.Context) error {
+func deleteUserReq(c echo.Context) (err error) {
 	log.Println("deleteUserReq")
 
-	var result define.BsmgMemberResponse
-	// server := c.Get("server").(*ServerProcessor)
-	url := c.Request().URL.Path[1:]
-	reqSlice := strings.Split(url, "/")
-	memID := reqSlice[3]
+	var apiResponse define.OnlyResult
 
-	// 내용 DB에 Delete 작업해야함
-	// TODO : user를 서버 memory에 넣고, userID를 mem_Index로 변환하여 빠르게 처리작업
+	memID := c.Param("memID")
 
-	fmt.Printf("%v ", memID)
-	// server.dbManager.DBGorm.InsertMember(memID)
+	// 사용자는 지워도 그 사람의 업무보고는 남겨야지. 기록이니까
+	err = server.dbManager.DBGorm.DeleteMember(memID)
+	if err != nil {
+		apiResponse.Result.ResultCode = define.ErrorDataBase
+		return c.JSON(http.StatusOK, apiResponse)
+	}
 
-	return c.JSON(http.StatusOK, result)
+	apiResponse.Result.ResultCode = define.Success
+
+	return c.JSON(http.StatusOK, apiResponse)
 }

@@ -2,6 +2,7 @@ package database
 
 import (
 	"BsmgRefactoring/define"
+	"errors"
 	"log"
 	"strconv"
 )
@@ -132,16 +133,77 @@ func (dbm *DBGormMaria) SelectLatestRptIdx(reporter string) (rptIdx int32, err e
 	return
 }
 
-func (dbm *DBGormMaria) SelectReportList() (rptList []define.BsmgReportInfo, err error) {
-	dbWhere := dbm.DB.Model(define.BsmgReportInfo{}).
-		Debug().Select("*").
-		Joins("INNER JOIN bsmg_member_infos m ON m.mem_id = bsmg_report_infos.rpt_reporter").
-		Joins("INNER JOIN bsmg_attr1_infos a ON a.attr1_idx = bsmg_report_infos.rpt_attr1").
-		Order("rpt_idx DESC").Limit(6).Offset(0).Find(&rptList)
+func (dbm *DBGormMaria) SelectReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error) {
+	ipb := searchData.SearchInput
+	offset, limit := pageInfo.Offset, pageInfo.Limit
+
+	dbWhere := dbm.DB.Model(define.BsmgReportInfo{}).Debug().Select("*")
+
+	switch searchData.SearchCombo {
+	case define.SearchReportAll:
+		dbWhere = dbWhere.
+			Joins("INNER JOIN bsmg_member_infos m ON m.mem_id = bsmg_report_infos.rpt_reporter").
+			Joins("INNER JOIN bsmg_attr1_infos a ON a.attr1_idx = bsmg_report_infos.rpt_attr1").
+			Where("rpt_title LIKE ? OR rpt_content LIKE ? OR m.mem_name LIKE ?", "%"+ipb+"%", "%"+ipb+"%", "%"+ipb+"%").
+			Order("rpt_idx DESC")
+		dbWhere.Count(&totalCount)
+		dbWhere.Limit(limit).Offset(offset).Find(&rptList)
+
+	case define.SearchReportTitle:
+		dbWhere = dbWhere.
+			Joins("INNER JOIN bsmg_member_infos m ON m.mem_id = bsmg_report_infos.rpt_reporter").
+			Joins("INNER JOIN bsmg_attr1_infos a ON a.attr1_idx = bsmg_report_infos.rpt_attr1").
+			Where("rpt_title LIKE ?", "%"+ipb+"%").
+			Order("rpt_idx DESC")
+		dbWhere.Count(&totalCount)
+		dbWhere.Limit(limit).Offset(offset).Find(&rptList)
+	case define.SearchReportContent:
+		dbWhere = dbWhere.
+			Joins("INNER JOIN bsmg_member_infos m ON m.mem_id = bsmg_report_infos.rpt_reporter").
+			Joins("INNER JOIN bsmg_attr1_infos a ON a.attr1_idx = bsmg_report_infos.rpt_attr1").
+			Where("rpt_content LIKE ?", "%"+ipb+"%").
+			Order("rpt_idx DESC")
+		dbWhere.Count(&totalCount)
+		dbWhere.Limit(limit).Offset(offset).Find(&rptList)
+	case define.SearchReportReporter:
+		dbWhere = dbWhere.
+			Joins("INNER JOIN bsmg_member_infos m ON m.mem_id = bsmg_report_infos.rpt_reporter").
+			Joins("INNER JOIN bsmg_attr1_infos a ON a.attr1_idx = bsmg_report_infos.rpt_attr1").
+			Where("m.mem_name LIKE ?", "%"+ipb+"%").
+			Order("rpt_idx DESC")
+		dbWhere.Count(&totalCount)
+		dbWhere.Limit(limit).Offset(offset).Find(&rptList)
+	}
 	err = dbWhere.Error
 	if err != nil {
 		log.Printf("SelectReportList : %v \n", err)
-		return nil, err
+		return nil, 0, err
+	}
+	return
+}
+
+func (dbm *DBGormMaria) SelecAttrSearchReportList(pageInfo define.PageInfo, attrData define.AttrSearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error) {
+	attrValue, attrCategory := attrData.AttrValue, attrData.AttrCategory
+
+	dbWhere := dbm.DB.Model(define.BsmgReportInfo{}).Debug().Select("*")
+
+	switch attrCategory {
+	case 0: // 솔루션, 제품 등 카테고리로만 검색
+		dbWhere = dbWhere.Where("rpt_attr1 = ?", attrValue)
+		dbWhere.Count(&totalCount)
+		dbWhere.Limit(pageInfo.Limit).Offset(pageInfo.Offset).Find(&rptList)
+	case 1: // 솔루션 or 제품의 이름으로 검색
+		dbWhere = dbWhere.Where("rpt_attr2 = ?", attrValue)
+		dbWhere.Count(&totalCount)
+		dbWhere.Limit(pageInfo.Limit).Offset(pageInfo.Offset).Find(&rptList)
+	default:
+		return nil, 0, errors.New("invalid Condition")
+	}
+
+	err = dbWhere.Error
+	if err != nil {
+		log.Printf("SelecAttrSearchReportList : %v \n", err)
+		return nil, 0, err
 	}
 	return
 }
@@ -174,7 +236,7 @@ func (dbm *DBGormMaria) SelectMemberListSearch(searchData define.SearchData) (me
 
 	ipb := searchData.SearchInput
 	switch searchData.SearchCombo {
-	case define.SearchAll:
+	case define.SearchUserAll:
 		/*
 			SELECT m.mem_id, m.mem_name, m.mem_rank, m.mem_part FROM bsmg_member_infos m
 				LEFT OUTER JOIN bsmg_rank_infos r ON r.rank_idx = m.mem_rank
@@ -195,7 +257,7 @@ func (dbm *DBGormMaria) SelectMemberListSearch(searchData define.SearchData) (me
 			}
 			return nil, err
 		}
-	case define.SearchName:
+	case define.SearchUserName:
 		dbWhere = dbWhere.Model(define.BsmgMemberInfo{}).Debug().
 			Where("mem_name LIKE ?", "%"+ipb+"%").Find(&memberList)
 		err = dbWhere.Error
@@ -205,7 +267,7 @@ func (dbm *DBGormMaria) SelectMemberListSearch(searchData define.SearchData) (me
 			}
 			return nil, err
 		}
-	case define.SearchRank:
+	case define.SearchUserRank:
 		dbWhere = dbWhere.Model(define.BsmgMemberInfo{}).Debug().
 			Joins("LEFT JOIN bsmg_rank_infos r ON r.rank_idx = mem_rank").
 			Where("r.rank_name LIKE ? ", "%"+ipb+"%").
@@ -217,7 +279,7 @@ func (dbm *DBGormMaria) SelectMemberListSearch(searchData define.SearchData) (me
 			}
 			return nil, err
 		}
-	case define.SearchPart:
+	case define.SearchUserPart:
 		dbWhere = dbWhere.Model(define.BsmgMemberInfo{}).Debug().
 			Joins("LEFT JOIN bsmg_part_infos p ON p.part_idx = mem_part").
 			Where("p.part_name LIKE ?", "%"+ipb+"%").

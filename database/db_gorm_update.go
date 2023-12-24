@@ -42,3 +42,17 @@ func (dbm *DBGormMaria) UpdateReportInfo(report define.BsmgReportInfo) (err erro
 
 	return
 }
+
+func (dbm *DBGormMaria) ConfirmRpt(rptIdx int32) (err error) {
+	setVal := make(map[string]interface{})
+	setVal["rpt_confirm"] = 1
+	dbWhere := dbm.DB.Debug().Model(define.BsmgReportInfo{}).
+		Where("rpt_idx = ?", rptIdx).Update(setVal)
+	err = dbWhere.Error
+	if err != nil {
+		log.Printf("ConfirmRpt %d: %v \n", rptIdx, err)
+		return err
+	}
+
+	return
+}

@@ -24,6 +24,11 @@ type SearchData struct {
 	SearchInput string
 }
 
+type AttrSearchData struct {
+	AttrValue    int32
+	AttrCategory int32
+}
+
 // 메인 화면의 tree 구조를 위한 결과물
 type BsmgTreeResult struct {
 	AttrTreeList []AttrTree `json:"ds_List"`

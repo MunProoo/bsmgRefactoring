@@ -34,7 +34,8 @@ type DBInterface interface {
 	SelectRankList() (rankList []define.BsmgRankInfo, err error)
 	SelectPartist() (partList []define.BsmgPartInfo, err error)
 	SelectUserList() (userList []define.BsmgMemberInfo, err error)
-	SelectReportList() (rptList []define.BsmgReportInfo, err error)
+	SelectReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error)
+	SelecAttrSearchReportList(pageInfo define.PageInfo, attrData define.AttrSearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error)
 	SelectReportInfo(idx int) (rptInfo define.BsmgReportInfo, err error)
 	SelectLatestRptIdx(reporter string) (rptIdx int32, err error)
 	SelectScheduleList(rptIdx int32) (scheduleList []define.BsmgScheduleInfo, err error)
@@ -44,6 +45,7 @@ type DBInterface interface {
 	// Update
 	UpdateUser(member define.BsmgMemberInfo) error
 	UpdateReportInfo(report define.BsmgReportInfo) (err error)
+	ConfirmRpt(rptIdx int32) (err error)
 
 	// Delete
 	DeleteSchedule(rptIdx int32) (err error)

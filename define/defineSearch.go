@@ -2,8 +2,15 @@ package define
 
 // combobox Value
 const (
-	SearchAll = iota
-	SearchName
-	SearchRank
-	SearchPart
+	SearchUserAll = iota
+	SearchUserName
+	SearchUserRank
+	SearchUserPart
+)
+
+const (
+	SearchReportAll = iota
+	SearchReportTitle
+	SearchReportContent
+	SearchReportReporter
 )

@@ -25,114 +25,87 @@ func getReportListReq(c echo.Context) (err error) {
 	limit, _ := strconv.Atoi(c.Request().FormValue("limit"))
 	pageInfo.Limit = int32(limit)
 
-	apiResponse.ReportList, err = server.dbManager.DBGorm.SelectReportList()
+	searchData := define.SearchData{}
+
+	var totalCount int32 // 페이징 처리
+	apiResponse.ReportList, totalCount, err = server.dbManager.DBGorm.SelectReportList(pageInfo, searchData)
 	if err != nil {
 		log.Printf("%v \n", err)
 		apiResponse.Result.ResultCode = define.ErrorDataBase
 		return c.JSON(http.StatusOK, apiResponse)
 	}
-	totalCount := len(apiResponse.ReportList)
-	// DB 처리
 
-	apiResponse.TotalCount.Count = int32(totalCount)
+	apiResponse.TotalCount.Count = totalCount
 	apiResponse.Result.ResultCode = define.Success
 
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
-// 업무보고 리스트 검색 + 정보 이걸 왜 나눠놓은 거지?
-func getReportSearchReq(c echo.Context) error {
+func getReportSearchReq(c echo.Context) (err error) {
 	log.Println("getReportSearchReq")
 
-	var result define.BsmgReportResult
+	apiResponse := define.BsmgReportListResponse{}
 
-	value, err := c.FormParams()
+	var searchData define.SearchData
+
+	searchCombo := c.Request().FormValue("@d1#search_combo")
+	combo, _ := strconv.Atoi(searchCombo)
+	searchData.SearchCombo = int32(combo)
+	searchData.SearchInput = c.Request().FormValue("@d1#search_input")
+
+	offset, _ := strconv.Atoi(c.Request().FormValue("offset"))
+	limit, _ := strconv.Atoi(c.Request().FormValue("limit"))
+
+	pageInfo := define.PageInfo{
+		Offset: int32(offset),
+		Limit:  int32(limit),
+	}
+
+	var totalCount int32 // 페이징처리
+	apiResponse.ReportList, totalCount, err = server.dbManager.DBGorm.SelectReportList(pageInfo, searchData)
+
 	if err != nil {
 		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		apiResponse.Result.ResultCode = define.ErrorDataBase
+		return c.JSON(http.StatusOK, apiResponse)
 	}
 
-	parser := initFormParser(value)
-	if parser == nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
+	apiResponse.TotalCount.Count = totalCount
+	apiResponse.Result.ResultCode = define.Success
 
-	search := &define.SearchData{}
-	// search = parseSearchRequest(parser)
-
-	fmt.Printf("%v \n", search)
-
-	RptList, err := getPageInfo(c.Request().URL.RawQuery)
-	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-	fmt.Printf("%v \n", RptList)
-
-	var totalCount int = 0
-	// DB 처리
-
-	result.TotalCount.Count = int32(totalCount)
-	result.Result.ResultCode = define.Success
-
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 // 업무 속성에 따른 보고 정보
-func getReportAttrSearchReq(c echo.Context) error {
+func getReportAttrSearchReq(c echo.Context) (err error) {
 	log.Println("getReportAttrSearchReq")
 
-	var result define.BsmgReportResult
-	var attrValue int32
-	var attrCategory int32
+	var apiResponse define.BsmgReportListResponse
 
-	value, err := c.FormParams()
+	attrData := define.AttrSearchData{}
+	attrValue, _ := strconv.Atoi(c.Request().FormValue("@d1#attrValue"))
+	attrData.AttrValue = int32(attrValue)
+	attrCategory, _ := strconv.Atoi(c.Request().FormValue("@d1#attrCategory"))
+	attrData.AttrCategory = int32(attrCategory)
+
+	pageInfo := define.PageInfo{}
+	offset, _ := strconv.Atoi(c.Request().FormValue("offset"))
+	pageInfo.Offset = int32(offset)
+	limit, _ := strconv.Atoi(c.Request().FormValue("limit"))
+	pageInfo.Limit = int32(limit)
+
+	var totalCount int32
+	apiResponse.ReportList, totalCount, err = server.dbManager.DBGorm.SelecAttrSearchReportList(pageInfo, attrData)
 	if err != nil {
 		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		apiResponse.Result.ResultCode = define.ErrorDataBase
+		return c.JSON(http.StatusOK, apiResponse)
 	}
 
-	parser := initFormParser(value)
-	if parser == nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
+	apiResponse.TotalCount.Count = totalCount
+	apiResponse.Result.ResultCode = define.Success
 
-	RptList, err := getPageInfo(c.Request().URL.RawQuery)
-	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-
-	attrValue, err = parser.getInt32Value(0, "attrValue", 0)
-	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-	attrCategory, err = parser.getInt32Value(0, "attrCategory", 0)
-	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-
-	fmt.Printf("%v \n", RptList)
-	fmt.Printf("%v \n", attrValue)
-	fmt.Printf("%v \n", attrCategory)
-
-	var totalCount int = 0
-	// DB 처리
-
-	result.TotalCount.Count = int32(totalCount)
-	result.Result.ResultCode = define.Success
-
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 // 업무 보고 Detail 정보
@@ -334,38 +307,25 @@ func getWeekRptInfoReq(c echo.Context) error {
 }
 
 // 업무보고 확인 (상급자 기능)
-func getConfirmRptReq(c echo.Context) error {
+func getConfirmRptReq(c echo.Context) (err error) {
 	log.Println("getConfirmRptReq")
 
-	var result define.BsmgWeekRptResult
+	var apiRespone define.OnlyResult
 
-	value, err := c.FormParams()
+	idxParam := c.Request().FormValue("@d1#rpt_idx")
+	rptIdx, _ := strconv.Atoi(idxParam)
+
+	// 서버에서도 확인작업 하면 좋겠지만.. 일단 웹에서 권한에 대해 확인했으니 패스
+
+	err = server.dbManager.DBGorm.ConfirmRpt(int32(rptIdx))
 	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		apiRespone.Result.ResultCode = define.ErrorDataBase
+		return c.JSON(http.StatusOK, apiRespone)
 	}
 
-	parser := initFormParser(value)
-	if parser == nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
+	apiRespone.Result.ResultCode = define.Success
 
-	rpt_idx, err := parser.getInt32Value(0, "rpt_idx", 0)
-	if err != nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-	fmt.Printf("%v \n", rpt_idx)
-
-	var totalCount int = 0
-	// DB 처리
-
-	result.TotalCount.Count = int32(totalCount)
-	result.Result.ResultCode = define.Success
-
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, apiRespone)
 }
 
 func postReportReq(c echo.Context) error {

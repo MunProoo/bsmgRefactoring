@@ -124,3 +124,16 @@ func (bs *BsmgScheduleInfoString) ParseSchedule() (schedule BsmgScheduleInfo) {
 	schedule.Sc_Content = bs.Sc_Content
 	return
 }
+
+type BsmgIncludeNameReport struct {
+	BsmgReportInfo
+	Reporter_Name string
+	// ToRpt_Name    string
+	// Ref_Name      string
+}
+
+func (brName *BsmgIncludeNameReport) ChangeIDToName() {
+	brName.Rpt_Reporter = brName.Reporter_Name
+	// brName.Rpt_toRpt = brName.ToRpt_Name
+	// brName.Rpt_ref = brName.Ref_Name
+}

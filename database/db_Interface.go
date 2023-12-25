@@ -41,6 +41,7 @@ type DBInterface interface {
 	SelectScheduleList(rptIdx int32) (scheduleList []define.BsmgScheduleInfo, err error)
 	CheckMemberIDDuplicate(memID string) (isExist bool, err error)
 	SelectMemberListSearch(searchData define.SearchData) (memberList []define.BsmgMemberInfo, err error)
+	SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error)
 
 	// Update
 	UpdateUser(member define.BsmgMemberInfo) error

@@ -40,3 +40,16 @@ type BsmgScheduleListResponse struct {
 	ScheduleList []BsmgScheduleInfo `json:"ds_schedule"`
 	Result       Result             `json:"Result"`
 }
+
+// getWeekReportList
+type BsmgWeekReportListResponse struct {
+	WeekReportList []BsmgWeekRptInfo `json:"ds_weekRptList"`
+	TotalCount     TotalCountData    `json:"totalCount"`
+	Result         Result            `json:"Result"`
+}
+
+// getWeekReportInfo
+type BsmgWeekReportInfoResponse struct {
+	WeekReportInfo BsmgWeekRptInfo `json:"dm_weekRptInfo"`
+	Result         Result          `json:"Result"`
+}

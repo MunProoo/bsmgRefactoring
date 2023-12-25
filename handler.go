@@ -49,7 +49,7 @@ func initSettingRoute(settingGroup *echo.Group) {
 
 // Report Group
 func initReportRoute(reportGroup *echo.Group) {
-	reportGroup.GET("/reportList", getReportListReq)
+	reportGroup.GET("/reportList", getReportSearchReq)
 	reportGroup.GET("/reportSearch", getReportSearchReq)
 	reportGroup.GET("/reportAttrSearch", getReportAttrSearchReq)
 	reportGroup.GET("/reportInfo", getReportInfoReq)

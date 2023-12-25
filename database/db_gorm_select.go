@@ -137,7 +137,11 @@ func (dbm *DBGormMaria) SelectReportList(pageInfo define.PageInfo, searchData de
 	ipb := searchData.SearchInput
 	offset, limit := pageInfo.Offset, pageInfo.Limit
 
-	dbWhere := dbm.DB.Model(define.BsmgReportInfo{}).Debug().Select("*")
+	var reportIncludeName []define.BsmgIncludeNameReport
+	dbm.DB.AutoMigrate(define.BsmgIncludeNameReport{})
+
+	dbWhere := dbm.DB.Model(define.BsmgReportInfo{}).Debug().
+		Select(`*, m.mem_name as reporter_name`)
 
 	switch searchData.SearchCombo {
 	case define.SearchReportAll:
@@ -147,7 +151,7 @@ func (dbm *DBGormMaria) SelectReportList(pageInfo define.PageInfo, searchData de
 			Where("rpt_title LIKE ? OR rpt_content LIKE ? OR m.mem_name LIKE ?", "%"+ipb+"%", "%"+ipb+"%", "%"+ipb+"%").
 			Order("rpt_idx DESC")
 		dbWhere.Count(&totalCount)
-		dbWhere.Limit(limit).Offset(offset).Find(&rptList)
+		dbWhere.Limit(limit).Offset(offset).Scan(&reportIncludeName)
 
 	case define.SearchReportTitle:
 		dbWhere = dbWhere.
@@ -156,7 +160,7 @@ func (dbm *DBGormMaria) SelectReportList(pageInfo define.PageInfo, searchData de
 			Where("rpt_title LIKE ?", "%"+ipb+"%").
 			Order("rpt_idx DESC")
 		dbWhere.Count(&totalCount)
-		dbWhere.Limit(limit).Offset(offset).Find(&rptList)
+		dbWhere.Limit(limit).Offset(offset).Scan(&reportIncludeName)
 	case define.SearchReportContent:
 		dbWhere = dbWhere.
 			Joins("INNER JOIN bsmg_member_infos m ON m.mem_id = bsmg_report_infos.rpt_reporter").
@@ -164,7 +168,7 @@ func (dbm *DBGormMaria) SelectReportList(pageInfo define.PageInfo, searchData de
 			Where("rpt_content LIKE ?", "%"+ipb+"%").
 			Order("rpt_idx DESC")
 		dbWhere.Count(&totalCount)
-		dbWhere.Limit(limit).Offset(offset).Find(&rptList)
+		dbWhere.Limit(limit).Offset(offset).Scan(&reportIncludeName)
 	case define.SearchReportReporter:
 		dbWhere = dbWhere.
 			Joins("INNER JOIN bsmg_member_infos m ON m.mem_id = bsmg_report_infos.rpt_reporter").
@@ -172,12 +176,19 @@ func (dbm *DBGormMaria) SelectReportList(pageInfo define.PageInfo, searchData de
 			Where("m.mem_name LIKE ?", "%"+ipb+"%").
 			Order("rpt_idx DESC")
 		dbWhere.Count(&totalCount)
-		dbWhere.Limit(limit).Offset(offset).Find(&rptList)
+		dbWhere.Limit(limit).Offset(offset).Scan(&reportIncludeName)
 	}
 	err = dbWhere.Error
 	if err != nil {
 		log.Printf("SelectReportList : %v \n", err)
 		return nil, 0, err
+	}
+
+	// 보고의 reporter는 ID고 웹에선 이름으로 보여주기 위해..
+	// report쪽에 사용자 이름도 추가할까????
+	for _, report := range reportIncludeName {
+		report.ChangeIDToName()
+		rptList = append(rptList, report.BsmgReportInfo)
 	}
 	return
 }
@@ -185,17 +196,21 @@ func (dbm *DBGormMaria) SelectReportList(pageInfo define.PageInfo, searchData de
 func (dbm *DBGormMaria) SelecAttrSearchReportList(pageInfo define.PageInfo, attrData define.AttrSearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error) {
 	attrValue, attrCategory := attrData.AttrValue, attrData.AttrCategory
 
-	dbWhere := dbm.DB.Model(define.BsmgReportInfo{}).Debug().Select("*")
+	var reportIncludeName []define.BsmgIncludeNameReport
+
+	dbWhere := dbm.DB.Model(define.BsmgReportInfo{}).Debug().Select("*, m.mem_name as reporter_name")
 
 	switch attrCategory {
 	case 0: // 솔루션, 제품 등 카테고리로만 검색
-		dbWhere = dbWhere.Where("rpt_attr1 = ?", attrValue)
+		dbWhere = dbWhere.Joins("INNER JOIN bsmg_member_infos m ON m.mem_id = rpt_reporter").
+			Where("rpt_attr1 = ?", attrValue)
 		dbWhere.Count(&totalCount)
-		dbWhere.Limit(pageInfo.Limit).Offset(pageInfo.Offset).Find(&rptList)
+		dbWhere.Limit(pageInfo.Limit).Offset(pageInfo.Offset).Scan(&reportIncludeName)
 	case 1: // 솔루션 or 제품의 이름으로 검색
-		dbWhere = dbWhere.Where("rpt_attr2 = ?", attrValue)
+		dbWhere = dbWhere.Joins("INNER JOIN bsmg_member_infos m ON m.mem_id = rpt_reporter").
+			Where("rpt_attr2 = ?", attrValue)
 		dbWhere.Count(&totalCount)
-		dbWhere.Limit(pageInfo.Limit).Offset(pageInfo.Offset).Find(&rptList)
+		dbWhere.Limit(pageInfo.Limit).Offset(pageInfo.Offset).Scan(&reportIncludeName)
 	default:
 		return nil, 0, errors.New("invalid Condition")
 	}
@@ -205,16 +220,36 @@ func (dbm *DBGormMaria) SelecAttrSearchReportList(pageInfo define.PageInfo, attr
 		log.Printf("SelecAttrSearchReportList : %v \n", err)
 		return nil, 0, err
 	}
+
+	for _, report := range reportIncludeName {
+		report.ChangeIDToName()
+		rptList = append(rptList, report.BsmgReportInfo)
+	}
 	return
 }
 func (dbm *DBGormMaria) SelectReportInfo(idx int) (rptInfo define.BsmgReportInfo, err error) {
+	/*
+		SELECT r.rpt_idx, m1.mem_name, r.rpt_date, m2.mem_name, r.rpt_ref, r.rpt_title,
+			r.rpt_content, r.rpt_etc, ba1.attr1_category, ba2.attr2_name, r.rpt_confirm
+			FROM bsmgReport r
+			INNER JOIN bsmgMembers m1 ON m1.mem_id = r.rpt_reporter
+			INNER JOIN bsmgMembers m2 ON m2.mem_id = r.rpt_toRpt
+			WHERE rpt_idx = %d`, rpt_idx
+	*/
+	var reportIncludeName define.BsmgIncludeNameReport
 	dbWhere := dbm.DB.Model(define.BsmgReportInfo{})
-	dbWhere = dbWhere.Debug().Where("rpt_idx = ?", idx).Find(&rptInfo)
+	dbWhere = dbWhere.Debug().Select(`*, m1.mem_name as reporter_name`).
+		Joins("INNER JOIN bsmg_member_infos m1 ON m1.mem_id = rpt_reporter").
+		// Joins("INNER JOIN bsmg_member_infos m2 ON m2.mem_id = rpt_to_rpt").
+		// Joins("INNER JOIN bsmg_member_infos m3 ON m3.mem_id = rpt_ref").
+		Where("rpt_idx = ?", idx).Scan(&reportIncludeName)
 	err = dbWhere.Error
 	if err != nil {
 		log.Printf("SelectReportInfo : %v \n", err)
 		return define.BsmgReportInfo{}, err
 	}
+	reportIncludeName.ChangeIDToName()
+	rptInfo = reportIncludeName.BsmgReportInfo
 	return
 
 }
@@ -291,6 +326,20 @@ func (dbm *DBGormMaria) SelectMemberListSearch(searchData define.SearchData) (me
 			}
 			return nil, err
 		}
+	}
+
+	return
+}
+
+func (dbm *DBGormMaria) SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error) {
+	// dbWhere := dbm.DB.Model(define.BsmgWeekRptInfo{}).Debug()
+	switch searchData.SearchCombo {
+	case 0: // 전체
+
+	case 1: // 제목
+	case 2: // 내용
+	case 4: // 보고자
+
 	}
 
 	return

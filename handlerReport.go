@@ -188,43 +188,32 @@ func getWeekRptListReq(c echo.Context) error {
 }
 
 // 주간보고 리스트 정보
-func getWeekRptSearchReq(c echo.Context) error {
+func getWeekRptSearchReq(c echo.Context) (err error) {
 	log.Println("getWeekRptSearchReq")
 
-	var result define.BsmgWeekRptResult
+	var apiResponse define.BsmgWeekReportListResponse
 
-	value, err := c.FormParams()
+	pageInfo := define.PageInfo{}
+	offset, _ := strconv.Atoi(c.Request().FormValue("offset"))
+	limit, _ := strconv.Atoi(c.Request().FormValue("limit"))
+	pageInfo.Offset, pageInfo.Limit = int32(offset), int32(limit)
+
+	searchData := &define.SearchData{}
+	combo, _ := strconv.Atoi(c.Request().FormValue("@d1#search_combo"))
+	input := c.Request().FormValue("@d1#search_input")
+	searchData.SearchCombo, searchData.SearchInput = int32(combo), input
+
+	var totalCount int32
+	// apiResponse.WeekReportList, totalCount, err = server.dbManager.DBGorm.SelectWeekReportList(pageInfo, searchData)
 	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		log.Printf("getWeekRptSearchReq: %v \n", err)
+		return c.JSON(http.StatusOK, apiResponse)
 	}
 
-	parser := initFormParser(value)
-	if parser == nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
+	apiResponse.TotalCount.Count = totalCount
+	apiResponse.Result.ResultCode = define.Success
 
-	weekRptList, err := getPageInfo(c.Request().URL.RawQuery)
-	if err != nil {
-		log.Printf("페이징처리 오류 %v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-	search := &define.SearchData{}
-	// search = parseSearchRequest(parser)
-
-	fmt.Printf("%v \n", weekRptList)
-	fmt.Printf("%v \n", search)
-
-	var totalCount int = 0
-	// DB 처리
-
-	result.TotalCount.Count = int32(totalCount)
-	result.Result.ResultCode = define.Success
-
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 // 주간 업무보고 카테고리 정보

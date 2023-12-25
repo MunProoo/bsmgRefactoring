@@ -46,3 +46,39 @@ MSSQL을 사용하다 mariadb로 변경을 하고 있어서..
 report의 rpt_confirm 컬럼은 0과 1만 쓸거면 bool을 쓰던가 tinyint를 썼으면 좋았을텐데
 괜히 bit를 써서 gorm 사용에 있어 불편함을 불러왔다.
 (golang의 슬라이스에 바로 converting 해주는 find함수에서 golang의 byte, int8 등과 호환 안됨)
+
+AutoMigrate를 써서 테이블 생성
+
+6. Gorm 조인
+report에 보고자, 보고대상, 참조대상을 member의 ID를 기록하도록 하니까 문제가 있었다
+실제로 보여줄때에는 이름으로 보여줘야 하는데 이름을 가져올 방법이 없던 것
+Raw 쿼리를 쓰기에는 너무 깔끔하지 못해서 많은 삽질을 하며 Gorm을 통해 가져오는 방법을 찾았다
+
+먼저 이름을 따로 받아올 struct를 만들어 놓고, 가져오는 모델을 포함시킨다
+
+type BsmgIncludeNameReport struct {
+	BsmgReportInfo
+	Reporter_Name string
+	ToRpt_Name    string
+	Ref_Name      string
+}
+
+func (brName *BsmgIncludeNameReport) ChangeIDToName() {
+	brName.BsmgReportInfo.Rpt_Reporter = brName.Rpt_Reporter
+	brName.BsmgReportInfo.Rpt_toRpt = brName.ToRpt_Name
+	brName.BsmgReportInfo.Rpt_ref = brName.Ref_Name
+}
+
+가져오는 쿼리는 다음과 같다
+
+중요한 건 매핑을 위해 select함수를 잘 쓰는 것이다
+dbWhere := dbm.DB.Model(define.BsmgReportInfo{}).Debug().
+        // bsmg_report_infos.*이라고 하면 gorm이 못찾는다. 그냥 *을 해줘야함
+		Select(`*, m.mem_name as reporter_name`). 
+        Joins("INNER JOIN bsmg_member_infos m ON m.mem_id = bsmg_report_infos.rpt_reporter").
+        Joins("INNER JOIN bsmg_attr1_infos a ON a.attr1_idx = bsmg_report_infos.rpt_attr1").
+        Where("rpt_title LIKE ? OR rpt_content LIKE ? OR m.mem_name LIKE ?", "%"+ipb+"%", "%"+ipb+"%", "%"+ipb+"%").
+        Order("rpt_idx DESC")
+		dbWhere.Count(&totalCount)
+		dbWhere.Limit(limit).Offset(offset).Scan(&reportIncludeName)
+Find가 아닌 Scan인 것도 주의해야 한다

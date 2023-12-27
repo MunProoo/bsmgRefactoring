@@ -75,3 +75,7 @@ type BsmgWeekRptInfo struct {
 	WRpt_Part         int32  `json:"wRpt_part" gorm:"type:int"`                 // 부서
 	WRpt_OmissionDate string `json:"wRpt_omissionDate" gorm:"type:varchar(50)"` // 보고서 누락 날짜
 }
+
+const (
+	PartLeader = 3
+)

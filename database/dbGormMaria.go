@@ -2,7 +2,10 @@ package database
 
 import (
 	"BsmgRefactoring/define"
+	"BsmgRefactoring/utils"
 	"log"
+	"strings"
+	"time"
 
 	"github.com/blue1004jy/gorm"
 )
@@ -30,7 +33,7 @@ func (dbManager *DatabaseManager) InitDBManager() (err error) {
 		DBConfig: define.DBConfig{
 			DatabaseIP:   "127.0.0.1",
 			DatabaseID:   "root",
-			DatabasePW:   "12345",
+			DatabasePW:   "0000",
 			DatabasePort: "3306",
 		},
 	}
@@ -116,4 +119,56 @@ func (dbManager *DatabaseManager) CreateTables() (err error) {
 	}
 
 	return
+}
+
+func (dbManager *DatabaseManager) MakeWeekRpt(bef7d, bef1d, now string, t time.Time) (err error) {
+	log.Println("dbManager.MakeWeekRpt is proceed")
+	userList, err := dbManager.DBGorm.SelectUserList()
+	if err != nil {
+		return err
+	}
+
+	for _, user := range userList {
+		rptList, err := dbManager.DBGorm.SelectReportListAWeek(user.Mem_ID, bef7d, bef1d)
+		if err != nil {
+			return err
+		}
+
+		if len(rptList) == 0 {
+			continue
+		}
+
+		var findOmission *define.OmissionMap
+		findOmission = define.InitOmissionMap(t) // 업무보고 없는 날짜 map에 할당할 것.
+		weekContent := strings.Builder{}         // 주간보고 내용물
+		for _, report := range rptList {
+			weekContent.WriteString("📆")
+			weekContent.WriteString(report.Rpt_date + "\n")
+			weekContent.WriteString(report.Rpt_content + "\n")
+
+			findOmission.SetRptDate(report.Rpt_date) // 보고가 있는 날짜는 map에서 true로 변경
+		}
+		omissionDate := findOmission.ExtractMap() // 보고 없는 날짜 취합
+
+		partLeader, err := dbManager.DBGorm.SelectPartLeader(user.Mem_Part) // 부서 팀장님의 아이디
+		if err != nil {
+			return err
+		}
+
+		weekRptInfo := define.BsmgWeekRptInfo{
+			WRpt_Reporter:     user.Mem_ID,
+			WRpt_Date:         now,
+			WRpt_Title:        utils.GetWeekRptTitle(user.Mem_Name, t),
+			WRpt_ToRpt:        partLeader,
+			WRpt_Content:      weekContent.String(),
+			WRpt_Part:         user.Mem_Part,
+			WRpt_OmissionDate: omissionDate,
+		}
+		err = dbManager.DBGorm.InsertWeekReport(weekRptInfo)
+		if err != nil {
+			return err
+		}
+	}
+
+	return err
 }

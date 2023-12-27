@@ -125,3 +125,16 @@ func (dbm *DBGormMaria) InsertSchedule(schedule define.BsmgScheduleInfo) (err er
 
 	return
 }
+
+func (dbm *DBGormMaria) InsertWeekReport(weekRptInfo define.BsmgWeekRptInfo) (err error) {
+	dbWhere := dbm.DB.Model(define.BsmgWeekRptInfo{}).Debug().
+		Create(&weekRptInfo)
+	err = dbWhere.Error
+
+	if err != nil {
+		log.Printf("%s 's InsertWeekReport Failed: %v \n", weekRptInfo.WRpt_Reporter, err)
+		return
+	}
+
+	return
+}

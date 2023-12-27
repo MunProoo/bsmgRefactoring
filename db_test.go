@@ -2,6 +2,7 @@ package main
 
 import (
 	"BsmgRefactoring/define"
+	"BsmgRefactoring/utils"
 	"fmt"
 	"testing"
 
@@ -76,4 +77,14 @@ func TestSelectUser(t *testing.T) {
 	fmt.Printf("%v \n", userList)
 
 	assert.Equal(t, 1, len(userList), "틀리네")
+}
+
+func TestGetAWeekRpt(t *testing.T) {
+	server := ServerProcessor{}
+	server.ConnectDataBase()
+	defer server.dbManager.DBGorm.Release()
+
+	bef7d, bef1d, now, tms := utils.GetDate()
+	err := server.dbManager.MakeWeekRpt(bef7d, bef1d, now, tms)
+	assert.NoError(t, err, "무슨 에러야₩")
 }

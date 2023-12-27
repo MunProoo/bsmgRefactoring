@@ -28,6 +28,7 @@ type DBInterface interface {
 	InsertMember(member define.BsmgMemberInfo) (err error)
 	InsertDailyReport(report define.BsmgReportInfo) (err error)
 	InsertSchedule(schedule define.BsmgScheduleInfo) (err error)
+	InsertWeekReport(wRptInfo define.BsmgWeekRptInfo) (err error)
 
 	// Select
 	Login(member *define.BsmgMemberInfo) (err error)
@@ -42,6 +43,8 @@ type DBInterface interface {
 	CheckMemberIDDuplicate(memID string) (isExist bool, err error)
 	SelectMemberListSearch(searchData define.SearchData) (memberList []define.BsmgMemberInfo, err error)
 	SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error)
+	SelectReportListAWeek(Mem_ID, bef7d, bef1d string) (reportList []define.BsmgReportInfo, err error)
+	SelectPartLeader(Mem_Part int32) (partLeader string, err error)
 
 	// Update
 	UpdateUser(member define.BsmgMemberInfo) error

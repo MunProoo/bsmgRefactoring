@@ -331,6 +331,41 @@ func (dbm *DBGormMaria) SelectMemberListSearch(searchData define.SearchData) (me
 	return
 }
 
+// 1주일 간의 업무보고 Select
+func (dbm *DBGormMaria) SelectReportListAWeek(Mem_ID, bef7d, bef1d string) (reportList []define.BsmgReportInfo, err error) {
+	dbWhere := dbm.DB.Model(define.BsmgReportInfo{}).Debug().
+		Where("rpt_reporter = ?", Mem_ID).
+		Where("CAST(rpt_date as DATETIME) >= ? ", bef7d).
+		Where("CAST(rpt_date as DATETIME) <= ?", bef1d).
+		Find(&reportList)
+	err = dbWhere.Error
+	if err != nil {
+		log.Printf("SelectScheduleList : %v \n", err)
+		return nil, err
+	}
+	return
+}
+
+func (dbm *DBGormMaria) SelectPartLeader(Mem_Part int32) (partLeader string, err error) {
+	memberInfo := define.BsmgMemberInfo{}
+	dbWhere := dbm.DB.Model(define.BsmgMemberInfo{}).Debug().
+		Where("mem_rank = ?", define.PartLeader). // 팀장은 3으로 고정해야할듯
+		Where("mem_part = ?", Mem_Part).
+		Find(&memberInfo)
+	err = dbWhere.Error
+	if err.Error() == "record not found" {
+		partLeader, err = "1", nil // 팀장 데이터를 안넣었다면 admin으로 고정
+		return
+	}
+	if err != nil {
+		log.Printf("%v \n", err)
+		return "", err
+	}
+
+	partLeader = memberInfo.Mem_ID
+	return
+}
+
 func (dbm *DBGormMaria) SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error) {
 	// dbWhere := dbm.DB.Model(define.BsmgWeekRptInfo{}).Debug()
 	switch searchData.SearchCombo {

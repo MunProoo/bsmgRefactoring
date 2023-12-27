@@ -6,6 +6,15 @@ import (
 	"time"
 )
 
+func (server *ServerProcessor) InitServer() {
+	server.SetState(define.StateInit)
+	// 음 채널링 써보고싶은데
+	server.reqCh = make(chan interface{}, 1000)
+	server.resCh = make(chan interface{}, 1000)
+
+	// cron을 여기서 만들어야 하나? new로 만들면 괜찮을거같은데
+}
+
 // Server 시작 (서버상태 별 프로세스 실행)
 func (server *ServerProcessor) StartServer() {
 	// TODO : DB 연결상태 확인 다른방법 없을까? Ping은 성능에 문제 준다는데

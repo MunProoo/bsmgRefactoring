@@ -912,6 +912,7 @@
 								cell.columnName = "mem_rank";
 								cell.control = (function(){
 									var comboBox_2 = new cpr.controls.ComboBox("cmb2");
+									comboBox_2.readOnly = true;
 									(function(comboBox_2){
 										comboBox_2.setItemSet(app.lookup("ds_rank"), {
 											"label": "rank_name",
@@ -1109,6 +1110,7 @@
 								cell.columnName = "mem_rank";
 								cell.control = (function(){
 									var comboBox_3 = new cpr.controls.ComboBox("cmb3");
+									comboBox_3.readOnly = true;
 									(function(comboBox_3){
 										comboBox_3.setItemSet(app.lookup("ds_rank"), {
 											"label": "rank_name",
@@ -1228,6 +1230,7 @@
 								cell.columnName = "mem_rank";
 								cell.control = (function(){
 									var comboBox_4 = new cpr.controls.ComboBox("cmb_rank");
+									comboBox_4.readOnly = true;
 									(function(comboBox_4){
 										comboBox_4.setItemSet(app.lookup("ds_rank"), {
 											"label": "rank_name",
@@ -1245,6 +1248,7 @@
 								cell.columnName = "mem_part";
 								cell.control = (function(){
 									var comboBox_5 = new cpr.controls.ComboBox("cmb_part");
+									comboBox_5.readOnly = true;
 									(function(comboBox_5){
 										comboBox_5.setItemSet(app.lookup("ds_part"), {
 											"label": "part_name",

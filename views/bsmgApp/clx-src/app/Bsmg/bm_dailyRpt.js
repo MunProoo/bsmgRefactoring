@@ -5,15 +5,22 @@
  * @author SW2Team
  ************************************************/
 
-
+var dataManager = cpr.core.Module.require("lib/DataManager");
 
 /*
  * 루트 컨테이너에서 load 이벤트 발생 시 호출.
  * 앱이 최초 구성된후 최초 랜더링 직후에 발생하는 이벤트 입니다.
  */
 function onBodyLoad(/* cpr.events.CEvent */ e){
+	dataManager = getDataManager();
 	momentToday();
-	app.lookup("sms_setAttr").send();
+//	app.lookup("sms_setAttr").send();
+
+	// 싱글톤 사용해서 서버 부담 완화
+	var dsList = dataManager.getDsAttrTree(); 
+	dsList.copyToDataSet(app.lookup("ds_List"));
+	app.lookup("lcb1").redraw();
+
 	app.lookup("sms_chkLogin").send();
 	
 	makeTitle();

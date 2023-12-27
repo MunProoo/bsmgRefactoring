@@ -4,7 +4,7 @@
  *
  * @author SW2Team
  ************************************************/
-
+var dataManager = cpr.core.Module.require("lib/DataManager");
 
 
 /*
@@ -12,8 +12,16 @@
  * 앱이 최초 구성된후 최초 랜더링 직후에 발생하는 이벤트 입니다.
  */
 function onBodyLoad(/* cpr.events.CEvent */ e){
+	dataManager = getDataManager();
+	var dsRank = dataManager.getRankList();
+	var dsPart = dataManager.getPartList();
+	
+	dsRank.copyToDataSet(app.lookup("ds_rank"));
+	dsPart.copyToDataSet(app.lookup("ds_part"));
+
+	
 	app.lookup("sms_getUserList").send();
-	app.lookup("sms_setRankPart").send();
+//	app.lookup("sms_setRankPart").send();
 }
 
 
@@ -31,6 +39,8 @@ function onSms_getUserListSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	var copy = app.lookup("ds_memberListCopy");
 	if (result == 0){
 		src.copyToDataSet(copy);
+		
+		insertRankPartValue();
 	}
 }
 
@@ -128,6 +138,15 @@ function onSms_setRankPartSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 }
 
 function insertRankPartValue(){
+	// init RankPart
+	var dsRank = dataManager.getRankList();
+	var dsPart = dataManager.getPartList();
+	
+	dsRank.copyToDataSet(app.lookup("ds_rank"));
+	dsPart.copyToDataSet(app.lookup("ds_part"));
+	
+	
+	// insertValue
 	var dsUserList = app.lookup("Src_memberList");
 	var grd = app.lookup("userList");
 	for(var i=0; i<grd.getRowCount(); i++){
@@ -136,9 +155,6 @@ function insertRankPartValue(){
 		cmb4.selectItemByValue(dsUserList.getRow(i).getValue("mem_rank"));
 		cmb5.selectItemByValue(dsUserList.getRow(i).getValue("mem_part"));
 		
-//		grd.setCellValue(i, 3, cmb4.value);
-//		grd.setCellValue(i, 4, cmb5.value);
-		console.log("흐아")
 	}
 	grd.sort("mem_part ASC");
 	grd.redraw();
@@ -300,7 +316,9 @@ function onSms_getUserListSearchSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		var src = app.lookup("Src_memberList");
 		var copy = app.lookup("ds_memberListCopy");
 		src.copyToDataSet(copy);
-		app.lookup("sms_setRankPart").send();
+//		app.lookup("sms_setRankPart").send();
+
+		insertRankPartValue();
 	}
 }
 

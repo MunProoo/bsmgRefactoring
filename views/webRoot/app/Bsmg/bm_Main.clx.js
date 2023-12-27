@@ -198,7 +198,6 @@
 					dataManager.setRankList(dsRankList);
 					dataManager.setPartList(dsPartList);
 					
-					console.log("하하");
 				} 
 				app.getContainer().redraw();
 				

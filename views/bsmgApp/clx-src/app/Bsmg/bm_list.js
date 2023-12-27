@@ -11,11 +11,15 @@ var SearchFlag = false; // 검색해서 받은 리스트
 var AttrFlag = false; // 업무속성으로 검색
 var NewSearch = false; // 현재 페이지가 1이 아닐때, 새로 search해서 리스트를 불러올 시 1페이지로 돌아가게.
 
+var dataManager = cpr.core.Module.require("lib/DataManager"); // 싱글톤패턴
+
 /*
  * 루트 컨테이너에서 load 이벤트 발생 시 호출.
  * 앱이 최초 구성된후 최초 랜더링 직후에 발생하는 이벤트 입니다.
  */
 function onBodyLoad(/* cpr.events.CEvent */ e){
+	dataManager = getDataManager();
+	
 	app.lookup("sms_setTree").send();
 	setPaging(0, 1, RowCount, 5);
 	sendRptListRequest();
@@ -276,6 +280,10 @@ function onSms_setTreeSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	var result = app.lookup("Result").getString("ResultCode");
 	if(result == 0){
 //		console.log(app.lookup("ds_List").getRowDataRanged());
+
+		var dsAttrTree = app.lookup("ds_List");
+		dataManager.setDsAttrTree(dsAttrTree);
+
 		app.lookup("tre1").redraw();
 	} else{
 		alert("tree 갱신 실패");

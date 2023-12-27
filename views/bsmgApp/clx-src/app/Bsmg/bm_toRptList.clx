@@ -150,7 +150,7 @@
         <cl:gridcell std:sid="gd-cell-fd51b97d" rowindex="0" colindex="0" columntype="checkbox"/>
         <cl:gridcell std:sid="gd-cell-bacbe9d3" rowindex="0" colindex="1" columnname="mem_name"/>
         <cl:gridcell std:sid="gd-cell-3e2a40d6" rowindex="0" colindex="2" columnname="mem_rank">
-          <cl:combobox std:sid="c-box-a4f872c4" id="cmb2">
+          <cl:combobox std:sid="c-box-a4f872c4" id="cmb2" readonly="true">
             <cl:itemset datasetid="ds_rank" label="rank_name" value="rank_idx"/>
           </cl:combobox>
         </cl:gridcell>
@@ -210,7 +210,7 @@
         <cl:gridcell std:sid="gd-cell-8c67a67d" rowindex="0" colindex="0" columntype="checkbox"/>
         <cl:gridcell std:sid="gd-cell-2df08110" rowindex="0" colindex="1" columnname="mem_name"/>
         <cl:gridcell std:sid="gd-cell-860fcb57" rowindex="0" colindex="2" columnname="mem_rank">
-          <cl:combobox std:sid="c-box-81740da0" id="cmb3">
+          <cl:combobox std:sid="c-box-81740da0" id="cmb3" readonly="true">
             <cl:itemset datasetid="ds_rank" label="rank_name" value="rank_idx"/>
           </cl:combobox>
         </cl:gridcell>
@@ -238,12 +238,12 @@
         <cl:gridcell std:sid="gd-cell-46f22f93" rowindex="0" colindex="1" columnname="mem_id"/>
         <cl:gridcell std:sid="gd-cell-13f5ac60" rowindex="0" colindex="2" columnname="mem_name"/>
         <cl:gridcell std:sid="gd-cell-efeefde7" rowindex="0" colindex="3" columnname="mem_rank">
-          <cl:combobox std:sid="c-box-47a77849" id="cmb_rank">
+          <cl:combobox std:sid="c-box-47a77849" id="cmb_rank" readonly="true">
             <cl:itemset datasetid="ds_rank" label="rank_name" value="rank_idx"/>
           </cl:combobox>
         </cl:gridcell>
         <cl:gridcell std:sid="gd-cell-9241ca31" rowindex="0" colindex="4" columnname="mem_part">
-          <cl:combobox std:sid="c-box-51f5a1b1" id="cmb_part">
+          <cl:combobox std:sid="c-box-51f5a1b1" id="cmb_part" readonly="true">
             <cl:itemset datasetid="ds_part" label="part_name" value="part_idx"/>
           </cl:combobox>
         </cl:gridcell>

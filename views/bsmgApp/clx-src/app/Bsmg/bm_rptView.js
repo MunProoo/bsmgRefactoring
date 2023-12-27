@@ -5,7 +5,7 @@
  * @author SW2Team
  ************************************************/
 
-
+var dataManager = cpr.core.Module.require("lib/DataManager");
 
 
 
@@ -14,6 +14,7 @@
  * 앱이 최초 구성된후 최초 랜더링 직후에 발생하는 이벤트 입니다.
  */
 function onBodyLoad(/* cpr.events.CEvent */ e){
+	
 	app.lookup("sms_chkLogin").send();
 }
 
@@ -25,13 +26,19 @@ function onBodyLoad(/* cpr.events.CEvent */ e){
  * 앱이 최초 구성될 때 발생하는 이벤트 입니다.
  */
 function onBodyInit(/* cpr.events.CEvent */ e){
+	dataManager = getDataManager();
 	var initValue = app.getHost().initValue;
 	var rpt_idx = initValue.rpt_idx;
 //	console.log("rptIdx : " +rpt_idx);
 	app.lookup("dm_rptIdx").setValue("rpt_idx", Number(rpt_idx));
 	
+	// 싱글톤 사용해서 서버 부담 완화
+	var dsList = dataManager.getDsAttrTree(); 
+	dsList.copyToDataSet(app.lookup("ds_List"));
+	
+	
 	app.lookup("sms_getRptInfo").send();
-	app.lookup("sms_setAttr").send();
+//	app.lookup("sms_setAttr").send();
 	app.lookup("sms_getRptSchedule").send();
 }
 
@@ -58,6 +65,7 @@ function onSms_getRptInfoSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 			});
 			
 		}
+		setAttr();
 		dateFormat();
 	}
 }
@@ -112,7 +120,10 @@ function onSms_setAttrSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 function setAttr(){ // 원본으로 돌리기
 	var lcb = app.lookup("lcb1");
 	var src = app.lookup("dm_reportInfoSrc");
-	lcb.selectItemByLabel(src.getString("rpt_attr2"));
+	var value = src.getValue("rpt_attr1").toString() + "-" + src.getValue("rpt_attr2").toString();
+	
+	lcb.selectItemByValue(value);
+	
 //	app.lookup("lcb1").redraw();
 }
 
@@ -399,7 +410,7 @@ function onSms_chkLoginSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 			app.lookup("update").visible = true;
 			app.lookup("cancel").visible = true;
 			app.lookup("delete").visible = true;
-		} else if(mem_name == rpt_toRpt || (mem_rank == '관리자' || mem_rank == '연구소장' || mem_rank == '부소장' )){
+		} else if(mem_name == rpt_toRpt || mem_rank < 4){
 			app.lookup("confirm").visible = true;
 		} 
 		app.getContainer().redraw();

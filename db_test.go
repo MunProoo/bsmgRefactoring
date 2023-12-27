@@ -38,8 +38,8 @@ func TestInsertDefaultDBData(t *testing.T) {
 
 	// server.dbManager.DBGorm.InsertDefaultAttr1()
 	// server.dbManager.DBGorm.InsertDefaultAttr2()
-	// server.dbManager.DBGorm.InsertDefaultRank()
-	// server.dbManager.DBGorm.InsertDefaultPart()
+	server.dbManager.DBGorm.InsertDefaultRank()
+	server.dbManager.DBGorm.InsertDefaultPart()
 
 }
 

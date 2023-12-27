@@ -20,6 +20,9 @@ exports.id = "DataManager.module.js";
 		/** #type cpr.data.DataSet */
 		this._partList = null;
 		
+		// 업무 속성 트리
+		/** #type cpr.data.DataSet */
+		this._dsAttrTree = null;
 	}
 	
 	DataManager.prototype.setRankList = function( /* cpr.data.DataSet */ dsRankList) {
@@ -36,6 +39,14 @@ exports.id = "DataManager.module.js";
 	
 	DataManager.prototype.getPartList = function() {
 		return this._partList;
+	}
+	
+	DataManager.prototype.setDsAttrTree = function( /*cpr.data.DataSet*/ dsAttrTree) {
+		this._dsAttrTree = dsAttrTree;
+	}
+	
+	DataManager.prototype.getDsAttrTree = function() {
+		return this._dsAttrTree;
 	}
 		
 //		DataManager.prototype.insertPosition = function(rowPosition) {

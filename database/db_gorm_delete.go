@@ -38,3 +38,14 @@ func (dbm *DBGormMaria) DeleteMember(memID string) (err error) {
 	}
 	return
 }
+
+func (dbm *DBGormMaria) DeleteWeekReport(wRptIdx int) (err error) {
+	dbWhere := dbm.DB.Debug().
+		Where("w_rpt_idx = ?", wRptIdx).Delete(define.BsmgWeekRptInfo{})
+	err = dbWhere.Error
+	if err != nil {
+		log.Printf("DeleteWeekReport : %v \n", err)
+		return err
+	}
+	return
+}

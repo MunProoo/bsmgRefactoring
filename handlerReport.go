@@ -13,34 +13,6 @@ import (
 // server를 지금 Main에서 전역으로 선언하고 그걸 갖다 쓰는데 이게 맞나?
 // 아니면 echo의 context에서 꺼내서 써야하나??????
 
-// 업무보고 리스트 정보
-func getReportListReq(c echo.Context) (err error) {
-	log.Println("getReportListReq")
-
-	var apiResponse define.BsmgReportListResponse
-
-	pageInfo := define.PageInfo{}
-	offset, _ := strconv.Atoi(c.Request().FormValue("offset"))
-	pageInfo.Offset = int32(offset)
-	limit, _ := strconv.Atoi(c.Request().FormValue("limit"))
-	pageInfo.Limit = int32(limit)
-
-	searchData := define.SearchData{}
-
-	var totalCount int32 // 페이징 처리
-	apiResponse.ReportList, totalCount, err = server.dbManager.DBGorm.SelectReportList(pageInfo, searchData)
-	if err != nil {
-		log.Printf("%v \n", err)
-		apiResponse.Result.ResultCode = define.ErrorDataBase
-		return c.JSON(http.StatusOK, apiResponse)
-	}
-
-	apiResponse.TotalCount.Count = totalCount
-	apiResponse.Result.ResultCode = define.Success
-
-	return c.JSON(http.StatusOK, apiResponse)
-}
-
 func getReportSearchReq(c echo.Context) (err error) {
 	log.Println("getReportSearchReq")
 
@@ -170,6 +142,7 @@ func getWeekRptSearchReq(c echo.Context) (err error) {
 	apiResponse.WeekReportList, totalCount, err = server.dbManager.DBGorm.SelectWeekReportList(pageInfo, searchData)
 	if err != nil {
 		log.Printf("getWeekRptSearchReq: %v \n", err)
+		apiResponse.Result.ResultCode = define.ErrorDataBase
 		return c.JSON(http.StatusOK, apiResponse)
 	}
 
@@ -179,83 +152,47 @@ func getWeekRptSearchReq(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
-// 주간 업무보고 카테고리 (부서의 것만 보이게)
-func getWeekRptCategorySearch(c echo.Context) error {
+// 주간 업무보고 카테고리 검색 ( = 부서로 검색)
+func getWeekRptCategorySearch(c echo.Context) (err error) {
 	log.Println("getWeekRptCategory")
 
-	var result define.BsmgWeekRptResult
+	var apiResponse define.BsmgWeekReportListResponse
 
-	value, err := c.FormParams()
-	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
+	pageInfo := define.PageInfo{}
+	offset, _ := strconv.Atoi(c.Request().FormValue("offset"))
+	limit, _ := strconv.Atoi(c.Request().FormValue("limit"))
+	pageInfo.Offset, pageInfo.Limit = int32(offset), int32(limit)
 
-	parser := initFormParser(value)
-	if parser == nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
+	partIdx, _ := strconv.Atoi(c.Request().FormValue("@d1#part_value"))
 
-	RptList, err := getPageInfo(c.Request().URL.RawQuery)
-	if err != nil {
-		log.Printf("페이징처리 오류 %v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-
-	partValue, err := parser.getInt32Value(0, "part_value", 0)
-	if err != nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-
-	fmt.Printf("%v \n", RptList)
-	fmt.Printf("%v \n", partValue)
-
-	var totalCount int = 0
+	var totalCount int32
 	// DB 처리
+	apiResponse.WeekReportList, totalCount, err = server.dbManager.DBGorm.SelectWeekReportCategorySearch(pageInfo, partIdx)
+	if err != nil {
+		log.Printf("getWeekRptCategory: %v \n", err)
+		apiResponse.Result.ResultCode = define.ErrorDataBase
+		return c.JSON(http.StatusOK, apiResponse)
+	}
 
-	result.TotalCount.Count = int32(totalCount)
-	result.Result.ResultCode = define.Success
+	apiResponse.TotalCount.Count = int32(totalCount)
+	apiResponse.Result.ResultCode = define.Success
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 // 주간 업무보고 Detail
-func getWeekRptInfoReq(c echo.Context) error {
+func getWeekRptInfoReq(c echo.Context) (err error) {
 	log.Println("getWeekRptInfoReq")
 
-	var result define.BsmgWeekRptResult
+	var apiResponse define.BsmgWeekReportInfoResponse
 
-	value, err := c.FormParams()
-	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-
-	parser := initFormParser(value)
-	if parser == nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-
-	wRpt_idx, err := parser.getInt32Value(0, "wRpt_idx", 0)
-	if err != nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-	fmt.Printf("%v \n", wRpt_idx)
-
-	var totalCount int = 0
+	wRptIdx, _ := strconv.Atoi(c.Request().FormValue("@d1#wRpt_idx"))
 	// DB 처리
+	apiResponse.WeekReportInfo, err = server.dbManager.DBGorm.SelectWeekReportInfo(wRptIdx)
 
-	result.TotalCount.Count = int32(totalCount)
-	result.Result.ResultCode = define.Success
+	apiResponse.Result.ResultCode = define.Success
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 // 업무보고 확인 (상급자 기능)
@@ -264,8 +201,7 @@ func getConfirmRptReq(c echo.Context) (err error) {
 
 	var apiRespone define.OnlyResult
 
-	idxParam := c.Request().FormValue("@d1#rpt_idx")
-	rptIdx, _ := strconv.Atoi(idxParam)
+	rptIdx, _ := strconv.Atoi(c.Request().FormValue("@d1#rpt_idx"))
 
 	// 서버에서도 확인작업 하면 좋겠지만.. 일단 웹에서 권한에 대해 확인했으니 패스
 
@@ -452,4 +388,55 @@ func deleteReportReq(c echo.Context) (err error) {
 
 	apiRespone.Result.ResultCode = define.Success
 	return c.JSON(http.StatusOK, apiRespone)
+}
+
+func putWeekRptReq(c echo.Context) (err error) {
+	apiRequest := define.BsmgPutWeekReportRequest{}
+	apiResponse := define.OnlyResult{}
+
+	err = c.Bind(&apiRequest)
+	if err != nil {
+		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+
+	// parsing
+	report := apiRequest.Data.WeekReportInfo.ParseReport()
+
+	// 세션으로 클라이언트 정보 Get
+	session, err := session.Get(sessionKey, c)
+	if err != nil {
+		apiResponse.Result.ResultCode = define.ErrorSession
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+	client := session.Values["Member"].(define.BsmgMemberInfo)
+
+	// 본인만 수정 가능
+	if client.Mem_ID != report.WRpt_Reporter {
+		apiResponse.Result.ResultCode = define.ErrorNotAuthorizedUser
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+
+	err = server.dbManager.DBGorm.UpdateWeekReportInfo(report)
+	if err != nil {
+		apiResponse.Result.ResultCode = define.ErrorDataBase
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+
+	return c.JSON(http.StatusOK, apiResponse)
+}
+
+func deleteWeekRptReq(c echo.Context) (err error) {
+	apiResponse := define.OnlyResult{}
+	wRptIdx, _ := strconv.Atoi(c.Param("wRptIdx"))
+
+	err = server.dbManager.DBGorm.DeleteWeekReport(wRptIdx)
+	if err != nil {
+		apiResponse.Result.ResultCode = define.ErrorDataBase
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+
+	apiResponse.Result.ResultCode = define.Success
+
+	return c.JSON(http.StatusOK, apiResponse)
 }

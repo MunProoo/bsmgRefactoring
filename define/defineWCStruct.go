@@ -56,11 +56,6 @@ type BsmgRankPartResult struct {
 	Result   Result         `json:"Result"`
 }
 
-// 부서 변경시 보고대상 바로 해당 팀의 팀장급으로
-type BsmgTeamLeaderResult struct {
-	Part   PartStruct `json:"dm_part"`
-	Result Result     `json:"Result"`
-}
 type PartStruct struct {
 	PartIdx    int32  `json:"part_idx"`
 	TeamLeader string `json:"team_leader"`
@@ -80,6 +75,7 @@ type BsmgWeekRptResult struct {
 	Result         Result            `json:"Result"`
 }
 
+// 일일 업무보고 json Bind용
 type BsmgReportInfoStringField struct {
 	Rpt_idx      string `json:"rpt_idx"`
 	Rpt_Reporter string `json:"rpt_reporter"`
@@ -93,6 +89,7 @@ type BsmgReportInfoStringField struct {
 	Rpt_etc      string `json:"rpt_etc" gorm:"type:nvarchar(50)"`   // 기타 특이사항
 }
 
+// string으로 받은 필드들을 실제 DB 타입에 맞게 변환
 func (stringReport *BsmgReportInfoStringField) ParseReport() (report BsmgReportInfo) {
 	idx, _ := strconv.Atoi(stringReport.Rpt_idx)
 	report.Rpt_Idx = int32(idx)
@@ -145,4 +142,30 @@ type BsmgIncludeNameWeekReport struct {
 func (brName *BsmgIncludeNameWeekReport) ChangeIDToName() {
 	brName.WRpt_Reporter = brName.Reporter_Name
 	brName.WRpt_ToRpt = brName.ToRpt_Name
+}
+
+// 주간 업무 보고 json Binding용
+type BsmgWeekRptInfoStringField struct {
+	WRpt_Idx          string `json:"wRpt_idx"`
+	WRpt_Reporter     string `json:"wRpt_reporter"`
+	WRpt_Date         string `json:"wRpt_date"`
+	WRpt_ToRpt        string `json:"wRpt_toRpt"`
+	WRpt_Title        string `json:"wRpt_title"`
+	WRpt_Content      string `json:"wRpt_content"`
+	WRpt_Part         string `json:"wRpt_part"`
+	WRpt_OmissionDate string `json:"wRpt_omissionDate"`
+}
+
+func (bwr *BsmgWeekRptInfoStringField) ParseReport() (report BsmgWeekRptInfo) {
+	idx, _ := strconv.Atoi(bwr.WRpt_Idx)
+	report.WRpt_Idx = int32(idx)
+	report.WRpt_Reporter = bwr.WRpt_Reporter
+	report.WRpt_Date = bwr.WRpt_Date
+	report.WRpt_ToRpt = bwr.WRpt_ToRpt
+	report.WRpt_Title = bwr.WRpt_Title
+	report.WRpt_Content = bwr.WRpt_Content
+	part, _ := strconv.Atoi(bwr.WRpt_Part)
+	report.WRpt_Part = int32(part)
+	report.WRpt_OmissionDate = bwr.WRpt_OmissionDate
+	return
 }

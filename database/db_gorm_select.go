@@ -355,11 +355,12 @@ func (dbm *DBGormMaria) SelectPartLeader(Mem_Part int32) (partLeader string, err
 		Where("mem_part = ?", Mem_Part).
 		Find(&memberInfo)
 	err = dbWhere.Error
-	if err.Error() == "record not found" {
-		partLeader, err = "1", nil // 팀장 데이터를 안넣었다면 admin으로 고정
-		return
-	}
+
 	if err != nil {
+		if err.Error() == "record not found" {
+			partLeader, err = "JJaturi", nil // 팀장 데이터를 안넣었다면 admin으로 고정
+			return
+		}
 		log.Printf("%v \n", err)
 		return "", err
 	}
@@ -381,21 +382,26 @@ func (dbm *DBGormMaria) SelectWeekReportList(pageInfo define.PageInfo, searchDat
 		dbWhere = dbWhere.Select("*, m1.mem_name as reporter_name, m2.mem_name as to_rpt_name").
 			Joins("LEFT JOIN bsmg_member_infos m1 ON m1.mem_id = w_rpt_reporter").
 			Joins("LEFT JOIN bsmg_member_infos m2 ON m2.mem_id = w_rpt_to_rpt").
-			Where("w_rpt_title LIKE ? OR reporter_name LIKE ? OR to_rpt_name LIKE ?", "%"+ipb+"%", "%"+ipb+"%", "%"+ipb+"%")
+			Where("w_rpt_title LIKE ? OR m1.mem_name LIKE ? OR m2.mem_name LIKE ?", "%"+ipb+"%", "%"+ipb+"%", "%"+ipb+"%")
 
 	case define.SearchReportTitle: // 제목
-		dbWhere = dbWhere.Select("*").
-			Where("w_rpt_title LIKE ?", "%"+ipb+"%")
-
-	case define.SearchWeekReportToRpt: // 보고대상
-		dbWhere = dbWhere.Select("*, m2.mem_name as to_rpt_name").
-			Joins("LEFT JOIN bsmg_member_infos m2 ON m2.mem_id = w_rpt_to_rpt").
-			Where("to_rpt_name LIKE ?", "%"+ipb+"%")
-
-	case define.SearchReportReporter: // 보고자
-		dbWhere = dbWhere.Select("*, m1.mem_name as reporter_name").
+		dbWhere = dbWhere.Select("*, m1.mem_name as reporter_name, m2.mem_name as to_rpt_name").
 			Joins("LEFT JOIN bsmg_member_infos m1 ON m1.mem_id = w_rpt_reporter").
-			Where("reporter_name LIKE ?", "%"+ipb+"%")
+			Joins("LEFT JOIN bsmg_member_infos m2 ON m2.mem_id = w_rpt_to_rpt").
+			Where("w_rpt_title LIKE ? ", "%"+ipb+"%")
+
+	case define.SearchWeekReportContent: // 내용
+		dbWhere = dbWhere.Select("*, m1.mem_name as reporter_name, m2.mem_name as to_rpt_name").
+			Joins("LEFT JOIN bsmg_member_infos m1 ON m1.mem_id = w_rpt_reporter").
+			Joins("LEFT JOIN bsmg_member_infos m2 ON m2.mem_id = w_rpt_to_rpt").
+			Where("w_rpt_content LIKE ? ", "%"+ipb+"%")
+
+	case define.SearchReportReporter: // 보고대상
+		dbWhere = dbWhere.Select("*, m1.mem_name as reporter_name, m2.mem_name as to_rpt_name").
+			Joins("LEFT JOIN bsmg_member_infos m1 ON m1.mem_id = w_rpt_reporter").
+			Joins("LEFT JOIN bsmg_member_infos m2 ON m2.mem_id = w_rpt_to_rpt").
+			Where("m2.mem_name LIKE ? ", "%"+ipb+"%")
+
 	default:
 		return nil, 0, errors.New("invalid Condition")
 	}
@@ -415,6 +421,61 @@ func (dbm *DBGormMaria) SelectWeekReportList(pageInfo define.PageInfo, searchDat
 		report.ChangeIDToName()
 		rptList = append(rptList, report.BsmgWeekRptInfo)
 	}
+
+	return
+}
+
+func (dbm *DBGormMaria) SelectWeekReportCategorySearch(pageInfo define.PageInfo, partIdx int) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error) {
+	offset, limit := pageInfo.Offset, pageInfo.Limit
+
+	var reportIncludeName []define.BsmgIncludeNameWeekReport
+	dbm.DB.AutoMigrate(define.BsmgIncludeNameWeekReport{})
+
+	dbWhere := dbm.DB.Model(define.BsmgWeekRptInfo{}).Debug().
+		Select("*, m1.mem_name as reporter_name, m2.mem_name as to_rpt_name").
+		Joins("LEFT JOIN bsmg_member_infos m1 ON m1.mem_id = w_rpt_reporter").
+		Joins("LEFT JOIN bsmg_member_infos m2 ON m2.mem_id = w_rpt_to_rpt")
+
+	if partIdx != define.AllCategory { // 1개의 부서를 특정한 경우
+		dbWhere = dbWhere.Where("w_rpt_part = ?", partIdx)
+	}
+
+	dbWhere.Count(&totalCount)
+	dbWhere.Order("w_rpt_idx DESC").Limit(limit).Offset(offset).Scan(&reportIncludeName)
+	err = dbWhere.Error
+	if err != nil {
+		log.Printf("SelectWeekReportList : %v \n", err)
+		return nil, 0, err
+	}
+
+	// 보고의 reporter는 ID고 웹에선 이름으로 보여주기 위해..
+	// report쪽에 사용자 이름도 추가할까????
+	for _, report := range reportIncludeName {
+		report.ChangeIDToName()
+		rptList = append(rptList, report.BsmgWeekRptInfo)
+	}
+
+	return
+}
+
+func (dbm *DBGormMaria) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWeekRptInfo, err error) {
+	var reportIncludeName define.BsmgIncludeNameWeekReport
+	dbm.DB.AutoMigrate(define.BsmgIncludeNameWeekReport{})
+
+	dbWhere := dbm.DB.Model(define.BsmgWeekRptInfo{}).Debug().
+		Select("*, m1.mem_name as reporter_name, m2.mem_name as to_rpt_name").
+		Joins("LEFT JOIN bsmg_member_infos m1 ON m1.mem_id = w_rpt_reporter").
+		Joins("LEFT JOIN bsmg_member_infos m2 ON m2.mem_id = w_rpt_to_rpt").
+		Where("w_rpt_idx = ?", wRptIdx).
+		Scan(&reportIncludeName)
+	err = dbWhere.Error
+	if err != nil {
+		log.Printf("SelectWeekReportList : %v \n", err)
+		return define.BsmgWeekRptInfo{}, err
+	}
+
+	reportIncludeName.ChangeIDToName()
+	rptInfo = reportIncludeName.BsmgWeekRptInfo
 
 	return
 }

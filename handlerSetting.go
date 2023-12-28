@@ -3,6 +3,7 @@ package main
 import (
 	"BsmgRefactoring/define"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -50,8 +51,8 @@ func getRankPartReq(c echo.Context) error {
 }
 
 // 주간 업무보고 카테고리 정보
-func getWeekRptCategory(c echo.Context) (err error) {
-	log.Println("getWeekRptCategory")
+func getPartTree(c echo.Context) (err error) {
+	log.Println("getPartTree")
 
 	var apiResponse define.BsmgTreeResult
 
@@ -66,33 +67,23 @@ func getWeekRptCategory(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
-// 주간 업무보고 카테고리 정보
-func getToRptReq(c echo.Context) error {
+// 주간 업무보고를 수정한다면, 해당 팀의 팀장으로 바로 보고자 변경하기 위해
+// 팀장을 response
+func getToRptReq(c echo.Context) (err error) {
 	log.Println("getToRptReq")
 
-	var result define.BsmgTeamLeaderResult
+	var apiResponse define.BsmgTeamLeaderResponse
 
-	value, err := c.FormParams()
+	partIdx, _ := strconv.Atoi(c.Request().FormValue("@d1#part_idx"))
+
+	apiResponse.Part.TeamLeader, err = server.dbManager.DBGorm.SelectPartLeader(int32(partIdx))
 	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
+		log.Printf("getToRptReq : %v \n", err)
+		apiResponse.Result.ResultCode = define.ErrorDataBase
+		return c.JSON(http.StatusOK, apiResponse)
 	}
+	apiResponse.Part.PartIdx = int32(partIdx)
+	apiResponse.Result.ResultCode = define.Success
 
-	parser := initFormParser(value)
-	if parser == nil {
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-	part_idx, err := parser.getInt32Value(0, "part_idx", 0)
-	if err != nil {
-		log.Printf("%v \n", err)
-		result.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, result)
-	}
-
-	result.Part.PartIdx = part_idx
-	result.Result.ResultCode = define.Success
-
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, apiResponse)
 }

@@ -68,3 +68,9 @@ type BsmgPutScheduleRequest struct {
 		} `json:"dm_rptIdx"`
 	} `json:"data"`
 }
+
+type BsmgPutWeekReportRequest struct {
+	Data struct {
+		WeekReportInfo BsmgWeekRptInfoStringField `json:"dm_weekRptInfo"`
+	} `json:"data"`
+}

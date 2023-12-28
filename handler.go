@@ -43,7 +43,7 @@ func initUserRoute(userGroup *echo.Group) {
 func initSettingRoute(settingGroup *echo.Group) {
 	settingGroup.GET("/attrTree", getAttrTreeReq)
 	settingGroup.GET("/rankPart", getRankPartReq)
-	settingGroup.GET("/weekRptCategory", getWeekRptCategory) // 주간보고 속성 트리 (부서 별로 볼 수 있는 기능)
+	settingGroup.GET("/weekRptCategory", getPartTree) // 주간보고 속성 트리 (부서 별로 볼 수 있는 기능)
 	settingGroup.GET("/getToRpt", getToRptReq)
 }
 
@@ -67,9 +67,9 @@ func initReportRoute(reportGroup *echo.Group) {
 	// PUT
 	reportGroup.PUT("/putRpt", putReportReq)
 	reportGroup.PUT("/putSchedule", putScheduleReq)
-	// reportGroup.PUT("/putWeekRpt", putWeekRptReq)
+	reportGroup.PUT("/putWeekRpt", putWeekRptReq)
 
 	// DELETE
 	reportGroup.DELETE("/deleteRpt/:rptIdx", deleteReportReq)
-	// reportGroup.DELETE("/deleteWeekRpt", deleteWeekRptReq)
+	reportGroup.DELETE("/deleteWeekRpt/:wRptIdx", deleteWeekRptReq)
 }

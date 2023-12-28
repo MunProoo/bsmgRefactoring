@@ -91,7 +91,8 @@ func TestGetAWeekRpt(t *testing.T) {
 
 func TestGetWeekRptList(t *testing.T) {
 	server := ServerProcessor{}
-	server.ConnectDataBase()
+	err := server.ConnectDataBase()
+	assert.NoError(t, err, "DB 연결 실패")
 	defer server.dbManager.DBGorm.Release()
 
 	pageInfo := define.PageInfo{}
@@ -104,5 +105,5 @@ func TestGetWeekRptList(t *testing.T) {
 
 	rptList, _, err := server.dbManager.DBGorm.SelectWeekReportList(pageInfo, searchData)
 	fmt.Printf("%v \n", rptList)
-	assert.NoError(t, err, "WeekRpt는 실패했다")
+	assert.NoError(t, err, "WeekRpt 가져오기 실패했다")
 }

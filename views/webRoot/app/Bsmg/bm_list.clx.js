@@ -383,7 +383,7 @@
 			//	console.log("파싱전 : "+ tre1.getSelectionLast().value);
 				attrValue = attrValue.split("-")
 				if(attrValue[1] == null){
-					attrValue = attrValue[0]-1;
+					attrValue = attrValue[0];
 					attrCategory = 0; // 업무속성1로 검색
 				} else {
 					attrValue = attrValue[1];

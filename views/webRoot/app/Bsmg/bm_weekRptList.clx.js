@@ -635,7 +635,7 @@
 					comboBox_1.addItem(new cpr.controls.Item("전체", "0"));
 					comboBox_1.addItem(new cpr.controls.Item("제목", "1"));
 					comboBox_1.addItem(new cpr.controls.Item("내용", "2"));
-					comboBox_1.addItem(new cpr.controls.Item("보고자", "4"));
+					comboBox_1.addItem(new cpr.controls.Item("보고자", "3"));
 				})(comboBox_1);
 				container.addChild(comboBox_1, {
 					positions: [

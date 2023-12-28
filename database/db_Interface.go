@@ -42,18 +42,22 @@ type DBInterface interface {
 	SelectScheduleList(rptIdx int32) (scheduleList []define.BsmgScheduleInfo, err error)
 	CheckMemberIDDuplicate(memID string) (isExist bool, err error)
 	SelectMemberListSearch(searchData define.SearchData) (memberList []define.BsmgMemberInfo, err error)
-	SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error)
 	SelectReportListAWeek(Mem_ID, bef7d, bef1d string) (reportList []define.BsmgReportInfo, err error)
 	SelectPartLeader(Mem_Part int32) (partLeader string, err error)
+	SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error)
+	SelectWeekReportCategorySearch(pageInfo define.PageInfo, partIdx int) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error)
+	SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWeekRptInfo, err error)
 
 	// Update
 	UpdateUser(member define.BsmgMemberInfo) error
 	UpdateReportInfo(report define.BsmgReportInfo) (err error)
+	UpdateWeekReportInfo(report define.BsmgWeekRptInfo) (err error)
 	ConfirmRpt(rptIdx int32) (err error)
 
 	// Delete
 	DeleteSchedule(rptIdx int32) (err error)
 	DeleteReport(rptIdx int32) (err error)
+	DeleteWeekReport(wRptIdx int) (err error)
 	DeleteMember(memId string) (err error)
 
 	// util

@@ -53,3 +53,10 @@ type BsmgWeekReportInfoResponse struct {
 	WeekReportInfo BsmgWeekRptInfo `json:"dm_weekRptInfo"`
 	Result         Result          `json:"Result"`
 }
+
+// getToRpt
+// 부서 변경시 보고대상 바로 해당 팀의 팀장급으로
+type BsmgTeamLeaderResponse struct {
+	Part   PartStruct `json:"dm_part"`
+	Result Result     `json:"Result"`
+}

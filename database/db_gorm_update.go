@@ -42,6 +42,25 @@ func (dbm *DBGormMaria) UpdateReportInfo(report define.BsmgReportInfo) (err erro
 
 	return
 }
+func (dbm *DBGormMaria) UpdateWeekReportInfo(report define.BsmgWeekRptInfo) (err error) {
+	wRptIdx := report.WRpt_Idx
+	setVal := make(map[string]interface{})
+	setVal["w_rpt_title"] = report.WRpt_Title
+	setVal["w_rpt_content"] = report.WRpt_Content
+	setVal["w_rpt_to_rpt"] = report.WRpt_ToRpt
+	setVal["w_rpt_part"] = report.WRpt_Part
+	setVal["w_rpt_omission_date"] = report.WRpt_OmissionDate
+
+	dbWhere := dbm.DB.Model(define.BsmgWeekRptInfo{}).
+		Debug().Where("w_rpt_idx = ?", wRptIdx).Update(setVal)
+	err = dbWhere.Error
+	if err != nil {
+		log.Printf("UpdateWeekReportInfo : %v \n", err)
+		return err
+	}
+
+	return
+}
 
 func (dbm *DBGormMaria) ConfirmRpt(rptIdx int32) (err error) {
 	setVal := make(map[string]interface{})

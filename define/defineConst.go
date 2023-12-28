@@ -20,8 +20,13 @@ const (
 const (
 	SearchWeekReportAll = iota
 	SearchWeekReportTitle
-	SearchWeekReportToRpt
+	SearchWeekReportContent
 	SearchWeekReportReporter
+)
+
+// WeekReport Category
+const (
+	AllCategory = 0
 )
 
 // Server State

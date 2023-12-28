@@ -86,5 +86,23 @@ func TestGetAWeekRpt(t *testing.T) {
 
 	bef7d, bef1d, now, tms := utils.GetDate()
 	err := server.dbManager.MakeWeekRpt(bef7d, bef1d, now, tms)
-	assert.NoError(t, err, "무슨 에러야₩")
+	assert.NoError(t, err, "WeekRpt는 실패했다")
+}
+
+func TestGetWeekRptList(t *testing.T) {
+	server := ServerProcessor{}
+	server.ConnectDataBase()
+	defer server.dbManager.DBGorm.Release()
+
+	pageInfo := define.PageInfo{}
+	pageInfo.Offset, pageInfo.Limit = int32(0), int32(6)
+
+	searchData := define.SearchData{
+		SearchCombo: 0,
+		SearchInput: "",
+	}
+
+	rptList, _, err := server.dbManager.DBGorm.SelectWeekReportList(pageInfo, searchData)
+	fmt.Printf("%v \n", rptList)
+	assert.NoError(t, err, "WeekRpt는 실패했다")
 }

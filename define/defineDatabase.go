@@ -67,15 +67,11 @@ type BsmgScheduleInfo struct {
 // 주간 업무 보고서 객체
 type BsmgWeekRptInfo struct {
 	WRpt_Idx          int32  `json:"wRpt_idx" gorm:"type:int;primary_key"`      // 업무보고 인덱스
-	WRpt_Reporter     string `json:"wRpt_reporter" gorm:"type:nvarchar(20)"`    // 업무보고자
+	WRpt_Reporter     string `json:"wRpt_reporter" gorm:"type:nvarchar(20)"`    // 업무보고자 아이디
 	WRpt_Date         string `json:"wRpt_date" gorm:"type:nvarchar(30)"`        // 업무보고 일자
-	WRpt_ToRpt        string `json:"wRpt_toRpt" gorm:"type:nvarchar(20)"`       // 업무보고 대상
+	WRpt_ToRpt        string `json:"wRpt_toRpt" gorm:"type:nvarchar(20)"`       // 업무보고 대상 아이디
 	WRpt_Title        string `json:"wRpt_title" gorm:"type:nvarchar(40)"`       // 업무보고 제목
 	WRpt_Content      string `json:"wRpt_content" gorm:"type:text"`             // 업무 내용
 	WRpt_Part         int32  `json:"wRpt_part" gorm:"type:int"`                 // 부서
 	WRpt_OmissionDate string `json:"wRpt_omissionDate" gorm:"type:varchar(50)"` // 보고서 누락 날짜
 }
-
-const (
-	PartLeader = 3
-)

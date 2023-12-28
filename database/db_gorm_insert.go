@@ -2,6 +2,7 @@ package database
 
 import (
 	"BsmgRefactoring/define"
+	"fmt"
 	"log"
 )
 
@@ -127,6 +128,8 @@ func (dbm *DBGormMaria) InsertSchedule(schedule define.BsmgScheduleInfo) (err er
 }
 
 func (dbm *DBGormMaria) InsertWeekReport(weekRptInfo define.BsmgWeekRptInfo) (err error) {
+	fmt.Printf("weekRptInfo : %v \n", weekRptInfo)
+
 	dbWhere := dbm.DB.Model(define.BsmgWeekRptInfo{}).Debug().
 		Create(&weekRptInfo)
 	err = dbWhere.Error

@@ -3,6 +3,7 @@ package database
 import (
 	"BsmgRefactoring/define"
 	"BsmgRefactoring/utils"
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -33,7 +34,7 @@ func (dbManager *DatabaseManager) InitDBManager() (err error) {
 		DBConfig: define.DBConfig{
 			DatabaseIP:   "127.0.0.1",
 			DatabaseID:   "root",
-			DatabasePW:   "0000",
+			DatabasePW:   "12345",
 			DatabasePort: "3306",
 		},
 	}
@@ -154,6 +155,8 @@ func (dbManager *DatabaseManager) MakeWeekRpt(bef7d, bef1d, now string, t time.T
 		if err != nil {
 			return err
 		}
+
+		fmt.Println(weekContent.String())
 
 		weekRptInfo := define.BsmgWeekRptInfo{
 			WRpt_Reporter:     user.Mem_ID,

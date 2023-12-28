@@ -96,7 +96,7 @@ func (dbm *DBGormMaria) ConnectBSMG() (err error) {
 	pw := dbm.DBConfig.DatabasePW
 	ip := dbm.DBConfig.DatabaseIP
 	port := dbm.DBConfig.DatabasePort
-	connectionString := fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local`, id, pw, ip, port, DBNAME)
+	connectionString := fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local`, id, pw, ip, port, DBNAME)
 	dbm.DB, err = gorm.Open("mysql", connectionString)
 	if err != nil {
 		return err

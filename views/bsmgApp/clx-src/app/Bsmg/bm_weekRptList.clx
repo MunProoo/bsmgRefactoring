@@ -102,7 +102,7 @@
         <cl:item std:sid="item-b55bc07a" label="전체" value="0"/>
         <cl:item std:sid="item-7e937ffd" label="제목" value="1"/>
         <cl:item std:sid="item-29c3db48" label="내용" value="2"/>
-        <cl:item std:sid="item-2f7401e3" label="보고자" value="4"/>
+        <cl:item std:sid="item-2f7401e3" label="보고자" value="3"/>
       </cl:combobox>
       <cl:searchinput std:sid="s-input-0b9ccfc8" id="ipb1">
         <cl:listener std:sid="listener-3f82031b" name="search" handler="onIpb1Search"/>

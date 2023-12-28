@@ -2,13 +2,6 @@ package define
 
 import "time"
 
-const (
-	StateInit = iota
-	StateConnected
-	StateRunning
-	StateDisconnected
-)
-
 // Type Definition
 type OmissionMap map[string]bool
 

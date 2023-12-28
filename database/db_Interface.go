@@ -60,4 +60,5 @@ type DBInterface interface {
 	FindMinIdx() int32
 	Release()
 	MakeAttrTree() (attrTreeList []define.AttrTree, err error)
+	MakePartTree() (partTreeList []define.PartTree, err error)
 }

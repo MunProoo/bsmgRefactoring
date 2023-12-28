@@ -50,15 +50,20 @@ func getRankPartReq(c echo.Context) error {
 }
 
 // 주간 업무보고 카테고리 정보
-func getWeekRptCategoryReq(c echo.Context) error {
-	log.Println("getWeekRptCategoryReq")
+func getWeekRptCategory(c echo.Context) (err error) {
+	log.Println("getWeekRptCategory")
 
-	var result define.BsmgTreeResult
-	result.AttrTreeList = make([]define.AttrTree, 0)
-	result.PartTreeList = make([]define.PartTree, 0)
+	var apiResponse define.BsmgTreeResult
 
-	result.Result.ResultCode = define.Success
-	return c.JSON(http.StatusOK, result)
+	apiResponse.PartTreeList, err = server.dbManager.DBGorm.MakePartTree()
+	if err != nil {
+		log.Printf("%v \n", err)
+		apiResponse.Result.ResultCode = define.ErrorDataBase
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+
+	apiResponse.Result.ResultCode = define.Success
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 // 주간 업무보고 카테고리 정보

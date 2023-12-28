@@ -86,3 +86,24 @@ func (dbm *DBGormMaria) AttrTreeSetNameAndValue(count int32) (attrTrees []define
 
 	return
 }
+
+// 클라이언트 단에서 작업하는게 서버의 부하를 줄이겠지만, 클라이언트 수정이 여건상 힘드므로 부득이하게..
+// 웹앱의 트리구조 포맷에 맞춰 업무속성을 서버에서 트리로 제작
+func (dbm *DBGormMaria) MakePartTree() (partTreeList []define.PartTree, err error) {
+	partList, err := dbm.SelectPartist()
+	partTreeList = make([]define.PartTree, len(partList)+1)
+
+	// 트리 최상위 부모 설정
+	partTreeList[0].Label = define.WeekCategoryName
+	partTreeList[0].Value = "1"
+	partTreeList[0].Parent = "0"
+
+	for idx, part := range partList {
+		partTreeList[idx+1].Label = part.Part_Name
+		partTreeList[idx+1].Value = "1-" + strconv.Itoa(int(part.Part_Idx))
+		partTreeList[idx+1].Parent = "1"
+	}
+
+	return
+
+}

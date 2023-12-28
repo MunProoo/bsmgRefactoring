@@ -128,12 +128,21 @@ func (bs *BsmgScheduleInfoString) ParseSchedule() (schedule BsmgScheduleInfo) {
 type BsmgIncludeNameReport struct {
 	BsmgReportInfo
 	Reporter_Name string
-	// ToRpt_Name    string
-	// Ref_Name      string
+	ToRpt_Name    string
 }
 
 func (brName *BsmgIncludeNameReport) ChangeIDToName() {
 	brName.Rpt_Reporter = brName.Reporter_Name
-	// brName.Rpt_toRpt = brName.ToRpt_Name
-	// brName.Rpt_ref = brName.Ref_Name
+	brName.Rpt_toRpt = brName.ToRpt_Name
+}
+
+type BsmgIncludeNameWeekReport struct {
+	BsmgWeekRptInfo
+	Reporter_Name string
+	ToRpt_Name    string
+}
+
+func (brName *BsmgIncludeNameWeekReport) ChangeIDToName() {
+	brName.WRpt_Reporter = brName.Reporter_Name
+	brName.WRpt_ToRpt = brName.ToRpt_Name
 }

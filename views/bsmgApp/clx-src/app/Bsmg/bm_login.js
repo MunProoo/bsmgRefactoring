@@ -57,11 +57,7 @@ function onSms_loginSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	var result = app.lookup("Result").getString("ResultCode");
 
 	var dmMember = app.lookup("dm_memberInfo");
-	if(result == null || result == ""){
-		alert("서버 오류")
-		return;
-	}
-	else if(result == 0){
+	if(result == 0){
 		var mem_name = app.lookup("dm_memberInfo").getString("mem_name");
 		alert(mem_name + "님 반갑습니다.");
 		
@@ -71,14 +67,14 @@ function onSms_loginSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 			var newInst = newapp.createNewInstance();
 			newInst.run().callAppMethod("setMemberInfo", applicationInfo);
 		});
-	}
-	else{
-		alert("아이디 혹은 비밀번호가 잘못되었습니다.");
+	} else {
+		alert(getErrorString(result));
 		app.lookup("mem_id").value = "";
 		app.lookup("mem_pw").value = "";
 		app.lookup("mem_id").focus();
 		return;
 	}
+	
 	
 }
 

@@ -80,6 +80,8 @@
 					}
 					setAttr();
 					dateFormat();
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -107,6 +109,8 @@
 				if (result == 0){
 					dsSchedule.copyToDataSet(src);
 					app.getContainer().redraw();
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -124,9 +128,8 @@
 				var result = app.lookup("Result").getString("ResultCode");
 				if(result == 0){
 					setAttr();
-				} else{
-					alert("속성 갱신 실패");
-					return;
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -325,6 +328,8 @@
 				var result = app.lookup("Result").getString("ResultCode");
 				if(result == 0){
 					alert("수정되었습니다.");
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -341,6 +346,8 @@
 				var result = app.lookup("Result").getString("ResultCode");
 				if(result == 0){
 			//		console.log("보고 수정 완료");
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -377,6 +384,8 @@
 				if(result == 0){
 					alert("보고가 삭제되었습니다.");
 					app.close(1);
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -428,8 +437,7 @@
 					} 
 					app.getContainer().redraw();
 				} else {
-					alert("세션이 끊어졌습니다.");
-					app.close();
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -468,6 +476,8 @@
 				if(result == 0){
 					alert('정상적으로 확인되었습니다.');
 					app.lookup("sms_getRptInfo").send();
+				} else {
+					alert(getErrorString(result));
 				}
 			};
 			// End - User Script

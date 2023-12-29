@@ -54,6 +54,8 @@
 					src.copyToDataSet(copy);
 					
 					insertRankPartValue();
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -126,6 +128,8 @@
 					app.lookup("sms_getUserList").send();
 					app.lookup("sms_setRankPart").send();
 					alert("정상적으로 삭제되었습니다.");
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -147,6 +151,8 @@
 				
 				if(result==0){
 					insertRankPartValue();
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -232,6 +238,8 @@
 					alert('성공적으로 수정되었습니다.');
 					app.lookup("sms_getUserList").send();
 			//		app.lookup("sms_setRankPart").send();
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -332,6 +340,8 @@
 			//		app.lookup("sms_setRankPart").send();
 			
 					insertRankPartValue();
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			

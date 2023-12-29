@@ -119,9 +119,8 @@ function onSms_setAttrSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	if(result == 0){
 //		console.log(app.lookup("ds_List").getRowDataRanged());
 		app.lookup("lcb1").redraw();
-	} else{
-		alert("속성 갱신 실패");
-		return;
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -215,7 +214,7 @@ function onSms_registRptSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		console.log(rptIdx);
 		return;
 	} else {
-		alert('보고서 저장에 실패하였습니다.');
+		alert(getErrorString(result));
 	}
 }
 
@@ -268,6 +267,8 @@ function onSms_registSchSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		alert("보고가 성공적으로 저장되었습니다.");
 		app.close(1);
 		return;
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -284,9 +285,9 @@ function onSms_chkLoginSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	var sms_chkLogin = e.control;
 	var result = app.lookup("Result").getString("ResultCode");
 	if(result != 0){
-		alert("세션이 끊어졌습니다.");
+		alert(getErrorString(result));
 		app.close();
-	}
+	} 
 }
 
 

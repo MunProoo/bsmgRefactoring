@@ -74,9 +74,8 @@ function onSms_getRptListSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		SearchFlag = false;
 		AttrFlag = false;
 		return;
-	} else{
-		alert("업무 보고 리스트를 불러오는 데 실패하였습니다.")
-		return;
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -228,6 +227,8 @@ function onSms_getRptSearchSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		}
 		app.getContainer().redraw();
 		return;
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -286,9 +287,8 @@ function onSms_setTreeSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		dataManager.setDsAttrTree(dsAttrTree);
 
 		app.lookup("tre1").redraw();
-	} else{
-		alert("tree 갱신 실패");
-		return;
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -349,6 +349,8 @@ function onSms_rptAttrSearchSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		return;
 		
 		// 이제 서버단 짜기만 하면 됨
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -466,8 +468,7 @@ function onSms_getAttr1SubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		var dsAttr1 = app.lookup("ds_attr1"); // 업무 속성 1 : 카테고리
 //		dataManager.setDsAttrTree(dsAttrTree);
 
-	} else{
-		alert("못받아따");
-		return;
+	} else {
+		alert(getErrorString(result));
 	}
 }

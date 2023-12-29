@@ -43,6 +43,8 @@ function onSms_getWeekRptInfoSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	if(result == 0){
 		dmWeekRptInfo.copyToDataMap(src);
 		dateFormat();
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -72,9 +74,8 @@ function onSms_setPartSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	var result = app.lookup("Result").getString("ResultCode");
 	if(result == 0){
 		setPart();
-	} else{
-		alert("속성 갱신 실패");
-		return;
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -178,6 +179,8 @@ function onSms_putWeekRptSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	if(result == 0){
 		alert('주간 업무보고가 수정되었습니다.');
 		return;
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -196,6 +199,8 @@ function onSms_getToRptSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		var teamLeader = app.lookup("dm_part").getString("team_leader");
 		app.lookup("teamLeader").value = teamLeader;
 		console.log('teamLeader : ',teamLeader);
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -247,6 +252,8 @@ function onSms_deleteWeekRptSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	if(result == 0){
 		alert("정상적으로 삭제되었습니다.");
 		app.close(1);
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -277,7 +284,7 @@ function onSms_chkLoginSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		}
 		app.getContainer().redraw();
 	} else {
-		alert("세션이 끊어졌습니다.");
+		alert(getErrorString(result));
 		app.close();
 	}
 }

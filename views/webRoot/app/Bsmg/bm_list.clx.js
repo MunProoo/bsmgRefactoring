@@ -87,9 +87,8 @@
 					SearchFlag = false;
 					AttrFlag = false;
 					return;
-				} else{
-					alert("업무 보고 리스트를 불러오는 데 실패하였습니다.")
-					return;
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -241,6 +240,8 @@
 					}
 					app.getContainer().redraw();
 					return;
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -299,9 +300,8 @@
 					dataManager.setDsAttrTree(dsAttrTree);
 			
 					app.lookup("tre1").redraw();
-				} else{
-					alert("tree 갱신 실패");
-					return;
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -362,6 +362,8 @@
 					return;
 					
 					// 이제 서버단 짜기만 하면 됨
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -479,9 +481,8 @@
 					var dsAttr1 = app.lookup("ds_attr1"); // 업무 속성 1 : 카테고리
 			//		dataManager.setDsAttrTree(dsAttrTree);
 			
-				} else{
-					alert("못받아따");
-					return;
+				} else {
+					alert(getErrorString(result));
 				}
 			};
 			// End - User Script

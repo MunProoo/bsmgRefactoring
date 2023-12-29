@@ -41,6 +41,8 @@ function onSms_getUserListSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		src.copyToDataSet(copy);
 		
 		insertRankPartValue();
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -113,6 +115,8 @@ function onSms_delUserSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		app.lookup("sms_getUserList").send();
 		app.lookup("sms_setRankPart").send();
 		alert("정상적으로 삭제되었습니다.");
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -134,6 +138,8 @@ function onSms_setRankPartSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	
 	if(result==0){
 		insertRankPartValue();
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -219,6 +225,8 @@ function onSms_putUserListSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		alert('성공적으로 수정되었습니다.');
 		app.lookup("sms_getUserList").send();
 //		app.lookup("sms_setRankPart").send();
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -319,6 +327,8 @@ function onSms_getUserListSearchSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 //		app.lookup("sms_setRankPart").send();
 
 		insertRankPartValue();
+	} else {
+		alert(getErrorString(result));
 	}
 }
 

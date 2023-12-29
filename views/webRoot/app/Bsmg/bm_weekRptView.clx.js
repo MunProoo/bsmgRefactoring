@@ -56,6 +56,8 @@
 				if(result == 0){
 					dmWeekRptInfo.copyToDataMap(src);
 					dateFormat();
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -85,9 +87,8 @@
 				var result = app.lookup("Result").getString("ResultCode");
 				if(result == 0){
 					setPart();
-				} else{
-					alert("속성 갱신 실패");
-					return;
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -191,6 +192,8 @@
 				if(result == 0){
 					alert('주간 업무보고가 수정되었습니다.');
 					return;
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -209,6 +212,8 @@
 					var teamLeader = app.lookup("dm_part").getString("team_leader");
 					app.lookup("teamLeader").value = teamLeader;
 					console.log('teamLeader : ',teamLeader);
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -260,6 +265,8 @@
 				if(result == 0){
 					alert("정상적으로 삭제되었습니다.");
 					app.close(1);
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -290,7 +297,7 @@
 					}
 					app.getContainer().redraw();
 				} else {
-					alert("세션이 끊어졌습니다.");
+					alert(getErrorString(result));
 					app.close();
 				}
 			};

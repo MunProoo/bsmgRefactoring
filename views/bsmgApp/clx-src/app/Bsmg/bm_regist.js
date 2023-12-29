@@ -25,19 +25,17 @@ function onSms_overlapCheckSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	 * @type cpr.protocols.Submission
 	 */
 	var sms_overlapCheck = e.control;
-	
-	if(app.lookup("Result").getString("ResultCode") == 0){
+	var result = app.lookup("Result").getString("ResultCode");
+	if(result == 0){
 		alert("사용 가능한 아이디입니다.");
 		idCheck = true;
 		app.lookup("mem_pw").focus();
 		return;
-	}
-	else{
-		alert("사용할 수 없는 아이디입니다.");
+	} else {
+		alert(getErrorString(result));
 		app.lookup("mem_id").focus();
 		return;
 	}
-	
 }
 
 
@@ -52,12 +50,13 @@ function onSms_getRankPartSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	 * @type cpr.protocols.Submission
 	 */
 	var sms_getRankPart = e.control;
-	if(app.lookup("Result").getString("ResultCode") == 0){
+	var result = app.lookup("Result").getValue("ResultCode");
+	if(result == 0){
 		//console.log(app.lookup("ds_rank").getRowCount())
 		app.lookup("mem_rank").redraw();
 		app.lookup("mem_part").redraw();
-	} else{
-		alert("직급, 부서 데이터를 가져오는 중 오류가 생겼습니다.");
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -76,8 +75,7 @@ function onSms_registUserSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		alert("사용자를 등록하였습니다.");
 		app.close();
 	} else {
-		alert("사용자 등록에 실패하였습니다.");
-		return;
+		alert(getErrorString(result));
 	}
 	
 }

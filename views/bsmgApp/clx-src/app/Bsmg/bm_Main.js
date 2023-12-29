@@ -90,6 +90,8 @@ function onSms_logoutSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 			newInst.run();
 		});
 		return; 
+	} else {
+		alert(getErrorString(result));
 	}
 }
 
@@ -138,7 +140,7 @@ function onSms_chkLoginSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	if(result == 0) {
 		app.lookup("sms_setRankPart").send();
 	} else {
-		alert("연결이  끊어졌습니다아앙.");
+		alert(getErrorString(result));
 		cpr.core.App.load("app/Bsmg/bm_login", function(newapp){
 			app.close();
 			var newInst = newapp.createNewInstance();
@@ -185,6 +187,8 @@ function onSms_setRankPartSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		dataManager.setRankList(dsRankList);
 		dataManager.setPartList(dsPartList);
 		
+	} else {
+		alert(getErrorString(result));
 	} 
 	app.getContainer().redraw();
 	

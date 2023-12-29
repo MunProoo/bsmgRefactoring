@@ -89,8 +89,7 @@
 					AttrFlag = false;
 					return;
 				} else {
-					alert("주간업무보고 리스트를 불러오는데 실패하였습니다.");
-					return;
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -109,8 +108,7 @@
 					app.lookup("tre1").redraw();
 					return;
 				} else {
-					alert("카테고리 트리 갱신 실패");
-					return;
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -236,6 +234,8 @@
 					}
 					app.getContainer().redraw();
 					return;
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -329,6 +329,8 @@
 					}
 					app.getContainer().redraw();
 					return;
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			

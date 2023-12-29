@@ -77,6 +77,8 @@
 					}
 					grd.sort("mem_part ASC");
 					grd.redraw();
+				} else {
+					alert(getErrorString(result));
 				}
 				 
 			}
@@ -318,6 +320,8 @@
 					app.lookup("userList").redraw();
 			//		console.log(ds.getRowDatasByState(cpr.data.tabledata.RowState.UNCHANGED));
 			//		console.log(ds.getRowDatasByState(cpr.data.tabledata.RowState.INSERTED));
+				} else {
+					alert(getErrorString(result));
 				}
 			}
 			
@@ -447,8 +451,7 @@
 					}
 					
 				} else {
-					alert("세션이 끊어졌습니다.");
-					app.close();
+					alert(getErrorString(result));
 				}
 			}
 			

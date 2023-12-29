@@ -60,3 +60,9 @@ type BsmgTeamLeaderResponse struct {
 	Part   PartStruct `json:"dm_part"`
 	Result Result     `json:"Result"`
 }
+
+// getAttr1Req
+type BsmgAttr1Response struct {
+	Attr1List []BsmgAttr1Info `json:"ds_attr1"`
+	Result    Result          `json:"Result"`
+}

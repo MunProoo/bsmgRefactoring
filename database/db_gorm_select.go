@@ -479,3 +479,15 @@ func (dbm *DBGormMaria) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWe
 
 	return
 }
+
+func (dbm *DBGormMaria) SelectAttr1List() (attr1List []define.BsmgAttr1Info, err error) {
+	dbWhere := dbm.DB.Model(define.BsmgAttr1Info{}).Debug().
+		Find(&attr1List)
+	err = dbWhere.Error
+	if err != nil {
+		log.Printf("SelectAttr1List : %v \n", err)
+		return nil, err
+	}
+
+	return
+}

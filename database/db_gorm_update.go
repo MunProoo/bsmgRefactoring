@@ -44,13 +44,13 @@ func (dbm *DBGormMaria) UpdateReportInfo(report define.BsmgReportInfo) (err erro
 }
 func (dbm *DBGormMaria) UpdateWeekReportInfo(report define.BsmgWeekRptInfo) (err error) {
 	wRptIdx := report.WRpt_Idx
-	setVal := make(map[string]interface{})
-	setVal["w_rpt_title"] = report.WRpt_Title
-	setVal["w_rpt_content"] = report.WRpt_Content
-	setVal["w_rpt_to_rpt"] = report.WRpt_ToRpt
-	setVal["w_rpt_part"] = report.WRpt_Part
-	setVal["w_rpt_omission_date"] = report.WRpt_OmissionDate
-
+	setVal := map[string]interface{}{
+		"w_rpt_title":         report.WRpt_Title,
+		"w_rpt_content":       report.WRpt_Content,
+		"w_rpt_to_rpt":        report.WRpt_ToRpt,
+		"w_rpt_part":          report.WRpt_Part,
+		"w_rpt_omission_date": report.WRpt_OmissionDate,
+	}
 	dbWhere := dbm.DB.Model(define.BsmgWeekRptInfo{}).
 		Debug().Where("w_rpt_idx = ?", wRptIdx).Update(setVal)
 	err = dbWhere.Error

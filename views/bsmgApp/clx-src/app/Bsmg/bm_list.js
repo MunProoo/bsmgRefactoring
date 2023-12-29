@@ -21,6 +21,7 @@ function onBodyLoad(/* cpr.events.CEvent */ e){
 	dataManager = getDataManager();
 	
 	app.lookup("sms_setTree").send();
+	app.lookup("sms_getAttr1").send();
 	setPaging(0, 1, RowCount, 5);
 	sendRptListRequest();
 }
@@ -370,7 +371,7 @@ function onTre1ItemDblclick(/* cpr.events.CItemEvent */ e){
 //	console.log("파싱전 : "+ tre1.getSelectionLast().value);
 	attrValue = attrValue.split("-")
 	if(attrValue[1] == null){
-		attrValue = attrValue[0]-1;
+		attrValue = attrValue[0];
 		attrCategory = 0; // 업무속성1로 검색
 	} else {
 		attrValue = attrValue[1];
@@ -446,4 +447,27 @@ function onRdb1SelectionChange(/* cpr.events.CSelectionEvent */ e){
 		app.lookup("grd1").autoRowHeight = "all";
 	}
 //	app.lookup("grd1").redraw(); 속성이 변경된 경우 자동으로 그려진다.
+}
+
+
+/*
+ * 서브미션에서 submit-done 이벤트 발생 시 호출.
+ * 응답처리가 모두 종료되면 발생합니다.
+ */
+function onSms_getAttr1SubmitDone(/* cpr.events.CSubmissionEvent */ e){
+	/** 
+	 * @type cpr.protocols.Submission
+	 */
+	var sms_getAttr1 = e.control;
+	var result = app.lookup("Result").getString("ResultCode");
+	if(result == 0){
+//		console.log(app.lookup("ds_List").getRowDataRanged());
+
+		var dsAttr1 = app.lookup("ds_attr1"); // 업무 속성 1 : 카테고리
+//		dataManager.setDsAttrTree(dsAttrTree);
+
+	} else{
+		alert("못받아따");
+		return;
+	}
 }

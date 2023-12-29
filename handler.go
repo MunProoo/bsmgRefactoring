@@ -45,6 +45,7 @@ func initSettingRoute(settingGroup *echo.Group) {
 	settingGroup.GET("/rankPart", getRankPartReq)
 	settingGroup.GET("/weekRptCategory", getPartTree) // 주간보고 속성 트리 (부서 별로 볼 수 있는 기능)
 	settingGroup.GET("/getToRpt", getToRptReq)
+	settingGroup.GET("/attr1", getAttr1Req) // 업무 카테고리만 return
 }
 
 // Report Group

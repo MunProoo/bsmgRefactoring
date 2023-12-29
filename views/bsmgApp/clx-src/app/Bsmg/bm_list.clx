@@ -23,6 +23,12 @@
           <cl:datacolumn std:sid="d-column-8c3b66c2" name="parent"/>
         </cl:datacolumnlist>
       </cl:dataset>
+      <cl:dataset std:sid="d-set-53a12ce5" id="ds_attr1">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-982d7768" name="attr1_idx" datatype="string"/>
+          <cl:datacolumn std:sid="d-column-565b7c76" name="attr1_category" datatype="string"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
       <cl:datamap std:sid="d-map-887a20ce" id="Result">
         <cl:datacolumnlist>
           <cl:datacolumn std:sid="d-column-1adc960e" name="ResultCode"/>
@@ -79,6 +85,11 @@
         <cl:responsedata dataid="Result"/>
         <cl:responsedata dataid="totalCount"/>
       </cl:submission>
+      <cl:submission std:sid="submission-9ae4fa70" id="sms_getAttr1" method="get" action="/bsmg/setting/attr1">
+        <cl:listener std:sid="listener-47179a90" name="submit-done" handler="onSms_getAttr1SubmitDone"/>
+        <cl:responsedata dataid="ds_attr1"/>
+        <cl:responsedata dataid="Result"/>
+      </cl:submission>
     </cl:model>
     <cl:appspec/>
   </head>
@@ -125,7 +136,11 @@
             <cl:textarea std:sid="t-area-c7c04c2e" id="txa1" style="font-weight:normal;"/>
           </cl:gridcell>
           <cl:gridcell std:sid="gd-cell-5b0157f6" rowindex="0" colindex="3" style="background-color:transparent; color:#000000; font-weight:normal;" columnname="rpt_reporter"/>
-          <cl:gridcell std:sid="gd-cell-f7f95192" rowindex="0" colindex="4" style="background-color:transparent; color:#000000; font-weight:normal;" columnname="rpt_attr1"/>
+          <cl:gridcell std:sid="gd-cell-f7f95192" rowindex="0" colindex="4" style="background-color:transparent; color:#000000; font-weight:normal;" columnname="rpt_attr1">
+            <cl:combobox std:sid="c-box-e5eaa5e4" id="cmb_attr1" readonly="true">
+              <cl:itemset datasetid="ds_attr1" label="attr1_category" value="attr1_idx"/>
+            </cl:combobox>
+          </cl:gridcell>
           <cl:gridcell std:sid="gd-cell-1e5cd6e0" rowindex="0" colindex="5" columnname="rpt_date"/>
         </cl:griddetail>
       </cl:grid>

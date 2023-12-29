@@ -34,6 +34,7 @@
 				dataManager = getDataManager();
 				
 				app.lookup("sms_setTree").send();
+				app.lookup("sms_getAttr1").send();
 				setPaging(0, 1, RowCount, 5);
 				sendRptListRequest();
 			}
@@ -459,6 +460,29 @@
 					app.lookup("grd1").autoRowHeight = "all";
 				}
 			//	app.lookup("grd1").redraw(); 속성이 변경된 경우 자동으로 그려진다.
+			}
+			
+			
+			/*
+			 * 서브미션에서 submit-done 이벤트 발생 시 호출.
+			 * 응답처리가 모두 종료되면 발생합니다.
+			 */
+			function onSms_getAttr1SubmitDone(/* cpr.events.CSubmissionEvent */ e){
+				/** 
+				 * @type cpr.protocols.Submission
+				 */
+				var sms_getAttr1 = e.control;
+				var result = app.lookup("Result").getString("ResultCode");
+				if(result == 0){
+			//		console.log(app.lookup("ds_List").getRowDataRanged());
+			
+					var dsAttr1 = app.lookup("ds_attr1"); // 업무 속성 1 : 카테고리
+			//		dataManager.setDsAttrTree(dsAttrTree);
+			
+				} else{
+					alert("못받아따");
+					return;
+				}
 			};
 			// End - User Script
 			
@@ -485,6 +509,21 @@
 				]
 			});
 			app.register(dataSet_2);
+			
+			var dataSet_3 = new cpr.data.DataSet("ds_attr1");
+			dataSet_3.parseData({
+				"columns" : [
+					{
+						"name": "attr1_idx",
+						"dataType": "string"
+					},
+					{
+						"name": "attr1_category",
+						"dataType": "string"
+					}
+				]
+			});
+			app.register(dataSet_3);
 			var dataMap_1 = new cpr.data.DataMap("Result");
 			dataMap_1.parseData({
 				"columns" : [{"name": "ResultCode"}]
@@ -570,6 +609,16 @@
 				submission_4.addEventListener("submit-done", onSms_rptAttrSearchSubmitDone);
 			}
 			app.register(submission_4);
+			
+			var submission_5 = new cpr.protocols.Submission("sms_getAttr1");
+			submission_5.method = "get";
+			submission_5.action = "/bsmg/setting/attr1";
+			submission_5.addResponseData(dataSet_3, false);
+			submission_5.addResponseData(dataMap_1, false);
+			if(typeof onSms_getAttr1SubmitDone == "function") {
+				submission_5.addEventListener("submit-done", onSms_getAttr1SubmitDone);
+			}
+			app.register(submission_5);
 			
 			app.supportMedia("all and (min-width: 1024px)", "default");
 			app.supportMedia("all and (min-width: 500px) and (max-width: 1023px)", "tablet");
@@ -810,6 +859,18 @@
 										"color" : "#000000",
 										"font-weight" : "normal"
 									});
+									cell.control = (function(){
+										var comboBox_1 = new cpr.controls.ComboBox("cmb_attr1");
+										comboBox_1.readOnly = true;
+										(function(comboBox_1){
+											comboBox_1.setItemSet(app.lookup("ds_attr1"), {
+												"label": "attr1_category",
+												"value": "attr1_idx"
+											})
+										})(comboBox_1);
+										comboBox_1.bind("value").toDataColumn("rpt_attr1");
+										return comboBox_1;
+									})();
 								}
 							},
 							{
@@ -886,18 +947,18 @@
 						}
 					]
 				});
-				var comboBox_1 = new cpr.controls.ComboBox("cmb1");
-				comboBox_1.value = "0";
-				comboBox_1.fixedListWidth = true;
-				comboBox_1.placeholder = "전체";
-				comboBox_1.preventInput = true;
-				(function(comboBox_1){
-					comboBox_1.addItem(new cpr.controls.Item("전체", "0"));
-					comboBox_1.addItem(new cpr.controls.Item("제목", "1"));
-					comboBox_1.addItem(new cpr.controls.Item("내용", "2"));
-					comboBox_1.addItem(new cpr.controls.Item("보고자", "3"));
-				})(comboBox_1);
-				container.addChild(comboBox_1, {
+				var comboBox_2 = new cpr.controls.ComboBox("cmb1");
+				comboBox_2.value = "0";
+				comboBox_2.fixedListWidth = true;
+				comboBox_2.placeholder = "전체";
+				comboBox_2.preventInput = true;
+				(function(comboBox_2){
+					comboBox_2.addItem(new cpr.controls.Item("전체", "0"));
+					comboBox_2.addItem(new cpr.controls.Item("제목", "1"));
+					comboBox_2.addItem(new cpr.controls.Item("내용", "2"));
+					comboBox_2.addItem(new cpr.controls.Item("보고자", "3"));
+				})(comboBox_2);
+				container.addChild(comboBox_2, {
 					positions: [
 						{
 							"media": "all and (min-width: 1024px)",

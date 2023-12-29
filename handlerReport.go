@@ -18,6 +18,9 @@ func getReportSearchReq(c echo.Context) (err error) {
 
 	apiResponse := define.BsmgReportListResponse{}
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	var searchData define.SearchData
 
 	searchCombo := c.Request().FormValue("@d1#search_combo")
@@ -54,6 +57,9 @@ func getReportAttrSearchReq(c echo.Context) (err error) {
 
 	var apiResponse define.BsmgReportListResponse
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	attrData := define.AttrSearchData{}
 	attrValue, _ := strconv.Atoi(c.Request().FormValue("@d1#attrValue"))
 	attrData.AttrValue = int32(attrValue)
@@ -86,6 +92,9 @@ func getReportInfoReq(c echo.Context) (err error) {
 
 	var apiResponse define.BsmgReportInfoResponse
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	// 임시코드. 깔끔하게 수정하려면 get요청을 setParameter로 변경
 	idxData := c.Request().FormValue("@d1#rpt_idx")
 	rpt_idx, _ := strconv.Atoi(idxData)
@@ -108,6 +117,9 @@ func getScheduleReq(c echo.Context) (err error) {
 
 	var apiRespone define.BsmgScheduleListResponse
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	stringIdx := c.Request().FormValue("@d1#rpt_idx")
 	rptIdx, _ := strconv.Atoi(stringIdx)
 	scheduleList, err := server.dbManager.DBGorm.SelectScheduleList(int32(rptIdx))
@@ -127,6 +139,9 @@ func getWeekRptSearchReq(c echo.Context) (err error) {
 	log.Println("getWeekRptSearchReq")
 
 	var apiResponse define.BsmgWeekReportListResponse
+
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
 
 	pageInfo := define.PageInfo{}
 	offset, _ := strconv.Atoi(c.Request().FormValue("offset"))
@@ -158,6 +173,9 @@ func getWeekRptCategorySearch(c echo.Context) (err error) {
 
 	var apiResponse define.BsmgWeekReportListResponse
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	pageInfo := define.PageInfo{}
 	offset, _ := strconv.Atoi(c.Request().FormValue("offset"))
 	limit, _ := strconv.Atoi(c.Request().FormValue("limit"))
@@ -186,6 +204,9 @@ func getWeekRptInfoReq(c echo.Context) (err error) {
 
 	var apiResponse define.BsmgWeekReportInfoResponse
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	wRptIdx, _ := strconv.Atoi(c.Request().FormValue("@d1#wRpt_idx"))
 	// DB 처리
 	apiResponse.WeekReportInfo, err = server.dbManager.DBGorm.SelectWeekReportInfo(wRptIdx)
@@ -200,6 +221,9 @@ func getConfirmRptReq(c echo.Context) (err error) {
 	log.Println("getConfirmRptReq")
 
 	var apiRespone define.OnlyResult
+
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
 
 	rptIdx, _ := strconv.Atoi(c.Request().FormValue("@d1#rpt_idx"))
 
@@ -221,6 +245,9 @@ func postReportReq(c echo.Context) error {
 
 	apiRequest := define.BsmgReportInfoRequest{}
 	apiResponse := define.BsmgReportInfoResponse{}
+
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
 
 	// 세션으로 클라이언트 정보 Get
 	session, err := session.Get(sessionKey, c)
@@ -269,6 +296,9 @@ func postRegistScheduleReq(c echo.Context) (err error) {
 	apiRequest := define.BsmgPostScheduleRequest{}
 	apiRespone := define.OnlyResult{}
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	err = c.Bind(&apiRequest)
 	if err != nil {
 		apiRespone.Result.ResultCode = define.ErrorInvalidParameter
@@ -296,6 +326,10 @@ func putReportReq(c echo.Context) (err error) {
 
 	apiRequest := define.BsmgReportInfoRequest{}
 	apiResponse := define.BsmgReportInfoResponse{}
+
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	err = c.Bind(&apiRequest)
 	if err != nil {
 		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
@@ -334,6 +368,9 @@ func putScheduleReq(c echo.Context) (err error) {
 	apiRequest := define.BsmgPutScheduleRequest{}
 	apiResponse := define.OnlyResult{}
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	err = c.Bind(&apiRequest)
 	if err != nil {
 		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
@@ -371,6 +408,9 @@ func deleteReportReq(c echo.Context) (err error) {
 	log.Println("deleteReportReq ")
 	apiRespone := define.OnlyResult{}
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	rptIdxParam, _ := strconv.Atoi(c.Param("rptIdx"))
 	rptIdx := int32(rptIdxParam)
 
@@ -393,6 +433,9 @@ func deleteReportReq(c echo.Context) (err error) {
 func putWeekRptReq(c echo.Context) (err error) {
 	apiRequest := define.BsmgPutWeekReportRequest{}
 	apiResponse := define.OnlyResult{}
+
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
 
 	err = c.Bind(&apiRequest)
 	if err != nil {
@@ -428,6 +471,10 @@ func putWeekRptReq(c echo.Context) (err error) {
 
 func deleteWeekRptReq(c echo.Context) (err error) {
 	apiResponse := define.OnlyResult{}
+
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	wRptIdx, _ := strconv.Atoi(c.Param("wRptIdx"))
 
 	err = server.dbManager.DBGorm.DeleteWeekReport(wRptIdx)

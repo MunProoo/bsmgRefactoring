@@ -28,6 +28,9 @@ func postLoginRequest(c echo.Context) error {
 	apiRequest := &define.BsmgMemberLoginRequest{}
 	apiResponse := &define.BsmgMemberResponse{}
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	err := c.Bind(apiRequest)
 	if err != nil {
 		log.Printf("%v \n", err)

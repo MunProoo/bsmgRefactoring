@@ -14,6 +14,9 @@ func getUserListRequest(c echo.Context) error {
 
 	result := &define.BsmgMemberListResponse{}
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	// DB에서 가져오는거로 변경
 	userList, err := server.dbManager.DBGorm.SelectUserList()
 	if err != nil {
@@ -37,6 +40,9 @@ func getIdCheckRequest(c echo.Context) (err error) {
 	log.Println("getIdCheckRequest")
 
 	var apiResponse define.OnlyResult
+
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
 
 	// dm에 넣어서 전송중이므로 이렇게 받아야함.
 	// TODO : parameter로 추가 (offset처럼)
@@ -63,8 +69,11 @@ func getUserSearchRequest(c echo.Context) error {
 	log.Println("getUserSearchRequest")
 
 	var apiResponse define.BsmgMemberListResponse
-	var searchData define.SearchData
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
+	var searchData define.SearchData
 	searchCombo := c.Request().FormValue("@d1#search_combo")
 	combo, _ := strconv.Atoi(searchCombo)
 	searchData.SearchCombo = int32(combo)
@@ -90,8 +99,11 @@ func postUserReq(c echo.Context) error {
 
 	// var apiRequest define.BsmgMemberRequest
 	var apiResponse define.BsmgMemberResponse
+
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	var member *define.BsmgMemberInfo
-	server := c.Get("Server").(*ServerProcessor)
 
 	value, err := c.FormParams()
 	if err != nil {
@@ -127,6 +139,9 @@ func putUserReq(c echo.Context) error {
 	var apiRequest define.BsmgPutMemberRequest
 	var apiResponse define.OnlyResult
 
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
+
 	err := c.Bind(&apiRequest)
 	if err != nil {
 		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
@@ -150,6 +165,9 @@ func deleteUserReq(c echo.Context) (err error) {
 	log.Println("deleteUserReq")
 
 	var apiResponse define.OnlyResult
+
+	server.mutex.Lock()
+	defer server.mutex.Unlock()
 
 	memID := c.Param("memID")
 

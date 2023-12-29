@@ -231,7 +231,7 @@
 				if(result == 0){
 					alert('성공적으로 수정되었습니다.');
 					app.lookup("sms_getUserList").send();
-					app.lookup("sms_setRankPart").send();
+			//		app.lookup("sms_setRankPart").send();
 				}
 			}
 			

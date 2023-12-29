@@ -47,6 +47,7 @@ type DBInterface interface {
 	SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error)
 	SelectWeekReportCategorySearch(pageInfo define.PageInfo, partIdx int) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error)
 	SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWeekRptInfo, err error)
+	SelectAttr1List() (attr1List []define.BsmgAttr1Info, err error)
 
 	// Update
 	UpdateUser(member define.BsmgMemberInfo) error

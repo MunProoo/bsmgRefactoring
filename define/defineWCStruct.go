@@ -125,7 +125,6 @@ func (bs *BsmgScheduleInfoString) ParseSchedule() (schedule BsmgScheduleInfo) {
 type BsmgIncludeNameReport struct {
 	BsmgReportInfo
 	Reporter_Name string
-	ToRpt_Name    string
 }
 
 func (brName *BsmgIncludeNameReport) ChangeIDToName() {

@@ -28,8 +28,8 @@ func postLoginRequest(c echo.Context) error {
 	apiRequest := &define.BsmgMemberLoginRequest{}
 	apiResponse := &define.BsmgMemberResponse{}
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	// // server.mutex.Lock()
+	// // defer server.mutex.Unlock()
 
 	err := c.Bind(apiRequest)
 	if err != nil {
@@ -42,13 +42,19 @@ func postLoginRequest(c echo.Context) error {
 	member := apiRequest.Data.MemberInfo
 
 	// member 바뀌는지 확인 필요
-	err = server.dbManager.DBGorm.Login(&member)
+	err = server.dbManager.DBGorm.SelectMemberInfo(&member)
 	if err != nil {
 		if err.Error() == "record not found" {
 			// 웹에서 에러코드 통해서 아이디 혹은 비밀번호가 틀립니다로
 			apiResponse.Result.ResultCode = define.ErrorLoginFailed
 			return c.JSON(http.StatusOK, apiResponse)
 		}
+	}
+
+	match, err := comparePasswordAndHash(apiRequest.Data.MemberInfo.Mem_Password, member.Mem_Password)
+	if err != nil || !match {
+		apiResponse.Result.ResultCode = define.ErrorLoginFailed
+		return c.JSON(http.StatusOK, apiResponse)
 	}
 
 	apiResponse.Result.ResultCode = define.Success

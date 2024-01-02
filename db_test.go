@@ -107,3 +107,25 @@ func TestGetWeekRptList(t *testing.T) {
 	fmt.Printf("%v \n", rptList)
 	assert.NoError(t, err, "WeekRpt 가져오기 실패했다")
 }
+
+func TestAllMemberEncryptToArgon2(t *testing.T) {
+	// 모든 사용자 암호화 적용
+	server := ServerProcessor{}
+	err := server.ConnectDataBase()
+	assert.NoError(t, err, "DB 연결 실패")
+	defer server.dbManager.DBGorm.Release()
+
+	userList, err := server.dbManager.DBGorm.SelectUserList()
+	assert.NoError(t, err, "User Select 실패")
+	for _, user := range userList {
+		if user.Mem_ID == "argon2" {
+			continue
+		}
+		encodedHash, err := generateFromPassword(user.Mem_Password)
+		assert.NoError(t, err, "암호화 실패")
+
+		user.Mem_Password = encodedHash
+		server.dbManager.DBGorm.UpdateUser(user)
+
+	}
+}

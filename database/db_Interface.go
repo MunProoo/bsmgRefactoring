@@ -31,7 +31,7 @@ type DBInterface interface {
 	InsertWeekReport(wRptInfo define.BsmgWeekRptInfo) (err error)
 
 	// Select
-	Login(member *define.BsmgMemberInfo) (err error)
+	SelectMemberInfo(member *define.BsmgMemberInfo) (err error)
 	SelectRankList() (rankList []define.BsmgRankInfo, err error)
 	SelectPartist() (partList []define.BsmgPartInfo, err error)
 	SelectUserList() (userList []define.BsmgMemberInfo, err error)

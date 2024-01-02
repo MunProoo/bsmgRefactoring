@@ -13,6 +13,10 @@ func (dbm *DBGormMaria) UpdateUser(member define.BsmgMemberInfo) error {
 	setVal["mem_rank"] = member.Mem_Rank
 	setVal["mem_part"] = member.Mem_Part
 
+	// 비밀번호 변경은 원칙상 불가능하도록 할까..?
+	// ... 새로 UI랑 API 파자. 제대로 해야지
+	setVal["mem_password"] = member.Mem_Password
+
 	dbWhere := dbm.DB.Model(define.BsmgMemberInfo{})
 
 	err := dbWhere.Debug().Where("mem_id = ?", memID).Update(setVal).Error

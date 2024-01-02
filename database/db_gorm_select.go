@@ -7,9 +7,9 @@ import (
 	"strconv"
 )
 
-func (dbm *DBGormMaria) Login(member *define.BsmgMemberInfo) (err error) {
+func (dbm *DBGormMaria) SelectMemberInfo(member *define.BsmgMemberInfo) (err error) {
 	dbWhere := dbm.DB.Model(define.BsmgMemberInfo{}).
-		Debug().Where("mem_id = ? and mem_password = ? ", member.Mem_ID, member.Mem_Password).
+		Debug().Where("mem_id = ?", member.Mem_ID).
 		Find(&member)
 	err = dbWhere.Error
 	if err != nil {

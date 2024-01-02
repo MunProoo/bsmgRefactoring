@@ -14,8 +14,8 @@ func getUserListRequest(c echo.Context) error {
 
 	result := &define.BsmgMemberListResponse{}
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	// server.mutex.Lock()
+	// defer server.mutex.Unlock()
 
 	// DB에서 가져오는거로 변경
 	userList, err := server.dbManager.DBGorm.SelectUserList()
@@ -41,8 +41,8 @@ func getIdCheckRequest(c echo.Context) (err error) {
 
 	var apiResponse define.OnlyResult
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	// server.mutex.Lock()
+	// defer server.mutex.Unlock()
 
 	// dm에 넣어서 전송중이므로 이렇게 받아야함.
 	// TODO : parameter로 추가 (offset처럼)
@@ -70,8 +70,8 @@ func getUserSearchRequest(c echo.Context) error {
 
 	var apiResponse define.BsmgMemberListResponse
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	// server.mutex.Lock()
+	// defer server.mutex.Unlock()
 
 	var searchData define.SearchData
 	searchCombo := c.Request().FormValue("@d1#search_combo")
@@ -100,8 +100,8 @@ func postUserReq(c echo.Context) error {
 	// var apiRequest define.BsmgMemberRequest
 	var apiResponse define.BsmgMemberResponse
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	// server.mutex.Lock()
+	// defer server.mutex.Unlock()
 
 	var member *define.BsmgMemberInfo
 
@@ -119,6 +119,18 @@ func postUserReq(c echo.Context) error {
 		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
 		return c.JSON(http.StatusOK, apiResponse)
 	}
+
+	// argon2 사용하여 salting, hashing
+	// Pass the plaintext password and parameters to our generateFromPassword
+	encodedHash, err := generateFromPassword(member.Mem_Password)
+	if err != nil {
+		log.Printf("%v \n", err)
+		// TODO : 암호화 전용 에러코드 생성 필요
+		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+
+	member.Mem_Password = encodedHash
 
 	err = server.dbManager.DBGorm.InsertMember(*member)
 	if err != nil {
@@ -139,8 +151,8 @@ func putUserReq(c echo.Context) error {
 	var apiRequest define.BsmgPutMemberRequest
 	var apiResponse define.OnlyResult
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	// server.mutex.Lock()
+	// defer server.mutex.Unlock()
 
 	err := c.Bind(&apiRequest)
 	if err != nil {
@@ -166,8 +178,8 @@ func deleteUserReq(c echo.Context) (err error) {
 
 	var apiResponse define.OnlyResult
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	// server.mutex.Lock()
+	// defer server.mutex.Unlock()
 
 	memID := c.Param("memID")
 

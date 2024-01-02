@@ -130,7 +130,6 @@ type BsmgIncludeNameReport struct {
 
 func (brName *BsmgIncludeNameReport) ChangeIDToName() {
 	brName.Rpt_Reporter = brName.Reporter_Name
-	brName.Rpt_toRpt = brName.ToRpt_Name
 }
 
 type BsmgIncludeNameWeekReport struct {

@@ -12,4 +12,5 @@ const (
 	ErrorNotLoggedIn
 
 	ErrorNotAuthorizedUser
+	ErrorTokenCreationFailed
 )

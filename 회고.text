@@ -82,3 +82,13 @@ dbWhere := dbm.DB.Model(define.BsmgReportInfo{}).Debug().
 		dbWhere.Count(&totalCount)
 		dbWhere.Limit(limit).Offset(offset).Scan(&reportIncludeName)
 Find가 아닌 Scan인 것도 주의해야 한다
+
+// 데드락
+DB 작업을 하면서, server에 Mutex에 Lock을 걸었었는데, 서버가 먹통이 되었었다.
+아무 작업도 안하길래 왜 이런걸까 당황하다가, 이전에 서버 프로세서를 
+채널링을 통해 DB작업을 하려고 고루틴으로 돌린 게 기억났다.
+Server의 State를 Update하면서 Lock, Unlock을 하고 있더라.
+SetState에 Lock, Unlock을 하면 되는데 굳이 SetState를 호출하는 for문에서 Lock을 걸고 있어서
+무한으로 Lock, Unlock을 하고 있었던 것이다.
+작은 나만의 프로젝트여서 금방 찾았지, 큰 프로젝트였으면 상당히 찾기 힘들 것 같다.
+언제나 Mutex Lock을 걸때는 주의해야 겠다.

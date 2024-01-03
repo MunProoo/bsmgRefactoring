@@ -18,8 +18,7 @@ func initRouteGroup(bsmgGroup *echo.Group) {
 
 // Login Group
 func initLoginRoute(loginGroup *echo.Group) {
-	loginGroup.GET("/chkLogin", getChkLoginRequest)
-	loginGroup.POST("/login", postLoginRequest)
+	// loginGroup.GET("/chkLogin", getChkLoginRequest)
 	loginGroup.POST("/logout", postLogoutRequest)
 }
 

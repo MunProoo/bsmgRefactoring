@@ -1,5 +1,7 @@
 package define
 
+// Web에 Alert를 위한 에러 코드
+
 const (
 	Success = iota
 	ErrorInvalidParameter
@@ -13,4 +15,6 @@ const (
 
 	ErrorNotAuthorizedUser
 	ErrorTokenCreationFailed
+	ErrorCookieExtractionFailed
+	ErrorInvalidToken
 )

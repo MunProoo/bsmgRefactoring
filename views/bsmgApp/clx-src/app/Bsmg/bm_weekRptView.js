@@ -279,7 +279,7 @@ function onSms_chkLoginSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 			app.lookup("update").visible = true;
 			app.lookup("cancel").visible = true;
 			app.lookup("delete").visible = true;
-		} else if(mem_name == wRpt_toRpt || (mem_rank == '관리자' || mem_rank == '연구소장' || mem_rank == '부소장' )){
+		} else if(mem_name == wRpt_toRpt || (mem_rank < 4)){
 			
 		}
 		app.getContainer().redraw();

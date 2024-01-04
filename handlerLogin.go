@@ -2,7 +2,6 @@ package main
 
 import (
 	"BsmgRefactoring/define"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -15,15 +14,23 @@ func getChkLoginRequest(c echo.Context) error {
 	log.Println("getChkLogin Req")
 	var result define.BsmgMemberResponse
 
-	cookie, _ := c.Cookie("bsmgToken")
-	fmt.Println(cookie.Value)
-	tokn := cookie.Value
+	tokenString, err := extractJwtFromCookie(c)
+	if err != nil {
+		log.Printf("%v\n", err)
+		result.Result.ResultCode = define.ErrorCookieExtractionFailed
+		return c.JSON(http.StatusOK, result)
+	}
+
+	claims, err := extractClaimsFromToken(tokenString)
+	if err != nil {
+		log.Printf("%v\n", err)
+		result.Result.ResultCode = define.ErrorInvalidToken
+		return c.JSON(http.StatusOK, result)
+	}
+
 	// 쿠키에서 꺼내서 String 형태인데 JWT 어떻게 사용하지
 	/*
-		JWT처리로 변경 해야함!!!
-
-
-
+		세샤션처리
 			isAuthenticated := checkSession(c)
 			if !isAuthenticated {
 				result.Result.ResultCode = define.ErrorInvalidParameter

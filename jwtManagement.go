@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -50,6 +52,7 @@ func makeJwtToken(claims *MemberClaims) (string, error) {
 	return t, err
 }
 
+// JWT 토큰 쿠키 생성
 func createCookie(c echo.Context, claims *MemberClaims, token string) {
 	// 쿠키 (클라이언트가 따로 저장하는 수고를 덜기 위해서...)
 	cookie := new(http.Cookie)
@@ -59,6 +62,7 @@ func createCookie(c echo.Context, claims *MemberClaims, token string) {
 	c.SetCookie(cookie)
 }
 
+// JWT 토큰 쿠키 삭제
 func deleteCookie(c echo.Context) {
 	// 만료기간을 이전날짜로 하여 쿠키 삭제
 	expire := time.Now().AddDate(0, 0, -1)
@@ -68,4 +72,43 @@ func deleteCookie(c echo.Context) {
 	cookie.Value = ""
 	cookie.Expires = expire
 	c.SetCookie(cookie)
+}
+
+// 쿠키에서 JWT 토큰 추출
+func extractJwtFromCookie(c echo.Context) (string, error) {
+	cookie, err := c.Cookie("bsmgToken")
+	if err != nil {
+		return "", err
+	}
+
+	jwtTokenString := cookie.Value
+	return jwtTokenString, nil
+}
+
+// JWT 토큰에서 클레임 추출
+func extractClaimsFromToken(tokenString string) (jwt.MapClaims, error) {
+	// 토큰 파싱
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+
+		// 토큰의 서명방식 확인  default :  HMAC SHA256 == HS256
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+
+		// 이곳에서 토큰을 검증하는데 사용되는 key를 반환
+		return []byte(myJWTKey), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// 클레임 추출
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return nil, errors.New("Invalid token")
+	}
+
+	return claims, nil
+
 }

@@ -65,12 +65,14 @@ func main() {
 	// 	ContextKey: "member", // nonselection -> default : user
 	// 	SigningKey: []byte(myJWTKey),
 	// }))
-	// URL 그룹화
+
+	// URL 그룹화 + JWT 미들웨어 적용
 	bsmgGroup := e.Group("/bsmg", echojwt.WithConfig(echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(MemberClaims)
 		},
-		// ContextKey: "member", // nonselection -> default : user
+		// ContextKey: "member", // 클레임의 이름 . default : user
+		// SigningMethod: "RS256",      // 토큰 서명 방식 . defaelt : HMAC SHA-256 (HS256)
 		SigningKey: []byte(myJWTKey),
 		// TokenLookup: "header:Auth", // 헤더이름 Auth, Value에 Bearer 안써도 되게
 		TokenLookup: "cookie:bsmgToken",

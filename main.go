@@ -21,7 +21,7 @@ func init() {
 }
 
 func main() {
-	// TODO : server를 goroutine으로 돌려야함
+	// TODO : server를 goroutine으로 돌리기
 	// DB 채널통신 테스트중
 	server.reqCh = make(chan interface{}, 6000)
 	server.resCh = make(chan interface{}, 6000)
@@ -46,8 +46,6 @@ func main() {
 			return next(c)
 		}
 	})
-	/* 세션관련 코드
-	 */
 
 	e.GET("/", func(c echo.Context) error {
 		return c.File("index.html")
@@ -57,15 +55,6 @@ func main() {
 	e.POST("/bsmg/login/login", postLoginRequest)
 	e.GET("/bsmg/login/chkLogin", getChkLoginRequest)
 
-	// 세션이 아닌 JWT로 변경
-	// e.Use(echojwt.WithConfig(echojwt.Config{
-	// 	NewClaimsFunc: func(c echo.Context) jwt.Claims {
-	// 		return new(MemberClaims)
-	// 	},
-	// 	ContextKey: "member", // nonselection -> default : user
-	// 	SigningKey: []byte(myJWTKey),
-	// }))
-
 	// URL 그룹화 + JWT 미들웨어 적용
 	bsmgGroup := e.Group("/bsmg", echojwt.WithConfig(echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
@@ -73,10 +62,19 @@ func main() {
 		},
 		// ContextKey: "member", // 클레임의 이름 . default : user
 		// SigningMethod: "RS256",      // 토큰 서명 방식 . defaelt : HMAC SHA-256 (HS256)
-		SigningKey: []byte(myJWTKey),
+		SigningKey: []byte(AccessTokenKey),
 		// TokenLookup: "header:Auth", // 헤더이름 Auth, Value에 Bearer 안써도 되게
-		TokenLookup: "cookie:bsmgToken",
-	}))
+		TokenLookup: "cookie:AC_bsmgCookie",
+	}),
+		echojwt.WithConfig(echojwt.Config{
+			NewClaimsFunc: func(c echo.Context) jwt.Claims {
+				return new(MemberClaims)
+			},
+			SigningKey: []byte(RefreshTokenKey),
+			// TokenLookup: "header:Auth", // 헤더이름 Auth, Value에 Bearer 안써도 되게
+			TokenLookup: "cookie:RS_bsmgCookie",
+		}),
+	)
 	// Route
 	initRouteGroup(bsmgGroup)
 

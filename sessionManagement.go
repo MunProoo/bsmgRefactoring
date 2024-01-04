@@ -137,6 +137,7 @@ func deleteSession(c echo.Context) {
 	// delete session
 	session.Values["authenticated"] = false
 	session.Values["Member"] = nil
+	session.Options.MaxAge = -1
 	session.Save(c.Request(), c.Response())
 }
 
@@ -154,4 +155,21 @@ func getSessionData(c echo.Context) (result define.BsmgMemberResponse) {
 	result.MemberInfo.Mem_Rank = member.Mem_Rank
 	result.MemberInfo.Mem_Part = member.Mem_Part
 	return
+}
+
+func isNotDuplicateLogin(c echo.Context, loginID string) bool {
+	session, err := session.Get(sessionKey, c)
+	if err != nil {
+		log.Printf("%v", err)
+		return false
+	}
+
+	member, exist := session.Values["Member"]
+	if !exist {
+		return true
+	}
+
+	sessionID := member.(define.BsmgMemberInfo).Mem_ID
+
+	return sessionID != loginID
 }

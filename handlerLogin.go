@@ -12,35 +12,36 @@ import (
 // 로그인 중인지 확인
 func getChkLoginRequest(c echo.Context) error {
 	log.Println("getChkLogin Req")
-	var result define.BsmgMemberResponse
+	var apiResponse define.BsmgMemberResponse
 
-	tokenString, err := extractJwtFromCookie(c)
+	// JWT 검증  ------------------------------------------
+
+	claims, err := checkToken(c)
 	if err != nil {
 		log.Printf("%v\n", err)
-		result.Result.ResultCode = define.ErrorCookieExtractionFailed
-		return c.JSON(http.StatusOK, result)
+		apiResponse.Result.ResultCode = define.ErrorInvalidToken
+		return c.JSON(http.StatusOK, apiResponse)
 	}
 
-	claims, err := extractClaimsFromToken(tokenString)
+	err = apiResponse.MemberInfo.ParsingClaim(claims)
 	if err != nil {
 		log.Printf("%v\n", err)
-		result.Result.ResultCode = define.ErrorInvalidToken
-		return c.JSON(http.StatusOK, result)
+		apiResponse.Result.ResultCode = define.ErrorInvalidToken
+		return c.JSON(http.StatusOK, apiResponse)
 	}
 
-	// 쿠키에서 꺼내서 String 형태인데 JWT 어떻게 사용하지
 	/*
-		세샤션처리
-			isAuthenticated := checkSession(c)
-			if !isAuthenticated {
-				result.Result.ResultCode = define.ErrorInvalidParameter
-			} else {
+		세션을 통한 사용자 정보 Get은 필요없음
+		isAuthenticated := checkSession(c)
+		if !isAuthenticated {
+			result.Result.ResultCode = define.ErrorInvalidParameter
+		} else {
 
-				result = getSessionData(c)
-				result.Result.ResultCode = define.Success
-			}
+			result = getSessionData(c)
+			result.Result.ResultCode = define.Success
+		}
 	*/
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, apiResponse)
 }
 
 func postLoginRequest(c echo.Context) error {
@@ -71,12 +72,20 @@ func postLoginRequest(c echo.Context) error {
 		}
 	}
 
+	// 비밀번호 매칭 확인
 	match, err := comparePasswordAndHash(apiRequest.Data.MemberInfo.Mem_Password, member.Mem_Password)
 	if err != nil || !match {
 		apiResponse.Result.ResultCode = define.ErrorLoginFailed
 		return c.JSON(http.StatusOK, apiResponse)
 	}
-	// 인증 성공 ---
+	// 인증 성공 ----------------------
+
+	// 중복 로그인 확인
+	if !isNotDuplicateLogin(c, member.Mem_ID) {
+		log.Printf("%v \n", "중복 로그인입니다.")
+		apiResponse.Result.ResultCode = define.ErrorLoginFailed
+		return c.JSON(http.StatusOK, apiResponse)
+	}
 
 	apiResponse.Result.ResultCode = define.Success
 	apiResponse.MemberInfo = member
@@ -89,22 +98,22 @@ func postLoginRequest(c echo.Context) error {
 		member.Mem_Rank,
 		member.Mem_Part,
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)),
 		},
 	}
-	token, err := makeJwtToken(claims)
+
+	// AccessToken, RefreshToken , 쿠키 생성
+	makeJwtToken(c, claims)
 	if err != nil {
 		apiResponse.Result.ResultCode = define.ErrorTokenCreationFailed
 		return c.JSON(http.StatusOK, apiResponse)
 	}
 
-	createCookie(c, claims, token)
-
 	// 세션 생성
 	createSession(c, &apiResponse.MemberInfo)
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"token":         token, // 쿠키에 저장하면 안보내도 되긴 함
+		// "token":         token, // 쿠키에 저장하면 안보내도 되긴 함
 		"dm_memberInfo": apiResponse.MemberInfo,
 		"Result":        apiResponse.Result,
 	})
@@ -113,9 +122,10 @@ func postLoginRequest(c echo.Context) error {
 func postLogoutRequest(c echo.Context) error {
 	log.Println("postLogoutRequest")
 	result := define.OnlyResult{}
-	// 에러코드 정리 필요
 
-	deleteCookie(c)
+	deleteCookie(c, AccessCookieName)
+	deleteCookie(c, RefreshCookieName)
+
 	deleteSession(c)
 	result.Result.ResultCode = define.Success
 

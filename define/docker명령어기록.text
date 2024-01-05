@@ -1,9 +1,0 @@
-1. Dockerfile로 내 이미지 빌드 환경 구성
-2. docker-compose.yml 로 앱과 DB 컨테이너 구성 및 연결
-
-3. docker-compose up -d 
-4. docker-compose logs 
-
-5. mariaDB 컨테이너에 DB 복원
-docker cp BSMG_2024-01-06.sql bsmgDB:/backup.sql
-docker exec -i bsmgDB mariadb -u root -p0000 BSMG < backup.sql

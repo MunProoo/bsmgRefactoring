@@ -1,0 +1,41 @@
+## 도커로 환경 구성
+1. Dockerfile로 내 이미지 빌드 환경 구성
+2. docker-compose.yml 로 앱과 DB 컨테이너 구성 및 연결
+
+3. docker-compose up -d 
+4. docker-compose logs 
+
+5. mariaDB 컨테이너에 DB 복원
+docker cp BSMG_2024-01-06.sql bsmgDB:/backup.sql
+docker exec -it bsmgDB bash 
+    
+    mariadb -u root -p0000 BSMG < backup.sql
+
+## 클라우드 서버 생성
+1. 포트 열기
+2. 내 레포지토리에서 zip파일로 받아오기
+    wget https://github.com/MunProoo/bsmgRefactoring/archive/master.zip
+3. docker 설치하기
+#시스템 패키지 업데이트 
+sudo apt update
+sudo apt upgrade -y
+
+#도커 필요 패키지 설치
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+#도커 GPG 키 추가
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+#도커 APT저장소 추가
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+#시스템 패키지 업데이트 
+sudo apt update
+
+#도커 설치
+sudo apt install -y docker-ce docker-ce-cli containerd.io
+#도커 서비스 시작 및 부팅 시 자동 실행
+sudo systemctl start docker
+sudo systemctl enable docker
+
+4. 내 DB백업본 전송 
+# 깃에 있으니까 굳이 필요는 없지만 깃에 안올리는게 좋을거같아서..?
+scp BSMG_2024-01-06.sql root@158.247.195.94:/backup.sql

@@ -117,8 +117,11 @@
 		globals.ErrorDataBase                   = 3 // Database 에러
 		globals.ErrorDuplicatedID               = 4 // ID 중복
 		globals.ErrorLoginFailed     			= 5 // 로그인 실패
-		globals.ErrorNotLoggedIn                = 6 // 로그인하지 않은 상태
-		globals.ErrorNotAuthorizedUser          = 7 // 권한이 없음
+		globals.ErrorLoginDuplication     			= 6 // 로그인 중복
+		globals.ErrorNotLoggedIn                = 7 // 로그인하지 않은 상태
+		globals.ErrorNotAuthorizedUser          = 8 // 권한이 없음
+		globals.ErrorTokenCreationFailed          = 9 // 토큰 생성 실패
+		globals.ErrorInvalidToken          = 10 // 유효하지 않은 토큰
 		
 		
 		globals.getErrorString = function( errCode ){
@@ -130,7 +133,10 @@
 				case ErrorDataBase: 					errMsg = "Database 에러입니다."; break;
 				case ErrorLoginFailed:                 		errMsg = "아이디 혹은 비밀번호가 다릅니다."; break;
 				case ErrorNotLoggedIn: 								errMsg = "ID가 중복되었습니다."; break; 
+				case ErrorLoginDuplication: 								errMsg = "이미 로그인 중입니다."; break; 
 				case ErrorNotAuthorizedUser: 								errMsg = "권한이 없습니다."; break; 
+				case ErrorTokenCreationFailed: 								errMsg = "로그인에 실패하였습니다."; break; 
+				case ErrorInvalidToken: 								errMsg = "유효하지 않은 정보입니다. (토큰)"; break; 
 				default : errMsg = "정의되지 않은 에러"; break;
 			}
 			return errMsg;

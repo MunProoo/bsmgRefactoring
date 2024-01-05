@@ -118,3 +118,42 @@ function onSms_chkLoginSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 		console.log("로그인 안됨");
 	}
 }
+
+
+/*
+ * 서브미션에서 submit-error 이벤트 발생 시 호출.
+ * 통신 중 문제가 생기면 발생합니다.
+ */
+function onSms_chkLoginSubmitError(/* cpr.events.CSubmissionEvent */ e){
+	/** 
+	 * @type cpr.protocols.Submission
+	 */
+	var sms_chkLogin = e.control;
+	
+}
+
+
+/*
+ * 서브미션에서 error-status 이벤트 발생 시 호출.
+ * 서버로 부터 에러로 분류되는 HTTP상태 코드를 전송받았을 때 발생합니다.
+ */
+function onSms_loginErrorStatus(/* cpr.events.CSubmissionEvent */ e){
+	/** 
+	 * @type cpr.protocols.Submission
+	 */
+	var sms_login = e.control;
+	alert("권한이 없습니다. (토큰 Error)");
+}
+
+
+/*
+ * 서브미션에서 error-status 이벤트 발생 시 호출.
+ * 서버로 부터 에러로 분류되는 HTTP상태 코드를 전송받았을 때 발생합니다.
+ */
+function onSms_chkLoginErrorStatus(/* cpr.events.CSubmissionEvent */ e){
+	/** 
+	 * @type cpr.protocols.Submission
+	 */
+	var sms_chkLogin = e.control;
+	alert("권한이 없습니다. (토큰 Error)");
+}

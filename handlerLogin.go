@@ -83,7 +83,7 @@ func postLoginRequest(c echo.Context) error {
 	// 중복 로그인 확인
 	if !isNotDuplicateLogin(c, member.Mem_ID) {
 		log.Printf("%v \n", "중복 로그인입니다.")
-		apiResponse.Result.ResultCode = define.ErrorLoginFailed
+		apiResponse.Result.ResultCode = define.ErrorLoginDuplication
 		return c.JSON(http.StatusOK, apiResponse)
 	}
 

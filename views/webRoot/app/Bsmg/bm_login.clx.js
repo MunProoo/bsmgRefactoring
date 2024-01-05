@@ -130,6 +130,45 @@
 				} else {
 					console.log("로그인 안됨");
 				}
+			}
+			
+			
+			/*
+			 * 서브미션에서 submit-error 이벤트 발생 시 호출.
+			 * 통신 중 문제가 생기면 발생합니다.
+			 */
+			function onSms_chkLoginSubmitError(/* cpr.events.CSubmissionEvent */ e){
+				/** 
+				 * @type cpr.protocols.Submission
+				 */
+				var sms_chkLogin = e.control;
+				
+			}
+			
+			
+			/*
+			 * 서브미션에서 error-status 이벤트 발생 시 호출.
+			 * 서버로 부터 에러로 분류되는 HTTP상태 코드를 전송받았을 때 발생합니다.
+			 */
+			function onSms_loginErrorStatus(/* cpr.events.CSubmissionEvent */ e){
+				/** 
+				 * @type cpr.protocols.Submission
+				 */
+				var sms_login = e.control;
+				alert("권한이 없습니다. (토큰 Error)");
+			}
+			
+			
+			/*
+			 * 서브미션에서 error-status 이벤트 발생 시 호출.
+			 * 서버로 부터 에러로 분류되는 HTTP상태 코드를 전송받았을 때 발생합니다.
+			 */
+			function onSms_chkLoginErrorStatus(/* cpr.events.CSubmissionEvent */ e){
+				/** 
+				 * @type cpr.protocols.Submission
+				 */
+				var sms_chkLogin = e.control;
+				alert("권한이 없습니다. (토큰 Error)");
 			};
 			// End - User Script
 			
@@ -169,6 +208,9 @@
 			if(typeof onSms_loginSubmitDone == "function") {
 				submission_1.addEventListener("submit-done", onSms_loginSubmitDone);
 			}
+			if(typeof onSms_loginErrorStatus == "function") {
+				submission_1.addEventListener("error-status", onSms_loginErrorStatus);
+			}
 			app.register(submission_1);
 			
 			var submission_2 = new cpr.protocols.Submission("sms_chkLogin");
@@ -178,6 +220,12 @@
 			submission_2.addResponseData(dataMap_1, false);
 			if(typeof onSms_chkLoginSubmitDone == "function") {
 				submission_2.addEventListener("submit-done", onSms_chkLoginSubmitDone);
+			}
+			if(typeof onSms_chkLoginSubmitError == "function") {
+				submission_2.addEventListener("submit-error", onSms_chkLoginSubmitError);
+			}
+			if(typeof onSms_chkLoginErrorStatus == "function") {
+				submission_2.addEventListener("error-status", onSms_chkLoginErrorStatus);
 			}
 			app.register(submission_2);
 			

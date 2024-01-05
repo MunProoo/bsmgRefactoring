@@ -12,9 +12,9 @@ const (
 	ErrorDuplicatedID
 	ErrorLoginFailed
 	ErrorNotLoggedIn
+	ErrorLoginDuplication
 
 	ErrorNotAuthorizedUser
 	ErrorTokenCreationFailed
-	ErrorCookieExtractionFailed
 	ErrorInvalidToken
 )

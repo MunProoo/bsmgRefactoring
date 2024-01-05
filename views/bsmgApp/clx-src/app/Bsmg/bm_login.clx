@@ -22,12 +22,15 @@
       </cl:datamap>
       <cl:submission std:sid="submission-a61df254" id="sms_login" action="/bsmg/login/login" mediatype="application/json">
         <cl:listener std:sid="listener-fad8053f" name="submit-done" handler="onSms_loginSubmitDone"/>
+        <cl:listener std:sid="listener-658a2a55" name="error-status" handler="onSms_loginErrorStatus"/>
         <cl:requestdata dataid="dm_memberInfo"/>
         <cl:responsedata dataid="Result"/>
         <cl:responsedata dataid="dm_memberInfo"/>
       </cl:submission>
       <cl:submission std:sid="submission-2f62b1b9" id="sms_chkLogin" method="get" action="/bsmg/login/chkLogin">
         <cl:listener std:sid="listener-dbfefb4f" name="submit-done" handler="onSms_chkLoginSubmitDone"/>
+        <cl:listener std:sid="listener-1453bf2c" name="submit-error" handler="onSms_chkLoginSubmitError"/>
+        <cl:listener std:sid="listener-72534ff6" name="error-status" handler="onSms_chkLoginErrorStatus"/>
         <cl:responsedata dataid="Result"/>
         <cl:responsedata dataid="dm_memberInfo"/>
       </cl:submission>

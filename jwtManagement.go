@@ -145,6 +145,7 @@ func extractClaimsFromToken(tokenString, tokenKey string) (jwt.MapClaims, error)
 
 // 토큰 만료시간 체크
 // true : 살아있음 , false : 만료됨
+// 내 프로젝트는 쿠키에 토큰을 저장하고, 쿠키는 만료시간이 다되면 자동삭제니까 내 프로젝트에선 필요없음
 func isExpired(claims jwt.MapClaims) (expired bool) {
 	exp, exist := claims["exp"].(float64)
 	if !exist {
@@ -166,21 +167,14 @@ func isExpired(claims jwt.MapClaims) (expired bool) {
 func checkToken(c echo.Context) (jwt.MapClaims, error) {
 	// accessToken 검증
 	accessClaims, err := ExtractClaims(c, "AC")
-	if err != nil {
-		return nil, err
-	}
+	if err == nil || err.Error() == "http: named cookie not present" {
+		// accessToken 쿠키가 만료되서 사라짐
+		refreshClaims, err := ExtractClaims(c, "RS")
+		if err != nil {
+			return nil, err
+		}
 
-	if isExpired(accessClaims) {
-		return accessClaims, nil
-	}
-
-	// accessToken 만료됐으니 refreshToken 검증
-	refreshClaims, err := ExtractClaims(c, "RS")
-	if err != nil {
-		return nil, err
-	}
-
-	if isExpired(refreshClaims) {
+		// claims 재생성
 		memberClaims, err := ClaimsMappingMember(refreshClaims)
 		if err != nil {
 			return nil, err
@@ -189,8 +183,12 @@ func checkToken(c echo.Context) (jwt.MapClaims, error) {
 		// 토큰 재발급
 		makeJwtToken(c, &memberClaims)
 		return accessClaims, nil
+		/*
+			if isExpired(refreshClaims) {
+				return accessClaims, nil
+			}
+		*/
 	}
-
 	return nil, errors.New("token is expired")
 
 }

@@ -60,8 +60,9 @@ func (dbm *DBGormMaria) IsConnected() (err error) {
 
 // DB 존재여부 확인
 func (DBGorm *DBGormMaria) IsExistBSMG() error {
+	dbname := DBGorm.DBConfig.DatabaseName
 	var count int64
-	err := DBGorm.DB.Table("INFORMATION_SCHEMA.SCHEMATA").Where("SCHEMA_NAME = ?", DBNAME).Count(&count).Error
+	err := DBGorm.DB.Table("INFORMATION_SCHEMA.SCHEMATA").Where("SCHEMA_NAME = ?", dbname).Count(&count).Error
 	if err != nil {
 		return err
 	}
@@ -77,7 +78,8 @@ func (DBGorm *DBGormMaria) IsExistBSMG() error {
 
 // BSMG DB 생성
 func (dbm *DBGormMaria) CreateDataBase() error {
-	createQuery := fmt.Sprintf("CREATE DATABASE %s", DBNAME)
+	dbname := dbm.DBConfig.DatabaseName
+	createQuery := fmt.Sprintf("CREATE DATABASE %s", dbname)
 	err := dbm.DB.Exec(createQuery).Error
 	if err != nil {
 		// 로그
@@ -96,7 +98,8 @@ func (dbm *DBGormMaria) ConnectBSMG() (err error) {
 	pw := dbm.DBConfig.DatabasePW
 	ip := dbm.DBConfig.DatabaseIP
 	port := dbm.DBConfig.DatabasePort
-	connectionString := fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local`, id, pw, ip, port, DBNAME)
+	dbname := dbm.DBConfig.DatabaseName
+	connectionString := fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local`, id, pw, ip, port, dbname)
 	dbm.DB, err = gorm.Open("mysql", connectionString)
 	if err != nil {
 		return err

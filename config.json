@@ -1,0 +1,13 @@
+{
+    "Database": {
+      "host": "db",
+      "port": "3306",
+      "user": "root",
+      "password": "0000",
+      "dbname": "BSMG"
+    },
+    "Cron" : {
+        "spec":"05 00 * * THU"
+    } 
+  }
+

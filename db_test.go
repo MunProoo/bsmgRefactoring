@@ -5,6 +5,7 @@ import (
 	"BsmgRefactoring/utils"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -128,4 +129,10 @@ func TestAllMemberEncryptToArgon2(t *testing.T) {
 		server.dbManager.DBGorm.UpdateUser(user)
 
 	}
+}
+
+func TestGetWeekRptTitle(t *testing.T) {
+	now := time.Now()
+	title := utils.GetWeekRptTitle("이름", now)
+	fmt.Println(title)
 }

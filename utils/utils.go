@@ -34,7 +34,7 @@ func GetDate() (string, string, string, time.Time) {
 
 // 주간업무보고 제목
 func GetWeekRptTitle(mem_name string, t time.Time) string {
-	t = t.AddDate(0, 0, -1) // t객체가 3일 후인 다음주로 들어오므로 이번 주로 변경
+	t = t.AddDate(0, 0, -3) // t객체가 3일 후인 다음주로 들어오므로 이번 주로 변경
 
 	month := t.Format("200601020000")[4:6]
 	nWeek := times.GetNthWeekOfMonth(t)

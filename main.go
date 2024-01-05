@@ -22,10 +22,7 @@ func init() {
 
 func main() {
 	// TODO : server를 goroutine으로 돌리기
-	// DB 채널통신 테스트중
-	server.reqCh = make(chan interface{}, 6000)
-	server.resCh = make(chan interface{}, 6000)
-
+	server.InitServer()
 	go server.StartServer()
 
 	e := echo.New()
@@ -33,8 +30,8 @@ func main() {
 	// middleware ------------------------------------
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	// e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
-	e.Use(middleware.Static("views/bsmgApp/webRoot")) // 빠른 디버깅용. 배포위치를 변경하여 front 수정 시 바로 반영되도록
+	e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
+	// e.Use(middleware.Static("views/bsmgApp/webRoot")) // 빠른 디버깅용. 배포위치를 변경하여 front 수정 시 바로 반영되도록
 
 	e.Use(session.Middleware(store)) // 세션 미들웨어 추가
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {

@@ -1,0 +1,28 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+    container_name: bsmg
+    ports:
+      - "8080:3000"
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:latest
+    container_name: bsmgDB
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "0000"
+    command:
+          - --default-authentication-plugin=mysql_native_password
+          - --character-set-server=utf8mb4
+          - --collation-server=utf8mb4_unicode_ci
+          - --skip-character-set-client-handshake
+          - --max_allowed_packet=256M
+    volumes:
+      - db_data:/var/lib/mysql
+volumes:
+  db_data:

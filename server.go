@@ -11,6 +11,7 @@ func (server *ServerProcessor) InitServer() {
 	// 음 채널링 써보고싶은데
 	server.reqCh = make(chan interface{}, 1000)
 	server.resCh = make(chan interface{}, 1000)
+	server.Config = &define.Config{}
 
 	// cron을 여기서 만들어야 하나? new로 만들면 괜찮을거같은데
 }
@@ -22,6 +23,13 @@ func (server *ServerProcessor) StartServer() {
 	for {
 		switch server.State {
 		case define.StateInit:
+			err = server.LoadConfig()
+			if err != nil {
+				log.Printf("%v \n ", err)
+				time.Sleep(100 * time.Millisecond)
+				continue
+			}
+
 			err = server.ConnectDataBase()
 			if err != nil {
 				log.Printf("%v \n ", err)
@@ -30,8 +38,10 @@ func (server *ServerProcessor) StartServer() {
 			}
 			server.SetState(define.StateConnected)
 
-		case define.StateConnected: // DB 쿼리용 고루틴 생성
-			go server.DBQuery() //
+		case define.StateConnected:
+			go server.DBQuery() // 1.DB 쿼리용 고루틴 생성 (미정)
+			server.CreateCron() // 2.주간보고 스케쥴러 생성
+
 			server.SetState(define.StateRunning)
 
 		case define.StateRunning: // DB 연결중임을 확인

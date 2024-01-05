@@ -1,11 +1,11 @@
 package define
 
 type DBConfig struct {
-	DatabaseIP       string
-	DatabasePort     string
-	DatabaseID       string
-	DatabasePW       string
-	ServerListenPort int
+	DatabaseIP   string `json:"host"`
+	DatabasePort string `json:"port"`
+	DatabaseID   string `json:"user"`
+	DatabasePW   string `json:"password"`
+	DatabaseName string `json:"dbname"`
 }
 
 // 멤버 구조체 객체

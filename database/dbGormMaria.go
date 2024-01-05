@@ -11,32 +11,21 @@ import (
 	"github.com/blue1004jy/gorm"
 )
 
-const (
-	DBNAME = "BSMG"
-)
-
 type DatabaseManager struct {
 	DBGorm DBInterface
 }
 
 type DBGormMaria struct {
 	DB       *gorm.DB
-	DBConfig define.DBConfig
+	DBConfig define.DBConfig `json:"database"`
 }
 
-func (dbManager *DatabaseManager) InitDBManager() (err error) {
-	// 필요? -------------------------
-	// 메모리에 저장하자 AES 256해서
-
+func (dbManager *DatabaseManager) InitDBManager(config define.DBConfig) (err error) {
 	// mariaDB 연결
 	log.Println("Connect DB ... ")
+
 	dbManager.DBGorm = &DBGormMaria{
-		DBConfig: define.DBConfig{
-			DatabaseIP:   "127.0.0.1",
-			DatabaseID:   "root",
-			DatabasePW:   "12345",
-			DatabasePort: "3306",
-		},
+		DBConfig: config,
 	}
 	err = dbManager.DBGorm.ConnectMariaDB()
 	if err != nil {
@@ -60,6 +49,13 @@ func (dbManager *DatabaseManager) InitDBManager() (err error) {
 			log.Printf("CreateDataBase Failed . err = %v\n", err)
 		}
 
+		err = dbManager.DBGorm.ConnectBSMG()
+		if err != nil {
+			// 로그
+			// Database connect Failed
+			log.Printf("Database connect Failed . err = %v\n", err)
+			return
+		}
 		// 테이블 생성
 		log.Println("Create Tables ... ")
 		err = dbManager.CreateTables()
@@ -144,7 +140,7 @@ func (dbManager *DatabaseManager) MakeWeekRpt(bef7d, bef1d, now string, t time.T
 		weekContent := strings.Builder{}         // 주간보고 내용물
 		for _, report := range rptList {
 			weekContent.WriteString("📆")
-			weekContent.WriteString(report.Rpt_date + "\n")
+			weekContent.WriteString(report.Rpt_date[:8] + "\n")
 			weekContent.WriteString(report.Rpt_content + "\n")
 
 			findOmission.SetRptDate(report.Rpt_date) // 보고가 있는 날짜는 map에서 true로 변경

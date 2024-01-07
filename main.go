@@ -4,6 +4,10 @@ package main
 
 import (
 	"BsmgRefactoring/define"
+	"BsmgRefactoring/handler"
+	md "BsmgRefactoring/middleware"
+	"BsmgRefactoring/server"
+
 	"encoding/gob"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -13,7 +17,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-var server ServerProcessor // 핸들러에서도 접근 가능하도록 전역으로 할당
+// var server ServerProcessor // 핸들러에서도 접근 가능하도록 전역으로 할당
 
 func init() {
 	// Gob에 BsmgMemberInfo 타입 등록
@@ -22,7 +26,7 @@ func init() {
 
 func main() {
 	// TODO : server를 goroutine으로 돌리기
-	server.InitServer()
+	server := server.InitServer()
 	go server.StartServer()
 
 	e := echo.New()
@@ -33,13 +37,13 @@ func main() {
 	e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
 	// e.Use(middleware.Static("views/bsmgApp/webRoot")) // 빠른 디버깅용. 배포위치를 변경하여 front 수정 시 바로 반영되도록
 
-	e.Use(session.Middleware(store)) // 세션 미들웨어 추가
+	e.Use(session.Middleware(md.Store)) // 세션 미들웨어 추가
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			// 세션 초기화
-			initSessionMiddleware(c)
+			md.InitSessionMiddleware(c)
 			// 스레드 안정성을 고려하여 서버 변수를 컨텍스트에 할당
-			c.Set("Server", &server)
+			c.Set("Server", server)
 			return next(c)
 		}
 	})
@@ -49,31 +53,31 @@ func main() {
 	})
 
 	// login API만 JWT 인증 제외하기 위해 JWT 미들웨어보다 먼저 선언
-	e.POST("/bsmg/login/login", postLoginRequest)
-	e.GET("/bsmg/login/chkLogin", getChkLoginRequest)
+	e.POST("/bsmg/login/login", handler.PostLoginRequest)
+	e.GET("/bsmg/login/chkLogin", handler.GetChkLoginRequest)
 
 	// URL 그룹화 + JWT 미들웨어 적용
 	bsmgGroup := e.Group("/bsmg", echojwt.WithConfig(echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(MemberClaims)
+			return new(md.MemberClaims)
 		},
 		// ContextKey: "member", // 클레임의 이름 . default : user
 		// SigningMethod: "RS256",      // 토큰 서명 방식 . defaelt : HMAC SHA-256 (HS256)
-		SigningKey: []byte(AccessTokenKey),
+		SigningKey: []byte(md.AccessTokenKey),
 		// TokenLookup: "header:Auth", // 헤더이름 Auth, Value에 Bearer 안써도 되게
 		TokenLookup: "cookie:AC_bsmgCookie",
 	}),
 		echojwt.WithConfig(echojwt.Config{
 			NewClaimsFunc: func(c echo.Context) jwt.Claims {
-				return new(MemberClaims)
+				return new(md.MemberClaims)
 			},
-			SigningKey: []byte(RefreshTokenKey),
+			SigningKey: []byte(md.RefreshTokenKey),
 			// TokenLookup: "header:Auth", // 헤더이름 Auth, Value에 Bearer 안써도 되게
 			TokenLookup: "cookie:RS_bsmgCookie",
 		}),
 	)
 	// Route
-	initRouteGroup(bsmgGroup)
+	handler.InitRouteGroup(bsmgGroup)
 
 	e.Logger.Fatal(e.Start(":3000"))
 }

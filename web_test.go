@@ -2,7 +2,9 @@ package main
 
 import (
 	"BsmgRefactoring/define"
+	"BsmgRefactoring/server"
 	"encoding/json"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,9 +15,9 @@ import (
 
 func TestMakePartTree(t *testing.T) {
 	// 서버 연결
-	server := ServerProcessor{}
+	server := server.ServerProcessor{}
 	server.ConnectDataBase()
-	defer server.dbManager.DBGorm.Release()
+	defer server.DBManager.DBGorm.Release()
 
 	assert := assert.New(t)
 
@@ -58,11 +60,11 @@ func TestMakePartTree(t *testing.T) {
 
 }
 
-func getWeekRptCategoryHandler(server *ServerProcessor, c echo.Context) (err error) {
+func getWeekRptCategoryHandler(server *server.ServerProcessor, c echo.Context) (err error) {
 	log.Println("getWeekRptCategoryReq")
 
 	var apiResponse define.BsmgTreeResult
-	apiResponse.PartTreeList, err = server.dbManager.DBGorm.MakePartTree()
+	apiResponse.PartTreeList, err = server.DBManager.DBGorm.MakePartTree()
 	if err != nil {
 		log.Printf("%v \n", err)
 		apiResponse.Result.ResultCode = define.ErrorDataBase

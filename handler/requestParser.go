@@ -1,7 +1,9 @@
-package main
+package handler
 
 import (
+	"BsmgRefactoring/define"
 	"errors"
+	"log"
 	"net/url"
 	"strconv"
 )
@@ -18,7 +20,7 @@ type FormParser struct {
 }
 
 // http request data를 서버에서 받기 편하게 eXBuilder format에 맞춰 parser 제작
-func initFormParser(form url.Values) (parser *FormParser) {
+func InitFormParser(form url.Values) (parser *FormParser) {
 	parser = &FormParser{
 		Form: form,
 	}
@@ -29,7 +31,7 @@ func initFormParser(form url.Values) (parser *FormParser) {
 }
 
 // keyword에 맞는 request data parsing -------------------------------------------------------------------
-func (parser *FormParser) getInt32Value(index int, keyword string, subIndex int) (value int32, err error) {
+func (parser *FormParser) GetInt32Value(index int, keyword string, subIndex int) (value int32, err error) {
 	if parser.prefixLen != 0 && index >= parser.prefixLen {
 		err = errors.New("prefix index out of range")
 		return
@@ -53,7 +55,7 @@ func (parser *FormParser) getInt32Value(index int, keyword string, subIndex int)
 	return
 }
 
-func (parser *FormParser) getInt64Value(index int, keyword string, subIndex int) (value int64, err error) {
+func (parser *FormParser) GetInt64Value(index int, keyword string, subIndex int) (value int64, err error) {
 	if parser.prefixLen != 0 && index >= parser.prefixLen {
 		err = errors.New("prefix index out of range")
 		return
@@ -124,4 +126,35 @@ func (parser *FormParser) getValueCount(index int, keyword string) (count int, e
 
 	count = len(parser.Form[key])
 	return
+}
+func parseUserRegistRequest(parser *FormParser) (member *define.BsmgMemberInfo, err error) {
+	member = &define.BsmgMemberInfo{}
+	member.Mem_ID, err = parser.getStringValue(0, "mem_id", 0)
+	if err != nil {
+		log.Printf("%v \n ", err)
+		return nil, err
+	}
+
+	member.Mem_Password, err = parser.getStringValue(0, "mem_pw", 0)
+	if err != nil {
+		log.Printf("%v \n ", err)
+		return nil, err
+	}
+
+	member.Mem_Name, err = parser.getStringValue(0, "mem_name", 0)
+	if err != nil {
+		log.Printf("%v \n ", err)
+		return nil, err
+	}
+	member.Mem_Rank, err = parser.GetInt32Value(0, "mem_rank", 0)
+	if err != nil {
+		log.Printf("%v \n ", err)
+		return nil, err
+	}
+	member.Mem_Part, err = parser.GetInt32Value(0, "mem_part", 0)
+	if err != nil {
+		log.Printf("%v \n ", err)
+		return nil, err
+	}
+	return member, nil
 }

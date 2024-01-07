@@ -1,7 +1,10 @@
-package main
+package handler
 
 import (
 	"BsmgRefactoring/define"
+	"BsmgRefactoring/middleware"
+	"BsmgRefactoring/server"
+	"log"
 	"net/http"
 	"time"
 
@@ -10,13 +13,13 @@ import (
 )
 
 // 로그인 중인지 확인
-func getChkLoginRequest(c echo.Context) error {
+func GetChkLoginRequest(c echo.Context) error {
 	log.Println("getChkLogin Req")
 	var apiResponse define.BsmgMemberResponse
 
 	// JWT 검증  ------------------------------------------
 
-	claims, err := checkToken(c)
+	claims, err := middleware.CheckToken(c)
 	if err != nil {
 		log.Printf("%v\n", err)
 		apiResponse.Result.ResultCode = define.ErrorInvalidToken
@@ -44,14 +47,16 @@ func getChkLoginRequest(c echo.Context) error {
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
-func postLoginRequest(c echo.Context) error {
-
+func PostLoginRequest(c echo.Context) error {
 	log.Println("postLoginRequest")
+
+	server, _ := c.Get("Server").(*server.ServerProcessor)
+
 	apiRequest := &define.BsmgMemberLoginRequest{}
 	apiResponse := &define.BsmgMemberResponse{}
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	server.Mutex.Lock()
+	defer server.Mutex.Unlock()
 
 	err := c.Bind(apiRequest)
 	if err != nil {
@@ -63,7 +68,7 @@ func postLoginRequest(c echo.Context) error {
 	// member := request.Data.MemberInfo.ParseMember()
 	member := apiRequest.Data.MemberInfo
 
-	err = server.dbManager.DBGorm.SelectMemberInfo(&member)
+	err = server.DBManager.DBGorm.SelectMemberInfo(&member)
 	if err != nil {
 		if err.Error() == "record not found" {
 			// 웹에서 에러코드 통해서 아이디 혹은 비밀번호가 틀립니다로
@@ -73,7 +78,7 @@ func postLoginRequest(c echo.Context) error {
 	}
 
 	// 비밀번호 매칭 확인
-	match, err := comparePasswordAndHash(apiRequest.Data.MemberInfo.Mem_Password, member.Mem_Password)
+	match, err := middleware.ComparePasswordAndHash(apiRequest.Data.MemberInfo.Mem_Password, member.Mem_Password)
 	if err != nil || !match {
 		apiResponse.Result.ResultCode = define.ErrorLoginFailed
 		return c.JSON(http.StatusOK, apiResponse)
@@ -81,7 +86,7 @@ func postLoginRequest(c echo.Context) error {
 	// 인증 성공 ----------------------
 
 	// 중복 로그인 확인
-	if !isNotDuplicateLogin(c, member.Mem_ID) {
+	if !middleware.IsNotDuplicateLogin(c, member.Mem_ID) {
 		log.Printf("%v \n", "중복 로그인입니다.")
 		apiResponse.Result.ResultCode = define.ErrorLoginDuplication
 		return c.JSON(http.StatusOK, apiResponse)
@@ -92,7 +97,7 @@ func postLoginRequest(c echo.Context) error {
 
 	// JWT 토큰 생성
 	// Set custom claims
-	claims := &MemberClaims{
+	claims := &middleware.MemberClaims{
 		member.Mem_ID,
 		member.Mem_Name,
 		member.Mem_Rank,
@@ -103,14 +108,14 @@ func postLoginRequest(c echo.Context) error {
 	}
 
 	// AccessToken, RefreshToken , 쿠키 생성
-	makeJwtToken(c, claims)
+	middleware.MakeJwtToken(c, claims)
 	if err != nil {
 		apiResponse.Result.ResultCode = define.ErrorTokenCreationFailed
 		return c.JSON(http.StatusOK, apiResponse)
 	}
 
 	// 세션 생성
-	createSession(c, &apiResponse.MemberInfo)
+	middleware.CreateSession(c, &apiResponse.MemberInfo)
 
 	return c.JSON(http.StatusOK, echo.Map{
 		// "token":         token, // 쿠키에 저장하면 안보내도 되긴 함
@@ -123,10 +128,10 @@ func postLogoutRequest(c echo.Context) error {
 	log.Println("postLogoutRequest")
 	result := define.OnlyResult{}
 
-	deleteCookie(c, AccessCookieName)
-	deleteCookie(c, RefreshCookieName)
+	middleware.DeleteCookie(c, middleware.AccessCookieName)
+	middleware.DeleteCookie(c, middleware.RefreshCookieName)
 
-	deleteSession(c)
+	middleware.DeleteSession(c)
 	result.Result.ResultCode = define.Success
 
 	return c.JSON(http.StatusOK, result)

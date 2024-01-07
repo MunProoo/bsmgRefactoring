@@ -1,19 +1,34 @@
-package main
+package server
 
 import (
+	"BsmgRefactoring/database"
 	"BsmgRefactoring/define"
 	"fmt"
+	"sync"
 	"time"
+
+	"github.com/robfig/cron"
 )
 
-func (server *ServerProcessor) InitServer() {
+type ServerProcessor struct {
+	DBManager    database.DatabaseManager
+	State        uint16 // 서버의 상태
+	Mutex        sync.RWMutex
+	WeekRptMaker *cron.Cron // 주간보고 스케쥴러
+	Config       *define.Config
+	ReqCh        chan interface{}
+	ResCh        chan interface{}
+}
+
+func InitServer() (server *ServerProcessor) {
+	server = &ServerProcessor{}
 	server.SetState(define.StateInit)
 	// 음 채널링 써보고싶은데
-	server.reqCh = make(chan interface{}, 1000)
-	server.resCh = make(chan interface{}, 1000)
+	server.ReqCh = make(chan interface{}, 1000)
+	server.ResCh = make(chan interface{}, 1000)
 	server.Config = &define.Config{}
 
-	// cron을 여기서 만들어야 하나? new로 만들면 괜찮을거같은데
+	return
 }
 
 // Server 시작 (서버상태 별 프로세스 실행)
@@ -68,18 +83,18 @@ func (server *ServerProcessor) StartServer() {
 
 // 서버 상태 Set
 func (server *ServerProcessor) SetState(state uint16) {
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	server.Mutex.Lock()
+	defer server.Mutex.Unlock()
 	server.State = state
 }
 
 // DB 연결 확인
 func (server *ServerProcessor) IsConnected() (err error) {
 	// ping날리는 고루틴을 따로 두고 db가 nil인지 아닌지를 판별할지, 아니면 ping을 StartServer에서 날릴지는 고민좀 해보자
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	server.Mutex.Lock()
+	defer server.Mutex.Unlock()
 
-	err = server.dbManager.DBGorm.IsConnected()
+	err = server.DBManager.DBGorm.IsConnected()
 	return
 }
 
@@ -88,7 +103,7 @@ func (server *ServerProcessor) DBQuery() {
 	// 호출하는 곳에서 Mutex Lock 하도록
 	for {
 		select {
-		case msg := <-server.reqCh:
+		case msg := <-server.ReqCh:
 			fmt.Printf("%v \n", msg)
 		}
 	}

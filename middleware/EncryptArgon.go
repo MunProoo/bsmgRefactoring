@@ -1,4 +1,4 @@
-package main
+package middleware
 
 import (
 	"crypto/rand"
@@ -19,7 +19,7 @@ var (
 )
 
 // Argon2 parameters
-type params struct {
+type Params struct {
 	memory      uint32
 	iterations  uint32
 	parallelism uint8
@@ -27,8 +27,8 @@ type params struct {
 	keyLength   uint32
 }
 
-func generateFromPassword(password string) (encodedHash string, err error) {
-	p := &params{
+func GenerateFromPassword(password string) (encodedHash string, err error) {
+	p := &Params{
 		memory:      64 * 1024,
 		iterations:  3,
 		parallelism: 2,
@@ -36,7 +36,7 @@ func generateFromPassword(password string) (encodedHash string, err error) {
 		keyLength:   32,
 	}
 
-	salt, err := generateRandomBytes(p.saltLength)
+	salt, err := GenerateRandomBytes(p.saltLength)
 	if err != nil {
 		return "", err
 	}
@@ -53,7 +53,7 @@ func generateFromPassword(password string) (encodedHash string, err error) {
 	return encodedHash, nil
 }
 
-func generateRandomBytes(n uint32) ([]byte, error) {
+func GenerateRandomBytes(n uint32) ([]byte, error) {
 	b := make([]byte, n)
 	_, err := rand.Read(b)
 	if err != nil {
@@ -63,10 +63,10 @@ func generateRandomBytes(n uint32) ([]byte, error) {
 	return b, nil
 }
 
-func comparePasswordAndHash(password, encodedHash string) (match bool, err error) {
+func ComparePasswordAndHash(password, encodedHash string) (match bool, err error) {
 	// Extract the parameters, salt and derived key from the encoded password
 	// hash.
-	p, salt, hash, err := decodeHash(encodedHash)
+	p, salt, hash, err := DecodeHash(encodedHash)
 	if err != nil {
 		return false, err
 	}
@@ -83,7 +83,7 @@ func comparePasswordAndHash(password, encodedHash string) (match bool, err error
 	return false, nil
 }
 
-func decodeHash(encodedHash string) (p *params, salt, hash []byte, err error) {
+func DecodeHash(encodedHash string) (p *Params, salt, hash []byte, err error) {
 	vals := strings.Split(encodedHash, "$")
 	if len(vals) != 6 {
 		return nil, nil, nil, ErrInvalidHash
@@ -98,7 +98,7 @@ func decodeHash(encodedHash string) (p *params, salt, hash []byte, err error) {
 		return nil, nil, nil, ErrIncompatibleVersion
 	}
 
-	p = &params{}
+	p = &Params{}
 	_, err = fmt.Sscanf(vals[3], "m=%d,t=%d,p=%d", &p.memory, &p.iterations, &p.parallelism)
 	if err != nil {
 		return nil, nil, nil, err

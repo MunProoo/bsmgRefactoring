@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"BsmgRefactoring/utils"
@@ -15,7 +15,7 @@ import (
 // 주간보고로 취합
 func (server *ServerProcessor) MakeWeekRpt() {
 	bef7d, bef1d, now, t := utils.GetDate()
-	err := server.dbManager.MakeWeekRpt(bef7d, bef1d, now, t)
+	err := server.DBManager.MakeWeekRpt(bef7d, bef1d, now, t)
 	if err != nil {
 		log.Printf("%s MakeWeekRpt Faield : %v", now, err)
 		return

@@ -43,7 +43,7 @@
         <cl:responsedata dataid="ds_part"/>
         <cl:responsedata dataid="Result"/>
       </cl:submission>
-      <cl:submission std:sid="submission-decea636" id="sms_registUser" action="/bsmg/user/">
+      <cl:submission std:sid="submission-decea636" id="sms_registUser" action="/bsmg/user/" mediatype="application/json">
         <cl:listener std:sid="listener-cc0b4282" name="submit-done" handler="onSms_registUserSubmitDone"/>
         <cl:requestdata dataid="dm_memberInfo"/>
         <cl:responsedata dataid="Result"/>

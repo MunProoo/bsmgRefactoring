@@ -1,8 +1,9 @@
-package main
+package middleware
 
 import (
 	"BsmgRefactoring/define"
 	"fmt"
+	"log"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
@@ -11,12 +12,12 @@ import (
 
 // echo framework로 구조 변경후엔 토큰 기반 세션으로 바꿔볼까
 const (
-	sessionKey = "BSMG"
+	SessionKey = "BSMG"
 )
 
 var (
-	key   = []byte("suuuuper-secret-key")
-	store = sessions.NewCookieStore(key)
+	Key   = []byte("suuuuper-secret-key")
+	Store = sessions.NewCookieStore(Key)
 )
 
 /*
@@ -46,8 +47,8 @@ func initSessionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 }
 */
 // 세션 생성 및 체크
-func initSessionMiddleware(c echo.Context) error {
-	session, err := session.Get(sessionKey, c)
+func InitSessionMiddleware(c echo.Context) error {
+	session, err := session.Get(SessionKey, c)
 	if session == nil {
 		return err
 	}
@@ -71,7 +72,7 @@ func initSessionMiddleware(c echo.Context) error {
 
 // func checkSessionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 // 	return func(c echo.Context) error {
-// 		session, _ := session.Get(sessionKey, c)
+// 		session, _ := session.Get(SessionKey, c)
 
 // 		if c.Request().URL.RawQuery == "/" {
 // 			return next(c)
@@ -89,8 +90,8 @@ func initSessionMiddleware(c echo.Context) error {
 //			return next(c)
 //		}
 //	}
-func checkSession(c echo.Context) bool {
-	session, err := session.Get(sessionKey, c)
+func CheckSession(c echo.Context) bool {
+	session, err := session.Get(SessionKey, c)
 	if err != nil {
 		return false
 	}
@@ -107,9 +108,9 @@ func checkSession(c echo.Context) bool {
 	return true
 }
 
-func createSession(c echo.Context, member *define.BsmgMemberInfo) {
+func CreateSession(c echo.Context, member *define.BsmgMemberInfo) {
 	log.Println("Session 생성!!")
-	session, err := session.Get(sessionKey, c)
+	session, err := session.Get(SessionKey, c)
 	if err != nil {
 		log.Printf("%v \n", err)
 	}
@@ -127,8 +128,8 @@ func createSession(c echo.Context, member *define.BsmgMemberInfo) {
 	}
 }
 
-func deleteSession(c echo.Context) {
-	session, err := session.Get(sessionKey, c)
+func DeleteSession(c echo.Context) {
+	session, err := session.Get(SessionKey, c)
 	if err != nil {
 		log.Printf("%v", err)
 		return
@@ -141,8 +142,8 @@ func deleteSession(c echo.Context) {
 	session.Save(c.Request(), c.Response())
 }
 
-func getSessionData(c echo.Context) (result define.BsmgMemberResponse) {
-	session, err := session.Get(sessionKey, c)
+func GetSessionData(c echo.Context) (result define.BsmgMemberResponse) {
+	session, err := session.Get(SessionKey, c)
 	if err != nil {
 		log.Printf("%v", err)
 		return
@@ -157,8 +158,8 @@ func getSessionData(c echo.Context) (result define.BsmgMemberResponse) {
 	return
 }
 
-func isNotDuplicateLogin(c echo.Context, loginID string) bool {
-	session, err := session.Get(sessionKey, c)
+func IsNotDuplicateLogin(c echo.Context, loginID string) bool {
+	session, err := session.Get(SessionKey, c)
 	if err != nil {
 		log.Printf("%v", err)
 		return false

@@ -1,4 +1,4 @@
-package main
+package middleware
 
 import (
 	"errors"
@@ -40,18 +40,18 @@ type MemberClaims struct {
 	jwt.RegisteredClaims
 }
 
-func makeJwtToken(c echo.Context, claims *MemberClaims) error {
+func MakeJwtToken(c echo.Context, claims *MemberClaims) error {
 
 	// Access Token 생성 (유효기간 20분)
 	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Minute * 20))
-	err := createToken(c, claims, AccessTokenKey, AccessCookieName)
+	err := CreateToken(c, claims, AccessTokenKey, AccessCookieName)
 	if err != nil {
 		return err
 	}
 
 	// Refresh Token 생성 (48시간)
 	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Hour * 48))
-	err = createToken(c, claims, RefreshTokenKey, RefreshCookieName)
+	err = CreateToken(c, claims, RefreshTokenKey, RefreshCookieName)
 	if err != nil {
 		return err
 	}
@@ -60,7 +60,7 @@ func makeJwtToken(c echo.Context, claims *MemberClaims) error {
 }
 
 // 단일 토큰 생성
-func createToken(c echo.Context, claims *MemberClaims, tokenKey, cookieName string) error {
+func CreateToken(c echo.Context, claims *MemberClaims, tokenKey, cookieName string) error {
 	// Create token with claims
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(tokenKey))
@@ -69,12 +69,12 @@ func createToken(c echo.Context, claims *MemberClaims, tokenKey, cookieName stri
 	}
 
 	// 쿠키로 저장 (클라이언트단에서 따로 저장하고 요청 시 헤더에 넣어주는 것보다 편하니까)
-	createCookie(c, claims, tokenString, cookieName)
+	CreateCookie(c, claims, tokenString, cookieName)
 	return nil
 }
 
 // JWT 토큰으로 쿠키 생성
-func createCookie(c echo.Context, claims *MemberClaims, tokenString, cookieName string) {
+func CreateCookie(c echo.Context, claims *MemberClaims, tokenString, cookieName string) {
 
 	cookie := new(http.Cookie)
 	cookie.Name = cookieName
@@ -90,7 +90,7 @@ func createCookie(c echo.Context, claims *MemberClaims, tokenString, cookieName 
 }
 
 // JWT 토큰 쿠키 삭제
-func deleteCookie(c echo.Context, cookieName string) {
+func DeleteCookie(c echo.Context, cookieName string) {
 	// 만료기간을 이전날짜로 하여 쿠키 삭제
 	expire := time.Now().AddDate(0, 0, -1)
 
@@ -106,7 +106,7 @@ func deleteCookie(c echo.Context, cookieName string) {
 }
 
 // 쿠키 -> JWT 토큰 추출
-func extractJwtFromCookie(c echo.Context, cookieName string) (string, error) {
+func ExtractJwtFromCookie(c echo.Context, cookieName string) (string, error) {
 	cookie, err := c.Cookie(cookieName)
 	if err != nil {
 		return "", err
@@ -117,7 +117,7 @@ func extractJwtFromCookie(c echo.Context, cookieName string) (string, error) {
 }
 
 // JWT 토큰 -> 클레임 추출
-func extractClaimsFromToken(tokenString, tokenKey string) (jwt.MapClaims, error) {
+func ExtractClaimsFromToken(tokenString, tokenKey string) (jwt.MapClaims, error) {
 	// 토큰 파싱
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 
@@ -146,7 +146,7 @@ func extractClaimsFromToken(tokenString, tokenKey string) (jwt.MapClaims, error)
 // 토큰 만료시간 체크
 // true : 살아있음 , false : 만료됨
 // 내 프로젝트는 쿠키에 토큰을 저장하고, 쿠키는 만료시간이 다되면 자동삭제니까 내 프로젝트에선 필요없음
-func isExpired(claims jwt.MapClaims) (expired bool) {
+func IsExpired(claims jwt.MapClaims) (expired bool) {
 	exp, exist := claims["exp"].(float64)
 	if !exist {
 		return
@@ -164,7 +164,7 @@ func isExpired(claims jwt.MapClaims) (expired bool) {
 
 // Token을 쿠키로부터 꺼내서 검증 후 반환
 // AccessToken 만료시 재발급
-func checkToken(c echo.Context) (jwt.MapClaims, error) {
+func CheckToken(c echo.Context) (jwt.MapClaims, error) {
 	// accessToken 검증
 	accessClaims, err := ExtractClaims(c, "AC")
 	if err == nil || err.Error() == "http: named cookie not present" {
@@ -181,7 +181,7 @@ func checkToken(c echo.Context) (jwt.MapClaims, error) {
 		}
 
 		// 토큰 재발급
-		makeJwtToken(c, &memberClaims)
+		MakeJwtToken(c, &memberClaims)
 		return accessClaims, nil
 		/*
 			if isExpired(refreshClaims) {
@@ -197,12 +197,12 @@ func ExtractClaims(c echo.Context, category string) (jwt.MapClaims, error) {
 	cookieName := category + "_bsmgCookie"
 	tokenKey := category + "_Suuuper-Secret-Key"
 
-	tokenString, err := extractJwtFromCookie(c, cookieName)
+	tokenString, err := ExtractJwtFromCookie(c, cookieName)
 	if err != nil {
 		return nil, err
 	}
 
-	claims, err := extractClaimsFromToken(tokenString, tokenKey)
+	claims, err := ExtractClaimsFromToken(tokenString, tokenKey)
 	if err != nil {
 		return nil, err
 	}

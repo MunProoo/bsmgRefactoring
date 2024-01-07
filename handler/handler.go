@@ -1,8 +1,8 @@
-package main
+package handler
 
 import "github.com/labstack/echo/v4"
 
-func initRouteGroup(bsmgGroup *echo.Group) {
+func InitRouteGroup(bsmgGroup *echo.Group) {
 	bsmgLoginGroup := bsmgGroup.Group("/login")
 	initLoginRoute(bsmgLoginGroup)
 

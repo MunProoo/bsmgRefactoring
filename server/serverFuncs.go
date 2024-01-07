@@ -1,30 +1,19 @@
-package main
+package server
 
 import (
-	"BsmgRefactoring/database"
-	"BsmgRefactoring/define"
 	"encoding/json"
-	"os"
-	"sync"
 
-	"github.com/robfig/cron/v3"
+	// "log"
+	"os"
+
+	"github.com/robfig/cron"
 	"github.com/sirupsen/logrus"
 )
 
 var log = logrus.New()
 
-type ServerProcessor struct {
-	dbManager    database.DatabaseManager
-	State        uint16 // 서버의 상태
-	mutex        sync.RWMutex
-	WeekRptMaker *cron.Cron // 주간보고 스케쥴러
-	Config       *define.Config
-	reqCh        chan interface{}
-	resCh        chan interface{}
-}
-
 func (server *ServerProcessor) ConnectDataBase() (err error) {
-	err = server.dbManager.InitDBManager(server.Config.DBConfig)
+	err = server.DBManager.InitDBManager(server.Config.DBConfig)
 	if err != nil {
 		// 로그
 		log.Printf("InitDBManager Failed . err = %v\n", err)

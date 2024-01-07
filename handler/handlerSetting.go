@@ -1,7 +1,9 @@
-package main
+package handler
 
 import (
 	"BsmgRefactoring/define"
+	"BsmgRefactoring/server"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -14,9 +16,10 @@ func getAttrTreeReq(c echo.Context) (err error) {
 
 	var result define.BsmgTreeResult
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
-	result.AttrTreeList, err = server.dbManager.DBGorm.MakeAttrTree()
+	server, _ := c.Get("Server").(*server.ServerProcessor)
+	server.Mutex.Lock()
+	defer server.Mutex.Unlock()
+	result.AttrTreeList, err = server.DBManager.DBGorm.MakeAttrTree()
 	if err != nil {
 		log.Printf("%v \n", err)
 		return err
@@ -31,11 +34,11 @@ func getRankPartReq(c echo.Context) error {
 	log.Println("getRankPartReq")
 
 	var result define.BsmgRankPartResult
-	server := c.Get("Server").(*ServerProcessor) // 서버가 전역 변수인데 context에서 꺼내서 쓸까말까@@@@@@@@@@@@@@@@@@@@@
+	server := c.Get("Server").(*server.ServerProcessor)
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
-	rankList, err := server.dbManager.DBGorm.SelectRankList()
+	server.Mutex.Lock()
+	defer server.Mutex.Unlock()
+	rankList, err := server.DBManager.DBGorm.SelectRankList()
 	if err != nil {
 		log.Printf("%v \n", err)
 		result.Result.ResultCode = define.ErrorInvalidParameter
@@ -43,7 +46,7 @@ func getRankPartReq(c echo.Context) error {
 	}
 	result.RankList = rankList
 
-	partList, err := server.dbManager.DBGorm.SelectPartist()
+	partList, err := server.DBManager.DBGorm.SelectPartist()
 	if err != nil {
 		log.Printf("%v \n", err)
 		result.Result.ResultCode = define.ErrorInvalidParameter
@@ -61,10 +64,11 @@ func getPartTree(c echo.Context) (err error) {
 
 	var apiResponse define.BsmgTreeResult
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	server, _ := c.Get("Server").(*server.ServerProcessor)
+	server.Mutex.Lock()
+	defer server.Mutex.Unlock()
 
-	apiResponse.PartTreeList, err = server.dbManager.DBGorm.MakePartTree()
+	apiResponse.PartTreeList, err = server.DBManager.DBGorm.MakePartTree()
 	if err != nil {
 		log.Printf("%v \n", err)
 		apiResponse.Result.ResultCode = define.ErrorDataBase
@@ -82,12 +86,13 @@ func getToRptReq(c echo.Context) (err error) {
 
 	var apiResponse define.BsmgTeamLeaderResponse
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	server, _ := c.Get("Server").(*server.ServerProcessor)
+	server.Mutex.Lock()
+	defer server.Mutex.Unlock()
 
 	partIdx, _ := strconv.Atoi(c.Request().FormValue("@d1#part_idx"))
 
-	apiResponse.Part.TeamLeader, err = server.dbManager.DBGorm.SelectPartLeader(int32(partIdx))
+	apiResponse.Part.TeamLeader, err = server.DBManager.DBGorm.SelectPartLeader(int32(partIdx))
 	if err != nil {
 		log.Printf("getToRptReq : %v \n", err)
 		apiResponse.Result.ResultCode = define.ErrorDataBase
@@ -104,10 +109,11 @@ func getAttr1Req(c echo.Context) (err error) {
 
 	var apiResponse define.BsmgAttr1Response
 
-	server.mutex.Lock()
-	defer server.mutex.Unlock()
+	server, _ := c.Get("Server").(*server.ServerProcessor)
+	server.Mutex.Lock()
+	defer server.Mutex.Unlock()
 
-	apiResponse.Attr1List, err = server.dbManager.DBGorm.SelectAttr1List()
+	apiResponse.Attr1List, err = server.DBManager.DBGorm.SelectAttr1List()
 	if err != nil {
 		log.Printf("getAttr1Req : %v \n", err)
 		apiResponse.Result.ResultCode = define.ErrorDataBase

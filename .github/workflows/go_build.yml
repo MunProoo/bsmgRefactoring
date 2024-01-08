@@ -9,10 +9,10 @@ on:
     branches: [master]
   workflow_call:
     inputs:
-      skipTests: true
+      skipTests: 
         description: 'Skip tests, useful when there is a dedicated CI job for tests'
-        default: false
-        required: false
+        default: true
+        required: true
         type: boolean
 
 jobs:

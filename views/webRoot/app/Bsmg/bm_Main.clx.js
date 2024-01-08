@@ -608,77 +608,41 @@
 			});
 			
 			var output_7 = new cpr.controls.Output();
-			output_7.value = "기술 연구소";
 			output_7.style.css({
-				"color" : "darkGreen",
-				"font-weight" : "bold",
-				"font-size" : "20px",
-				"font-style" : "normal"
-			});
-			container.addChild(output_7, {
-				positions: [
-					{
-						"media": "all and (min-width: 1024px)",
-						"top": "18px",
-						"left": "191px",
-						"width": "113px",
-						"height": "50px"
-					}, 
-					{
-						"media": "all and (min-width: 500px) and (max-width: 1023px)",
-						"hidden": false,
-						"top": "18px",
-						"left": "93px",
-						"width": "55px",
-						"height": "50px"
-					}, 
-					{
-						"media": "all and (max-width: 499px)",
-						"hidden": false,
-						"top": "18px",
-						"left": "65px",
-						"width": "39px",
-						"height": "50px"
-					}
-				]
-			});
-			
-			var output_8 = new cpr.controls.Output();
-			output_8.style.css({
 				"background-repeat" : "no-repeat",
-				"background-size" : "cover",
+				"background-size" : "contain",
 				"color" : "darkGreen",
 				"font-weight" : "bold",
 				"font-size" : "20px",
 				"font-style" : "normal",
 				"background-position" : "center",
 				"background-origin" : "padding-box",
-				"background-image" : "url('images/UNIONCOMMUNITY-logo-_Eng_.gif')"
+				"background-image" : "url('images/reportImg.png')"
 			});
-			container.addChild(output_8, {
+			container.addChild(output_7, {
 				positions: [
 					{
 						"media": "all and (min-width: 1024px)",
-						"top": "-27px",
-						"left": "-33px",
-						"width": "267px",
-						"height": "139px"
+						"top": "0px",
+						"right": "1800px",
+						"bottom": "840px",
+						"left": "0px"
 					}, 
 					{
 						"media": "all and (min-width: 500px) and (max-width: 1023px)",
 						"hidden": false,
-						"top": "-27px",
-						"left": "-16px",
-						"width": "130px",
-						"height": "139px"
+						"top": "0px",
+						"right": "879px",
+						"bottom": "840px",
+						"left": "0px"
 					}, 
 					{
 						"media": "all and (max-width: 499px)",
 						"hidden": false,
-						"top": "-27px",
-						"left": "-11px",
-						"width": "91px",
-						"height": "139px"
+						"top": "0px",
+						"right": "615px",
+						"bottom": "840px",
+						"left": "0px"
 					}
 				]
 			});

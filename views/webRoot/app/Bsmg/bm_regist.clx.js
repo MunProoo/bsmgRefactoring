@@ -247,6 +247,7 @@
 			
 			var submission_3 = new cpr.protocols.Submission("sms_registUser");
 			submission_3.action = "/bsmg/user/";
+			submission_3.mediaType = "application/json";
 			submission_3.addRequestData(dataMap_1);
 			submission_3.addResponseData(dataMap_2, false);
 			if(typeof onSms_registUserSubmitDone == "function") {

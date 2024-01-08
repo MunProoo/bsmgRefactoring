@@ -41,7 +41,7 @@
     <cl:listener std:sid="listener-45f34217" name="load" handler="onBodyLoad"/>
     <cl:group std:sid="group-5efa5095">
       <cl:xylayoutdata std:sid="xyl-data-e627ca78" top="59px" width="719px" height="545px" horizontalAnchor="CENTER" verticalAnchor="TOP"/>
-      <cl:group std:sid="group-e1d26a83" style="background-color:#0a552c;">
+      <cl:group std:sid="group-e1d26a83" style="background-color:#a5b2d6;">
         <cl:xylayoutdata std:sid="xyl-data-ae34eaca" top="91px" left="64px" width="655px" height="454px"/>
         <cl:inputbox std:sid="i-box-e5faf03a" id="mem_id" style="border-radius:15px; padding-left:10px; text-align:left;" placeholder="ID">
           <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_memberInfo" columnname="mem_id"/>
@@ -57,13 +57,13 @@
           <cl:listener std:sid="listener-7732d83e" name="keydown" handler="onButtonKeydown"/>
           <cl:xylayoutdata std:sid="xyl-data-e0978be9" top="347px" left="242px" width="174px" height="40px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
         </cl:button>
-        <cl:output std:sid="output-fc6c26c1" style="color:#ffffff; font-weight:bold; font-size:25px; font-style:normal;" value="기술 연구소 업무관리 서비스">
+        <cl:output std:sid="output-fc6c26c1" style="color:#ffffff; font-weight:bold; font-size:25px; font-style:normal; text-align:center;" value="업무관리 서비스">
           <cl:xylayoutdata std:sid="xyl-data-4bb4801e" top="58px" left="148px" width="361px" height="71px" horizontalAnchor="LEFT" verticalAnchor="TOP"/>
         </cl:output>
         <cl:xylayout std:sid="xylayout-73d3b74b"/>
       </cl:group>
-      <cl:output std:sid="output-6deedec2" style="background-repeat:no-repeat; background-size:cover; background-image:url('../../images/UNIONCOMMUNITY-logo-_Eng_.gif'); background-position:center;">
-        <cl:xylayoutdata std:sid="xyl-data-41bd2756" top="0px" left="0px" width="353px" height="92px"/>
+      <cl:output std:sid="output-6deedec2" style="background-repeat:no-repeat; background-size:contain; background-image:url('../../images/free-icon-team-2521870.png'); background-position:center;">
+        <cl:xylayoutdata std:sid="xyl-data-41bd2756" top="0px" left="64px" width="655px" height="92px"/>
       </cl:output>
       <cl:xylayout std:sid="xylayout-a9585836"/>
     </cl:group>

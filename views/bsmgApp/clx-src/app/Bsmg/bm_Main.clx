@@ -101,14 +101,9 @@
         <cl:xylayoutdata std:sid="sxyl-data-03a0d2e9" top="20px" left="916px" width="126px" height="31px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
       </cl:responsivexylayoutdata>
     </cl:button>
-    <cl:output std:sid="output-fc6c26c1" style="color:darkGreen; font-weight:bold; font-size:20px; font-style:normal;" value="기술 연구소">
-      <cl:responsivexylayoutdata std:sid="rxyl-data-44c849c1">
-        <cl:xylayoutdata std:sid="sxyl-data-5ef4e926" top="18px" left="191px" width="113px" height="50px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
-      </cl:responsivexylayoutdata>
-    </cl:output>
-    <cl:output std:sid="output-90c72759" style="background-repeat:no-repeat; background-size:cover; color:darkGreen; font-weight:bold; font-size:20px; font-style:normal; background-position:center; background-origin:padding-box; background-image:url('../../images/UNIONCOMMUNITY-logo-_Eng_.gif');">
+    <cl:output std:sid="output-90c72759" style="background-repeat:no-repeat; background-size:contain; color:darkGreen; font-weight:bold; font-size:20px; font-style:normal; background-position:center; background-origin:padding-box; background-image:url('../../images/reportImg.png');">
       <cl:responsivexylayoutdata std:sid="rxyl-data-15f999d8">
-        <cl:xylayoutdata std:sid="sxyl-data-8565faad" top="-27px" left="-33px" width="267px" height="139px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        <cl:xylayoutdata std:sid="sxyl-data-8565faad" top="0px" right="1800px" bottom="840px" left="0px" horizontalAnchor="BOTH" verticalAnchor="BOTH" screenid="default"/>
       </cl:responsivexylayoutdata>
     </cl:output>
     <cl:button std:sid="button-d10bd5bd" id="userManagement" style="background-color:#5497da; background-image:linear-gradient(#fcfeff,#e0e1e2);" visible="false" value="사용자 관리">

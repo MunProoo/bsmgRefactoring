@@ -254,7 +254,7 @@
 			(function(container){
 				var group_2 = new cpr.controls.Container();
 				group_2.style.css({
-					"background-color" : "#0a552c"
+					"background-color" : "#a5b2d6"
 				});
 				// Layout
 				var xYLayout_3 = new cpr.controls.layouts.XYLayout();
@@ -312,12 +312,13 @@
 						"height": "40px"
 					});
 					var output_1 = new cpr.controls.Output();
-					output_1.value = "기술 연구소 업무관리 서비스";
+					output_1.value = "업무관리 서비스";
 					output_1.style.css({
 						"color" : "#ffffff",
 						"font-weight" : "bold",
 						"font-size" : "25px",
-						"font-style" : "normal"
+						"font-style" : "normal",
+						"text-align" : "center"
 					});
 					container.addChild(output_1, {
 						"top": "58px",
@@ -335,14 +336,14 @@
 				var output_2 = new cpr.controls.Output();
 				output_2.style.css({
 					"background-repeat" : "no-repeat",
-					"background-size" : "cover",
-					"background-image" : "url('images/UNIONCOMMUNITY-logo-_Eng_.gif')",
+					"background-size" : "contain",
+					"background-image" : "url('images/free-icon-team-2521870.png')",
 					"background-position" : "center"
 				});
 				container.addChild(output_2, {
 					"top": "0px",
-					"left": "0px",
-					"width": "353px",
+					"left": "64px",
+					"width": "655px",
 					"height": "92px"
 				});
 			})(group_1);

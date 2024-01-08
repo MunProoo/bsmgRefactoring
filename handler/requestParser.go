@@ -1,9 +1,7 @@
 package handler
 
 import (
-	"BsmgRefactoring/define"
 	"errors"
-	"log"
 	"net/url"
 	"strconv"
 )
@@ -74,87 +72,4 @@ func (parser *FormParser) GetInt64Value(index int, keyword string, subIndex int)
 		}
 	}
 	return
-}
-
-func (parser *FormParser) getStringValue(index int, keyword string, subIndex int) (value string, err error) {
-	if parser.prefixLen != 0 && index >= parser.prefixLen {
-		err = errors.New("prefix index out of range")
-		return
-	}
-	var key string
-	if parser.prefixLen > 0 {
-		key = parser.prefix[index] + keyword
-	} else {
-		key = keyword
-	}
-
-	if len(parser.Form[key]) > 0 {
-		value = parser.Form[key][subIndex]
-	}
-	return
-}
-
-func (parser *FormParser) getStringArray(index int, keyword string) (values []string, err error) {
-	if parser.prefixLen != 0 && index >= parser.prefixLen {
-		err = errors.New("prefix index out of range")
-		return
-	}
-	var key string
-	if parser.prefixLen > 0 {
-		key = parser.prefix[index] + keyword
-	} else {
-		key = keyword
-	}
-
-	if len(parser.Form[key]) > 0 {
-		return parser.Form[key], nil
-	}
-	return
-}
-
-func (parser *FormParser) getValueCount(index int, keyword string) (count int, err error) {
-	if parser.prefixLen != 0 && index >= parser.prefixLen {
-		err = errors.New("prefix index out of range")
-		return
-	}
-	var key string
-	if parser.prefixLen > 0 {
-		key = parser.prefix[index] + keyword
-	} else {
-		key = keyword
-	}
-
-	count = len(parser.Form[key])
-	return
-}
-func parseUserRegistRequest(parser *FormParser) (member *define.BsmgMemberInfo, err error) {
-	member = &define.BsmgMemberInfo{}
-	member.Mem_ID, err = parser.getStringValue(0, "mem_id", 0)
-	if err != nil {
-		log.Printf("%v \n ", err)
-		return nil, err
-	}
-
-	member.Mem_Password, err = parser.getStringValue(0, "mem_pw", 0)
-	if err != nil {
-		log.Printf("%v \n ", err)
-		return nil, err
-	}
-
-	member.Mem_Name, err = parser.getStringValue(0, "mem_name", 0)
-	if err != nil {
-		log.Printf("%v \n ", err)
-		return nil, err
-	}
-	member.Mem_Rank, err = parser.GetInt32Value(0, "mem_rank", 0)
-	if err != nil {
-		log.Printf("%v \n ", err)
-		return nil, err
-	}
-	member.Mem_Part, err = parser.GetInt32Value(0, "mem_part", 0)
-	if err != nil {
-		log.Printf("%v \n ", err)
-		return nil, err
-	}
-	return member, nil
 }

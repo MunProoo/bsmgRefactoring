@@ -98,11 +98,11 @@ func PostLoginRequest(c echo.Context) error {
 	// JWT 토큰 생성
 	// Set custom claims
 	claims := &middleware.MemberClaims{
-		member.Mem_ID,
-		member.Mem_Name,
-		member.Mem_Rank,
-		member.Mem_Part,
-		jwt.RegisteredClaims{
+		Mem_ID:   member.Mem_ID,
+		Mem_Name: member.Mem_Name,
+		Mem_Rank: member.Mem_Rank,
+		Mem_Part: member.Mem_Part,
+		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)),
 		},
 	}

@@ -101,30 +101,28 @@ func getUserSearchRequest(c echo.Context) error {
 func postUserReq(c echo.Context) error {
 	log.Println("postUserReq")
 
-	// var apiRequest define.BsmgMemberRequest
+	var apiRequest define.BsmgMemberRequest
 	var apiResponse define.BsmgMemberResponse
 
 	server, _ := c.Get("Server").(*server.ServerProcessor)
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()
 
-	var member *define.BsmgMemberInfo
-
-	value, err := c.FormParams()
+	// value, err := c.FormParams()
+	// if err != nil {
+	// 	log.Printf("%v \n", err)
+	// 	apiResponse.Result.ResultCode = define.ErrorInvalidParameter
+	// 	return c.JSON(http.StatusOK, apiResponse)
+	// }
+	// parser := InitFormParser(value)
+	// member, err = parseUserRegistRequest(parser)
+	err := c.Bind(&apiRequest)
 	if err != nil {
-		log.Printf("%v \n", err)
 		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
 		return c.JSON(http.StatusOK, apiResponse)
 	}
-	parser := InitFormParser(value)
-	member, err = parseUserRegistRequest(parser)
 
-	if err != nil {
-		log.Printf("%v \n", err)
-		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, apiResponse)
-	}
-
+	member := apiRequest.Data.MemberInfo
 	// argon2 사용하여 salting, hashing
 	// Pass the plaintext password and parameters to our generateFromPassword
 	encodedHash, err := middleware.GenerateFromPassword(member.Mem_Password)
@@ -137,7 +135,7 @@ func postUserReq(c echo.Context) error {
 
 	member.Mem_Password = encodedHash
 
-	err = server.DBManager.DBGorm.InsertMember(*member)
+	err = server.DBManager.DBGorm.InsertMember(member)
 	if err != nil {
 		log.Printf("%v \n", err)
 		apiResponse.Result.ResultCode = define.ErrorDataBase

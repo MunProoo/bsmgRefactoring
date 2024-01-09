@@ -159,13 +159,13 @@ func GetSessionData(c echo.Context) (result define.BsmgMemberResponse) {
 }
 
 func IsNotDuplicateLogin(c echo.Context, loginID string) bool {
-	session, err := session.Get(SessionKey, c)
+	sessions, err := session.Get(SessionKey, c)
 	if err != nil {
 		log.Printf("%v", err)
 		return false
 	}
 
-	member, exist := session.Values["Member"]
+	member, exist := sessions.Values["Member"]
 	if !exist {
 		return true
 	}

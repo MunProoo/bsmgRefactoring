@@ -1,11 +1,12 @@
 version: '3'
 services:
   web:
-    build:
-      context: .
+    # build:
+    #   context: .
+    image: bsmg:latest
     container_name: bsmg
     ports:
-      - "8080:3000"
+      - "8080:80"
     depends_on:
       - db
 

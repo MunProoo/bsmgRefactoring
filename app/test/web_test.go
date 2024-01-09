@@ -1,8 +1,8 @@
 package main
 
 import (
-	"BsmgRefactoring/define"
-	"BsmgRefactoring/server"
+	"BsmgRefactoring/app/define"
+	"BsmgRefactoring/app/server"
 	"encoding/json"
 	"log"
 	"net/http"

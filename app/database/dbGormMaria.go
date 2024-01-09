@@ -1,8 +1,8 @@
 package database
 
 import (
-	"BsmgRefactoring/define"
-	"BsmgRefactoring/utils"
+	"BsmgRefactoring/app/define"
+	"BsmgRefactoring/app/utils"
 	"fmt"
 	"log"
 	"strings"

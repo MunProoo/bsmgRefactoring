@@ -3,10 +3,10 @@ package main
 // SPA (클라이언트 측 페이지 전환) 방식이므로 세션체크는 클라이언트에서 한다.
 
 import (
-	"BsmgRefactoring/define"
-	"BsmgRefactoring/handler"
-	md "BsmgRefactoring/middleware"
-	"BsmgRefactoring/server"
+	"BsmgRefactoring/app/define"
+	"BsmgRefactoring/app/handler"
+	md "BsmgRefactoring/app/middleware"
+	"BsmgRefactoring/app/server"
 
 	"encoding/gob"
 

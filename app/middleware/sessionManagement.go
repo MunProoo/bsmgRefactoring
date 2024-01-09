@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"BsmgRefactoring/define"
+	"BsmgRefactoring/app/define"
 	"fmt"
 	"log"
 

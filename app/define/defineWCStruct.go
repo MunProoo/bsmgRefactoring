@@ -1,7 +1,7 @@
 package define
 
 import (
-	"BsmgRefactoring/utils"
+	"BsmgRefactoring/app/utils"
 	"strconv"
 )
 

@@ -1,6 +1,6 @@
 package database
 
-import "BsmgRefactoring/define"
+import "BsmgRefactoring/app/define"
 
 type DBInterface interface {
 	// DB Connect

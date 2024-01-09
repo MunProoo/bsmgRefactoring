@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"BsmgRefactoring/define"
-	"BsmgRefactoring/server"
+	"BsmgRefactoring/app/define"
+	"BsmgRefactoring/app/server"
 	"log"
 	"net/http"
 	"strconv"

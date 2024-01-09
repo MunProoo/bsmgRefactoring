@@ -1,7 +1,7 @@
 package database
 
 import (
-	"BsmgRefactoring/define"
+	"BsmgRefactoring/app/define"
 	"log"
 	"strconv"
 )

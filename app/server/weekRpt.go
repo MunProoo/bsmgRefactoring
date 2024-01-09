@@ -1,7 +1,7 @@
 package server
 
 import (
-	"BsmgRefactoring/utils"
+	"BsmgRefactoring/app/utils"
 )
 
 //	           Minute   Hour   Day      Month                  Day of Week

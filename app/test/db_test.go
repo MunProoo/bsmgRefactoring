@@ -1,10 +1,9 @@
 package main
 
 import (
-	"BsmgRefactoring/define"
-	"BsmgRefactoring/middleware"
-	"BsmgRefactoring/server"
-	"BsmgRefactoring/utils"
+	"BsmgRefactoring/app/define"
+	"BsmgRefactoring/app/server"
+	"BsmgRefactoring/app/utils"
 	"fmt"
 	"testing"
 	"time"
@@ -111,27 +110,27 @@ func TestGetWeekRptList(t *testing.T) {
 	assert.NoError(t, err, "WeekRpt 가져오기 실패했다")
 }
 
-func TestAllMemberEncryptToArgon2(t *testing.T) {
-	// 모든 사용자 암호화 적용
-	server := server.ServerProcessor{}
-	err := server.ConnectDataBase()
-	assert.NoError(t, err, "DB 연결 실패")
-	defer server.DBManager.DBGorm.Release()
+// func TestAllMemberEncryptToArgon2(t *testing.T) {
+// 	// 모든 사용자 암호화 적용
+// 	server := server.ServerProcessor{}
+// 	err := server.ConnectDataBase()
+// 	assert.NoError(t, err, "DB 연결 실패")
+// 	defer server.DBManager.DBGorm.Release()
 
-	userList, err := server.DBManager.DBGorm.SelectUserList()
-	assert.NoError(t, err, "User Select 실패")
-	for _, user := range userList {
-		if user.Mem_ID == "argon2" {
-			continue
-		}
-		encodedHash, err := middleware.GenerateFromPassword(user.Mem_Password)
-		assert.NoError(t, err, "암호화 실패")
+// 	userList, err := server.DBManager.DBGorm.SelectUserList()
+// 	assert.NoError(t, err, "User Select 실패")
+// 	for _, user := range userList {
+// 		if user.Mem_ID == "argon2" {
+// 			continue
+// 		}
+// 		encodedHash, err := middleware.GenerateFromPassword(user.Mem_Password)
+// 		assert.NoError(t, err, "암호화 실패")
 
-		user.Mem_Password = encodedHash
-		server.DBManager.DBGorm.UpdateUser(user)
+// 		user.Mem_Password = encodedHash
+// 		server.DBManager.DBGorm.UpdateUser(user)
 
-	}
-}
+// 	}
+// }
 
 func TestGetWeekRptTitle(t *testing.T) {
 	now := time.Now()

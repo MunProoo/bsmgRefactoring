@@ -1,14 +1,23 @@
-version: '3'
+version: '3.8'
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx_conf:/etc/nginx/conf.d
+    depends_on:
+      - web
+
   web:
     # build:
     #   context: .
-    image: munprooo/bsmg:latest
-    platform:
-      architecture: arm64
+    image: web # cloud에서 이미지 빌드하고 사용 (CPU 아키텍쳐문제)
+    platform: linux/arm64
     container_name: bsmg
-    ports:
-      - "8080:80"
+    # ports:
+    #   - "8080:3000"
     depends_on:
       - db
 

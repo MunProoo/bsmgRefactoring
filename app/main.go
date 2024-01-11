@@ -3,10 +3,10 @@ package main
 // SPA (클라이언트 측 페이지 전환) 방식이므로 세션체크는 클라이언트에서 한다.
 
 import (
-	"BsmgRefactoring/app/define"
-	"BsmgRefactoring/app/handler"
-	md "BsmgRefactoring/app/middleware"
-	"BsmgRefactoring/app/server"
+	"BsmgRefactoring/define"
+	"BsmgRefactoring/handler"
+	md "BsmgRefactoring/middleware"
+	"BsmgRefactoring/server"
 
 	"encoding/gob"
 
@@ -35,7 +35,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
-	// e.Use(middleware.Static("views/bsmgApp/webRoot")) // 빠른 디버깅용. 배포위치를 변경하여 front 수정 시 바로 반영되도록
+	// e.Use(middleware.Static("views/bsmgBsmgRefactoring/webRoot")) // 빠른 디버깅용. 배포위치를 변경하여 front 수정 시 바로 반영되도록
 
 	e.Use(session.Middleware(md.Store)) // 세션 미들웨어 추가
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {

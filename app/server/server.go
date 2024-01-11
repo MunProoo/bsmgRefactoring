@@ -1,8 +1,8 @@
 package server
 
 import (
-	"BsmgRefactoring/app/database"
-	"BsmgRefactoring/app/define"
+	"BsmgRefactoring/database"
+	"BsmgRefactoring/define"
 	"fmt"
 	"sync"
 	"time"

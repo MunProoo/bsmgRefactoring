@@ -15,7 +15,7 @@ docker exec -it bsmgDB bash
 1. 포트 열기
 2. 내 레포지토리에서 zip파일로 받아오기
     wget https://github.com/MunProoo/bsmgRefactoring/archive/master.zip
-3. docker 설치하기
+3. docker 설치하기 (Ubuntu)
 #시스템 패키지 업데이트 
 sudo apt update
 sudo apt upgrade -y
@@ -35,6 +35,22 @@ sudo apt install -y docker-ce docker-ce-cli containerd.io
 #도커 서비스 시작 및 부팅 시 자동 실행
 sudo systemctl start docker
 sudo systemctl enable docker
+
+3-1 Rocky linux8 Docker 설치
+sudo yum install -y yum-utils
+  
+#Docker repository 추가
+sudo yum-config-manager \
+--add-repo \
+https://download.docker.com/linux/centos/docker-ce.repo
+
+#Docker Engine 설치
+sudo yum install docker-ce docker-ce-cli containerd.io
+
+#Docker 실행 
+sudo systemctl start docker
+출처: https://xshine.tistory.com/342 [메모하는습관:티스토리]
+
 
 4. 내 DB백업본 전송 
 # 깃에 있으니까 굳이 필요는 없지만 깃에 안올리는게 좋을거같아서..?

@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"BsmgRefactoring/app/define"
-	"BsmgRefactoring/app/middleware"
-	"BsmgRefactoring/app/server"
+	"BsmgRefactoring/define"
+	"BsmgRefactoring/middleware"
+	"BsmgRefactoring/server"
 	"fmt"
 	"log"
 	"net/http"

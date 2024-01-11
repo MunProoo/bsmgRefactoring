@@ -1,9 +1,9 @@
 package main
 
 import (
-	"BsmgRefactoring/app/define"
-	"BsmgRefactoring/app/server"
-	"BsmgRefactoring/app/utils"
+	"BsmgRefactoring/define"
+	"BsmgRefactoring/server"
+	"BsmgRefactoring/utils"
 	"fmt"
 	"testing"
 	"time"

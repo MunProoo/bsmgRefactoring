@@ -36,25 +36,25 @@ jobs:
           check-latest: true
 
       - name: Go Format
-        run: gofmt -s -w . && git diff --exit-code
+        run: cd app && gofmt -s -w . && git diff --exit-code
 
       - name: Go Vet
-        run: go vet ./...
+        run: cd app && go vet ./...
 
       - name: Go Tidy
-        run: go mod tidy && git diff --exit-code
+        run: cd app && go mod tidy && git diff --exit-code
 
       - name: Go Mod
-        run: go mod download
+        run: cd app && go mod download
 
       - name: Go Mod Verify
-        run: go mod verify
+        run: cd app && go mod verify
 
       - name: Go Generate
-        run: go generate ./... && git diff --exit-code
+        run: cd app && go generate ./... && git diff --exit-code
 
       - name: Go Build
-        run: go build -o /dev/null ./...
+        run: cd app && go build -o /dev/null ./...
 
    #   - name: Go Compile Tests
    #     if: ${{ inputs.skipTests }}

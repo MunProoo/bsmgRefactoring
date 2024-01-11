@@ -1,4 +1,4 @@
-## 도커로 환경 구성
+## 도커로 환경 구성 -> 로컬은 제대로 동작확인만 하고, mac m1이라 문제가 있으므로 배포서버에서 빌드하는거로 변경
 1. Dockerfile로 내 이미지 빌드 환경 구성
 2. docker-compose.yml 로 앱과 DB 컨테이너 구성 및 연결
 
@@ -13,8 +13,7 @@ docker exec -it bsmgDB bash
 
 ## 클라우드 서버 생성
 1. 포트 열기
-2. 내 레포지토리에서 zip파일로 받아오기
-    wget https://github.com/MunProoo/bsmgRefactoring/archive/master.zip
+2. 배포 서버에서 git clone
 3. docker 설치하기 (Ubuntu)
 #시스템 패키지 업데이트 
 sudo apt update
@@ -52,6 +51,14 @@ sudo systemctl start docker
 출처: https://xshine.tistory.com/342 [메모하는습관:티스토리]
 
 
+4. 배포서버에서 이미지 빌드
+ # webServer build
+docker build -t web . #bsmgRefactoring에서
+docker compose up --build -d #기존 이미지에서 변경점만 빌드
+docker compose ps 
+docker compose down 등 compose로 한번에 제어 가능
+
 4. 내 DB백업본 전송 
 # 깃에 있으니까 굳이 필요는 없지만 깃에 안올리는게 좋을거같아서..?
+scp BSMG_2024-01-06.sql root@158.247.195.94:/backup.sql
 scp BSMG_2024-01-06.sql root@158.247.195.94:/backup.sql

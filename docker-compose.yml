@@ -14,7 +14,6 @@ services:
     # build:
     #   context: .
     image: web # cloud에서 이미지 빌드하고 사용 (CPU 아키텍쳐문제)
-    platform: linux/arm64
     container_name: bsmg
     # ports:
     #   - "8080:3000"

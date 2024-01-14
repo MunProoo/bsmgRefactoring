@@ -4,9 +4,11 @@ import (
 	"BsmgRefactoring/database"
 	"BsmgRefactoring/define"
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
+	"github.com/inconshreveable/log15"
 	"github.com/robfig/cron"
 )
 
@@ -18,6 +20,7 @@ type ServerProcessor struct {
 	Config       *define.Config
 	ReqCh        chan interface{}
 	ResCh        chan interface{}
+	log          log15.Logger
 }
 
 func InitServer() (server *ServerProcessor) {
@@ -27,6 +30,7 @@ func InitServer() (server *ServerProcessor) {
 	server.ReqCh = make(chan interface{}, 1000)
 	server.ResCh = make(chan interface{}, 1000)
 	server.Config = &define.Config{}
+	server.InitLog()
 
 	return
 }
@@ -40,14 +44,14 @@ func (server *ServerProcessor) StartServer() {
 		case define.StateInit:
 			err = server.LoadConfig()
 			if err != nil {
-				log.Printf("%v \n ", err)
+				server.log.Error("Load config Failed", "error", err)
 				time.Sleep(100 * time.Millisecond)
 				continue
 			}
 
 			err = server.ConnectDataBase()
 			if err != nil {
-				log.Printf("%v \n ", err)
+				server.log.Error("Connect Database Failed", "error", err)
 				time.Sleep(100 * time.Millisecond)
 				continue
 			}
@@ -62,7 +66,7 @@ func (server *ServerProcessor) StartServer() {
 		case define.StateRunning: // DB 연결중임을 확인
 			err = server.IsConnected()
 			if err != nil {
-				log.Printf("%v \n ", err)
+				server.log.Error("DB is not connected", "error", err)
 				server.SetState(define.StateDisconnected)
 			}
 			time.Sleep(1 * time.Second)
@@ -70,7 +74,7 @@ func (server *ServerProcessor) StartServer() {
 		case define.StateDisconnected: // DB 연결 재시도
 			err = server.ConnectDataBase()
 			if err != nil {
-				log.Printf("%v \n ", err)
+				server.log.Error("Connect Database Failed", "error", err)
 				time.Sleep(100 * time.Millisecond)
 				continue
 			}
@@ -107,4 +111,20 @@ func (server *ServerProcessor) DBQuery() {
 			fmt.Printf("%v \n", msg)
 		}
 	}
+}
+
+func (server *ServerProcessor) InitLog() {
+
+	server.log = log15.New("module", "app/server")
+	// 스트림 핸들러 (터미널에 출력)
+	streamHandler := log15.StreamHandler(os.Stdout, log15.TerminalFormat())
+
+	// 파일 핸들러 (프로덕션 환경에서만 중요한 오류 기록)
+	fileHandler := log15.LvlFilterHandler(
+		log15.LvlError,
+		log15.Must.FileHandler("errors.json", log15.JsonFormat()),
+	)
+
+	// 로거에 여러 핸들러 추가 (디버깅 중에는 모든 로그를 스트림에, 프로덕션 환경에서는 중요한 오류만 파일에)
+	server.log.SetHandler(log15.MultiHandler(streamHandler, fileHandler))
 }

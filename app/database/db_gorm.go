@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/blue1004jy/gorm"
 	_ "github.com/go-sql-driver/mysql"
@@ -29,8 +28,6 @@ func (dbm *DBGormMaria) ConnectMariaDB() (err error) {
 	// dbm.DB, err = gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	dbm.DB, err = gorm.Open("mysql", connectionString)
 	if err != nil {
-		log.Printf("ConnectMariaDB %v \n", err)
-		// 로그
 		return err
 	}
 

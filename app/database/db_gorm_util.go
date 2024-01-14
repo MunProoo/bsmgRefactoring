@@ -28,7 +28,6 @@ func (dbm *DBGormMaria) MakeAttrTree() (attrTrees []define.AttrTree, err error) 
 	count1 := dbm.Attr1Count()
 	attrTrees, err = dbm.SelectAttrCategory(count1)
 	if attrTrees == nil || err != nil {
-		log.Printf("SelectAttrTree : %v \n", err)
 		return nil, err
 	}
 
@@ -53,7 +52,6 @@ func (dbm *DBGormMaria) AttrTreeSetNameAndValue(count int32) (attrTrees []define
 	FROM bsmg_attr2_infos ba2;`
 	rows, err := dbWhere.Debug().Raw(queryString).Rows()
 	if err != nil {
-		log.Printf("AttrTreeSetNameAndValue : %v \n", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -71,7 +69,6 @@ func (dbm *DBGormMaria) AttrTreeSetNameAndValue(count int32) (attrTrees []define
 	for rows.Next() {
 		err = rows.Scan(&attr2_name, &value, &attr1_idx, &attr2_idx)
 		if err != nil {
-			log.Printf("AttrTreeSetNameAndValue : %v \n", err)
 			return nil, err
 		}
 		attrTrees[idx].Label = attr2_name

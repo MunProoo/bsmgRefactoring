@@ -3,7 +3,6 @@ package database
 import (
 	"BsmgRefactoring/define"
 	"errors"
-	"log"
 	"strconv"
 )
 
@@ -13,7 +12,6 @@ func (dbm *DBGormMaria) SelectMemberInfo(member *define.BsmgMemberInfo) (err err
 		Find(&member)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("Login Failed :  %v \n", err)
 		return err
 	}
 
@@ -26,7 +24,6 @@ func (dbm *DBGormMaria) CheckMemberIDDuplicate(memID string) (isExist bool, err 
 		Debug().Select("Count(0)").Where("mem_id = ?", memID).Count(&count)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("CheckMemberIDDuplicate :  %v \n", err)
 		return true, err
 	}
 
@@ -79,7 +76,6 @@ func (dbm *DBGormMaria) SelectAttrCategory(count int32) (attrTrees []define.Attr
 
 	rows, err := dbWhere.Debug().Model(&define.BsmgAttr1Info{}).Select("Attr1_Category").Rows()
 	if err != nil {
-		log.Printf("SelectAttrCategory : %v \n", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -89,7 +85,6 @@ func (dbm *DBGormMaria) SelectAttrCategory(count int32) (attrTrees []define.Attr
 	for rows.Next() {
 		err = rows.Scan(&category)
 		if err != nil {
-			log.Printf("SelectAttrCategory : %v \n", err)
 			return nil, err
 		}
 		attrTrees[idx].Label = category
@@ -110,7 +105,6 @@ func (dbm *DBGormMaria) SelectUserList() (userList []define.BsmgMemberInfo, err 
 
 	err = dbWhere.Select("*").Find(&userList).Error
 	if err != nil {
-		log.Printf("SelectUserList : %v \n", err)
 		return nil, err
 	}
 	return
@@ -126,7 +120,6 @@ func (dbm *DBGormMaria) SelectLatestRptIdx(reporter string) (rptIdx int32, err e
 		Pluck("rpt_idx", &rptIdxSlice)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("SelectLatestRptIdx : %v \n", err)
 		return 0, err
 	}
 	rptIdx = rptIdxSlice[0]
@@ -182,7 +175,6 @@ func (dbm *DBGormMaria) SelectReportList(pageInfo define.PageInfo, searchData de
 	}
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("SelectReportList : %v \n", err)
 		return nil, 0, err
 	}
 
@@ -219,7 +211,6 @@ func (dbm *DBGormMaria) SelecAttrSearchReportList(pageInfo define.PageInfo, attr
 
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("SelecAttrSearchReportList : %v \n", err)
 		return nil, 0, err
 	}
 
@@ -247,7 +238,6 @@ func (dbm *DBGormMaria) SelectReportInfo(idx int) (rptInfo define.BsmgReportInfo
 		Where("rpt_idx = ?", idx).Scan(&reportIncludeName)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("SelectReportInfo : %v \n", err)
 		return define.BsmgReportInfo{}, err
 	}
 	reportIncludeName.ChangeIDToName()
@@ -262,7 +252,6 @@ func (dbm *DBGormMaria) SelectScheduleList(rptIdx int32) (scheduleList []define.
 		Find(&scheduleList)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("SelectScheduleList : %v \n", err)
 		return nil, err
 	}
 	return
@@ -342,7 +331,6 @@ func (dbm *DBGormMaria) SelectReportListAWeek(Mem_ID, bef7d, bef1d string) (repo
 		Find(&reportList)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("SelectScheduleList : %v \n", err)
 		return nil, err
 	}
 	return
@@ -361,7 +349,6 @@ func (dbm *DBGormMaria) SelectPartLeader(Mem_Part int32) (partLeader string, err
 			partLeader, err = "JJaturi", nil // 팀장 데이터를 안넣었다면 admin으로 고정
 			return
 		}
-		log.Printf("%v \n", err)
 		return "", err
 	}
 
@@ -411,7 +398,6 @@ func (dbm *DBGormMaria) SelectWeekReportList(pageInfo define.PageInfo, searchDat
 	dbWhere.Limit(limit).Offset(offset).Scan(&reportIncludeName)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("SelectWeekReportList : %v \n", err)
 		return nil, 0, err
 	}
 
@@ -444,7 +430,6 @@ func (dbm *DBGormMaria) SelectWeekReportCategorySearch(pageInfo define.PageInfo,
 	dbWhere.Order("w_rpt_idx DESC").Limit(limit).Offset(offset).Scan(&reportIncludeName)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("SelectWeekReportList : %v \n", err)
 		return nil, 0, err
 	}
 
@@ -470,7 +455,6 @@ func (dbm *DBGormMaria) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWe
 		Scan(&reportIncludeName)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("SelectWeekReportList : %v \n", err)
 		return define.BsmgWeekRptInfo{}, err
 	}
 
@@ -485,7 +469,6 @@ func (dbm *DBGormMaria) SelectAttr1List() (attr1List []define.BsmgAttr1Info, err
 		Find(&attr1List)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("SelectAttr1List : %v \n", err)
 		return nil, err
 	}
 

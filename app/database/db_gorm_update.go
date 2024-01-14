@@ -2,7 +2,6 @@ package database
 
 import (
 	"BsmgRefactoring/define"
-	"log"
 )
 
 func (dbm *DBGormMaria) UpdateUser(member define.BsmgMemberInfo) error {
@@ -21,7 +20,6 @@ func (dbm *DBGormMaria) UpdateUser(member define.BsmgMemberInfo) error {
 
 	err := dbWhere.Debug().Where("mem_id = ?", memID).Update(setVal).Error
 	if err != nil {
-		log.Printf("UpdateUser : %v \n", err)
 		return err
 	}
 	return err
@@ -40,7 +38,6 @@ func (dbm *DBGormMaria) UpdateReportInfo(report define.BsmgReportInfo) (err erro
 		Debug().Where("rpt_idx = ?", rptIdx).Update(setVal)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("UpdateReportInfo : %v \n", err)
 		return err
 	}
 
@@ -59,7 +56,6 @@ func (dbm *DBGormMaria) UpdateWeekReportInfo(report define.BsmgWeekRptInfo) (err
 		Debug().Where("w_rpt_idx = ?", wRptIdx).Update(setVal)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("UpdateWeekReportInfo : %v \n", err)
 		return err
 	}
 
@@ -73,7 +69,6 @@ func (dbm *DBGormMaria) ConfirmRpt(rptIdx int32) (err error) {
 		Where("rpt_idx = ?", rptIdx).Update(setVal)
 	err = dbWhere.Error
 	if err != nil {
-		log.Printf("ConfirmRpt %d: %v \n", rptIdx, err)
 		return err
 	}
 

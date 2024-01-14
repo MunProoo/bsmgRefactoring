@@ -5,14 +5,17 @@ import (
 	"BsmgRefactoring/utils"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/blue1004jy/gorm"
+	"github.com/inconshreveable/log15"
 )
 
 type DatabaseManager struct {
 	DBGorm DBInterface
+	Log    log15.Logger
 }
 
 type DBGormMaria struct {
@@ -21,8 +24,10 @@ type DBGormMaria struct {
 }
 
 func (dbManager *DatabaseManager) InitDBManager(config define.DBConfig) (err error) {
+	dbManager.Log = InitLog()
+
 	// mariaDB 연결
-	log.Println("Connect DB ... ")
+	dbManager.Log.Info("Connect DB ... ")
 
 	dbManager.DBGorm = &DBGormMaria{
 		DBConfig: config,
@@ -30,7 +35,7 @@ func (dbManager *DatabaseManager) InitDBManager(config define.DBConfig) (err err
 	err = dbManager.DBGorm.ConnectMariaDB()
 	if err != nil {
 		// 로그남기기
-		log.Printf("ConnectMariaDB Failed . err = %v\n", err)
+		dbManager.Log.Error("ConnectMariaDB Failed.", "error", err)
 		return err
 	}
 
@@ -46,21 +51,21 @@ func (dbManager *DatabaseManager) InitDBManager(config define.DBConfig) (err err
 		err = dbManager.DBGorm.CreateDataBase()
 		if err != nil {
 			// 로그
-			log.Printf("CreateDataBase Failed . err = %v\n", err)
+			dbManager.Log.Error("CreateDataBase Failed ", "error", err)
 		}
 
 		err = dbManager.DBGorm.ConnectBSMG()
 		if err != nil {
 			// 로그
 			// Database connect Failed
-			log.Printf("Database connect Failed . err = %v\n", err)
+			dbManager.Log.Error("Database connect Failed ", "error", err)
 			return
 		}
 		// 테이블 생성
 		log.Println("Create Tables ... ")
 		err = dbManager.CreateTables()
 		if err != nil {
-			log.Printf("CreateTables : %v \n", err)
+			dbManager.Log.Error("CreateTables", "error", err)
 			return err
 		}
 
@@ -69,12 +74,12 @@ func (dbManager *DatabaseManager) InitDBManager(config define.DBConfig) (err err
 	}
 
 	// database 연결
-	log.Println("Connect BSMG ... ")
+	dbManager.Log.Info("Connect BSMG ... ")
 	err = dbManager.DBGorm.ConnectBSMG()
 	if err != nil {
 		// 로그
 		// Database connect Failed
-		log.Printf("Database connect Failed . err = %v\n", err)
+		dbManager.Log.Error("Database connect Failed", "error", err)
 		return
 	}
 
@@ -119,7 +124,7 @@ func (dbManager *DatabaseManager) CreateTables() (err error) {
 }
 
 func (dbManager *DatabaseManager) MakeWeekRpt(bef7d, bef1d, now string, t time.Time) (err error) {
-	log.Println("dbManager.MakeWeekRpt is proceed")
+	dbManager.Log.Info("dbManager.MakeWeekRpt is proceed")
 	userList, err := dbManager.DBGorm.SelectUserList()
 	if err != nil {
 		return err
@@ -170,4 +175,22 @@ func (dbManager *DatabaseManager) MakeWeekRpt(bef7d, bef1d, now string, t time.T
 	}
 
 	return err
+}
+
+func InitLog() log15.Logger {
+	log := log15.New("module", "database")
+
+	// 스트림 핸들러 (터미널에 출력)
+	streamHandler := log15.StreamHandler(os.Stdout, log15.TerminalFormat())
+
+	// 파일 핸들러 (프로덕션 환경에서만 중요한 오류 기록)
+	fileHandler := log15.LvlFilterHandler(
+		log15.LvlError,
+		log15.Must.FileHandler("errors.json", log15.JsonFormat()),
+	)
+
+	// 로거에 여러 핸들러 추가 (디버깅 중에는 모든 로그를 스트림에, 프로덕션 환경에서는 중요한 오류만 파일에)
+	log.SetHandler(log15.MultiHandler(streamHandler, fileHandler))
+
+	return log
 }

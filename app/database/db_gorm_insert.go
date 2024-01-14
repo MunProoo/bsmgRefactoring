@@ -15,7 +15,6 @@ func (dbm *DBGormMaria) InsertDefaultAttr1() {
 	for _, val := range attr1List {
 		err := dbm.DB.Create(val).Error
 		if err != nil {
-			log.Printf("%v \n", err)
 		}
 	}
 }

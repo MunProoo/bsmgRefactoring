@@ -7,16 +7,13 @@ import (
 	"os"
 
 	"github.com/robfig/cron"
-	"github.com/sirupsen/logrus"
 )
-
-var log = logrus.New()
 
 func (server *ServerProcessor) ConnectDataBase() (err error) {
 	err = server.DBManager.InitDBManager(server.Config.DBConfig)
 	if err != nil {
 		// 로그
-		log.Printf("InitDBManager Failed . err = %v\n", err)
+		server.log.Error("InitDBManager Failed ", "error", err)
 		return err
 	}
 	return

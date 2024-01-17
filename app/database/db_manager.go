@@ -13,6 +13,13 @@ import (
 	"github.com/inconshreveable/log15"
 )
 
+type DatabaseManagerInterface interface {
+	InitDBManager(config define.DBConfig) (err error)
+	CreateTables() (err error)
+	MakeWeekRpt(bef7d, bef1d, now string, t time.Time) (err error)
+	DBInterface
+}
+
 type DatabaseManager struct {
 	DBGorm DBInterface
 	Log    log15.Logger
@@ -193,4 +200,64 @@ func InitLog() log15.Logger {
 	log.SetHandler(log15.MultiHandler(streamHandler, fileHandler))
 
 	return log
+}
+
+func NewDBManager(config define.DBConfig) DatabaseManagerInterface {
+	dbManager := DatabaseManager{}
+	dbManager.Log = InitLog()
+
+	// mariaDB 연결
+	dbManager.Log.Info("Connect DB ... ")
+
+	dbManager.DBGorm = &DBGormMaria{
+		DBConfig: config,
+	}
+	err := dbManager.DBGorm.ConnectMariaDB()
+	if err != nil {
+		// 로그남기기
+		dbManager.Log.Error("ConnectMariaDB Failed.", "error", err)
+	}
+
+	// BSMG Database 연결
+	dbExist := false
+	err = dbManager.DBGorm.IsExistBSMG()
+	if err == nil {
+		dbExist = true
+	}
+
+	// database 생성
+	if !dbExist {
+		err = dbManager.DBGorm.CreateDataBase()
+		if err != nil {
+			// 로그
+			dbManager.Log.Error("CreateDataBase Failed ", "error", err)
+		}
+
+		err = dbManager.DBGorm.ConnectBSMG()
+		if err != nil {
+			// 로그
+			// Database connect Failed
+			dbManager.Log.Error("Database connect Failed ", "error", err)
+			return nil
+		}
+		// 테이블 생성
+		log.Println("Create Tables ... ")
+		err = dbManager.CreateTables()
+		if err != nil {
+			dbManager.Log.Error("CreateTables", "error", err)
+		}
+
+		dbManager.DBGorm.InsertDefaultAttr1()
+		dbManager.DBGorm.InsertDefaultAttr2()
+	}
+
+	// database 연결
+	dbManager.Log.Info("Connect BSMG ... ")
+	err = dbManager.DBGorm.ConnectBSMG()
+	if err != nil {
+		// 로그
+		// Database connect Failed
+		dbManager.Log.Error("Database connect Failed", "error", err)
+	}
+	return &dbManager
 }

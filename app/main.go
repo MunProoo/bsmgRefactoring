@@ -3,10 +3,14 @@ package main
 // SPA (클라이언트 측 페이지 전환) 방식이므로 세션체크는 클라이언트에서 한다.
 
 import (
+	"BsmgRefactoring/database"
 	"BsmgRefactoring/define"
 	"BsmgRefactoring/handler"
 	md "BsmgRefactoring/middleware"
+	"BsmgRefactoring/repository"
+	"BsmgRefactoring/router"
 	"BsmgRefactoring/server"
+	"BsmgRefactoring/usecase"
 
 	"encoding/gob"
 
@@ -27,9 +31,23 @@ func init() {
 func main() {
 	// TODO : server를 goroutine으로 돌리기
 	server := server.InitServer()
-	go server.StartServer()
+	server.LoadConfig()
+
+	// go server.StartServer()
 
 	e := echo.New()
+
+	// DBManager 생성
+	dbManager := database.NewDBManager(server.Config.DBConfig)
+
+	// Repository 생성 DB 의존성 주입
+	repo := repository.NewBsmgRepository(dbManager)
+
+	// UseCase 생성 및 Repository 의존성 주입
+	useCase := usecase.NewBsmgUsecase(repo)
+
+	// handler 생성 및 Usecase 의존성 주입
+	bsmgHandler := handler.NewBsmgHandler(useCase)
 
 	// middleware ------------------------------------
 	e.Use(middleware.Logger())
@@ -53,8 +71,8 @@ func main() {
 	})
 
 	// login API만 JWT 인증 제외하기 위해 JWT 미들웨어보다 먼저 선언
-	e.POST("/bsmg/login/login", handler.PostLoginRequest)
-	e.GET("/bsmg/login/chkLogin", handler.GetChkLoginRequest)
+	e.POST("/bsmg/login/login", bsmgHandler.PostLoginRequest)
+	e.GET("/bsmg/login/chkLogin", bsmgHandler.GetChkLoginRequest)
 
 	// URL 그룹화 + JWT 미들웨어 적용
 	bsmgGroup := e.Group("/bsmg", echojwt.WithConfig(echojwt.Config{
@@ -77,7 +95,7 @@ func main() {
 		}),
 	)
 	// Route
-	handler.InitRouteGroup(bsmgGroup)
+	router.InitRouteGroup(bsmgGroup, *bsmgHandler)
 
 	e.Logger.Fatal(e.Start(":3000"))
 }

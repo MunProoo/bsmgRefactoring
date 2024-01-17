@@ -12,8 +12,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func getUserListRequest(c echo.Context) error {
-	log.Println("getUserList Req")
+func (h *BsmgHandler) GetUserListRequest(c echo.Context) error {
+	log.Println("GetUserList Req")
 
 	result := &define.BsmgMemberListResponse{}
 
@@ -21,8 +21,9 @@ func getUserListRequest(c echo.Context) error {
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()
 
-	// DB에서 가져오는거로 변경
-	userList, err := server.DBManager.DBGorm.SelectUserList()
+	// Handler -> Usecase -> Repository
+	userList, err := h.bmUsecase.SelectUserList()
+	// userList, err := server.DBManager.DBGorm.SelectUserList()
 	if err != nil {
 		result.Result.ResultCode = define.ErrorDataBase
 		return c.JSON(http.StatusOK, result)
@@ -38,7 +39,7 @@ func getUserListRequest(c echo.Context) error {
 }
 
 // 아이디 중복체크 확인
-func getIdCheckRequest(c echo.Context) (err error) {
+func (h *BsmgHandler) GetIdCheckRequest(c echo.Context) (err error) {
 	log.Println("getIdCheckRequest")
 
 	var apiResponse define.OnlyResult
@@ -68,7 +69,7 @@ func getIdCheckRequest(c echo.Context) (err error) {
 }
 
 // 사용자 검색
-func getUserSearchRequest(c echo.Context) error {
+func (h *BsmgHandler) GetUserSearchRequest(c echo.Context) error {
 	log.Println("getUserSearchRequest")
 
 	var apiResponse define.BsmgMemberListResponse
@@ -98,7 +99,7 @@ func getUserSearchRequest(c echo.Context) error {
 }
 
 // 사용자 등록 -> 통신 json으로 변경필요
-func postUserReq(c echo.Context) error {
+func (h *BsmgHandler) PostUserReq(c echo.Context) error {
 	log.Println("postUserReq")
 
 	var apiRequest define.BsmgMemberRequest
@@ -148,7 +149,7 @@ func postUserReq(c echo.Context) error {
 }
 
 // 사용자 수정
-func putUserReq(c echo.Context) error {
+func (h *BsmgHandler) PutUserReq(c echo.Context) error {
 	log.Println("putUserReq")
 
 	var apiRequest define.BsmgPutMemberRequest
@@ -176,7 +177,7 @@ func putUserReq(c echo.Context) error {
 }
 
 // 사용자 삭제
-func deleteUserReq(c echo.Context) (err error) {
+func (h *BsmgHandler) DeleteUserReq(c echo.Context) (err error) {
 	log.Println("deleteUserReq")
 
 	var apiResponse define.OnlyResult

@@ -16,7 +16,7 @@ import (
 // server를 지금 Main에서 전역으로 선언하고 그걸 갖다 쓰는데 이게 맞나?
 // 아니면 echo의 context에서 꺼내서 써야하나??????
 
-func getReportSearchReq(c echo.Context) (err error) {
+func (h *BsmgHandler) GetReportSearchReq(c echo.Context) (err error) {
 	log.Println("getReportSearchReq")
 
 	apiResponse := define.BsmgReportListResponse{}
@@ -56,7 +56,7 @@ func getReportSearchReq(c echo.Context) (err error) {
 }
 
 // 업무 속성에 따른 보고 정보
-func getReportAttrSearchReq(c echo.Context) (err error) {
+func (h *BsmgHandler) GetReportAttrSearchReq(c echo.Context) (err error) {
 	log.Println("getReportAttrSearchReq")
 
 	var apiResponse define.BsmgReportListResponse
@@ -92,7 +92,7 @@ func getReportAttrSearchReq(c echo.Context) (err error) {
 }
 
 // 업무 보고 Detail 정보
-func getReportInfoReq(c echo.Context) (err error) {
+func (h *BsmgHandler) GetReportInfoReq(c echo.Context) (err error) {
 	log.Println("getReportInfoReq")
 
 	var apiResponse define.BsmgReportInfoResponse
@@ -118,7 +118,7 @@ func getReportInfoReq(c echo.Context) (err error) {
 }
 
 // 업무보고에 들어있는 일정 정보
-func getScheduleReq(c echo.Context) (err error) {
+func (h *BsmgHandler) GetScheduleReq(c echo.Context) (err error) {
 	log.Println("getScheduleReq")
 
 	var apiRespone define.BsmgScheduleListResponse
@@ -142,7 +142,7 @@ func getScheduleReq(c echo.Context) (err error) {
 }
 
 // 주간보고 리스트 정보
-func getWeekRptSearchReq(c echo.Context) (err error) {
+func (h *BsmgHandler) GetWeekRptSearchReq(c echo.Context) (err error) {
 	log.Println("getWeekRptSearchReq")
 
 	var apiResponse define.BsmgWeekReportListResponse
@@ -176,7 +176,7 @@ func getWeekRptSearchReq(c echo.Context) (err error) {
 }
 
 // 주간 업무보고 카테고리 검색 ( = 부서로 검색)
-func getWeekRptCategorySearch(c echo.Context) (err error) {
+func (h *BsmgHandler) GetWeekRptCategorySearch(c echo.Context) (err error) {
 	log.Println("getWeekRptCategory")
 
 	var apiResponse define.BsmgWeekReportListResponse
@@ -208,7 +208,7 @@ func getWeekRptCategorySearch(c echo.Context) (err error) {
 }
 
 // 주간 업무보고 Detail
-func getWeekRptInfoReq(c echo.Context) (err error) {
+func (h *BsmgHandler) GetWeekRptInfoReq(c echo.Context) (err error) {
 	log.Println("getWeekRptInfoReq")
 
 	var apiResponse define.BsmgWeekReportInfoResponse
@@ -227,7 +227,7 @@ func getWeekRptInfoReq(c echo.Context) (err error) {
 }
 
 // 업무보고 확인 (상급자 기능)
-func getConfirmRptReq(c echo.Context) (err error) {
+func (h *BsmgHandler) GetConfirmRptReq(c echo.Context) (err error) {
 	log.Println("getConfirmRptReq")
 
 	var apiRespone define.OnlyResult
@@ -251,7 +251,7 @@ func getConfirmRptReq(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, apiRespone)
 }
 
-func postReportReq(c echo.Context) error {
+func (h *BsmgHandler) PostReportReq(c echo.Context) error {
 	log.Println("postReportReq")
 
 	apiRequest := define.BsmgReportInfoRequest{}
@@ -302,7 +302,7 @@ func postReportReq(c echo.Context) error {
 
 }
 
-func postRegistScheduleReq(c echo.Context) (err error) {
+func (h *BsmgHandler) PostRegistScheduleReq(c echo.Context) (err error) {
 	log.Println("postRegistScheduleReq")
 
 	apiRequest := define.BsmgPostScheduleRequest{}
@@ -334,7 +334,7 @@ func postRegistScheduleReq(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, apiRespone)
 }
 
-func putReportReq(c echo.Context) (err error) {
+func (h *BsmgHandler) PutReportReq(c echo.Context) (err error) {
 	log.Println("putReportReq ")
 
 	apiRequest := define.BsmgReportInfoRequest{}
@@ -376,7 +376,7 @@ func putReportReq(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
-func putScheduleReq(c echo.Context) (err error) {
+func (h *BsmgHandler) PutScheduleReq(c echo.Context) (err error) {
 	log.Println("putScheduleReq ")
 
 	apiRequest := define.BsmgPutScheduleRequest{}
@@ -419,7 +419,7 @@ func putScheduleReq(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
-func deleteReportReq(c echo.Context) (err error) {
+func (h *BsmgHandler) DeleteReportReq(c echo.Context) (err error) {
 	log.Println("deleteReportReq ")
 	apiRespone := define.OnlyResult{}
 
@@ -446,7 +446,7 @@ func deleteReportReq(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, apiRespone)
 }
 
-func putWeekRptReq(c echo.Context) (err error) {
+func (h *BsmgHandler) PutWeekRptReq(c echo.Context) (err error) {
 	apiRequest := define.BsmgPutWeekReportRequest{}
 	apiResponse := define.OnlyResult{}
 
@@ -486,7 +486,7 @@ func putWeekRptReq(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
-func deleteWeekRptReq(c echo.Context) (err error) {
+func (h *BsmgHandler) DeleteWeekRptReq(c echo.Context) (err error) {
 	apiResponse := define.OnlyResult{}
 
 	server, _ := c.Get("Server").(*server.ServerProcessor)

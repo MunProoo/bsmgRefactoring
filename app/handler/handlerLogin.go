@@ -13,7 +13,7 @@ import (
 )
 
 // 로그인 중인지 확인
-func GetChkLoginRequest(c echo.Context) error {
+func (h *BsmgHandler) GetChkLoginRequest(c echo.Context) error {
 	log.Println("getChkLogin Req")
 	var apiResponse define.BsmgMemberResponse
 
@@ -47,7 +47,7 @@ func GetChkLoginRequest(c echo.Context) error {
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
-func PostLoginRequest(c echo.Context) error {
+func (h *BsmgHandler) PostLoginRequest(c echo.Context) error {
 	log.Println("postLoginRequest")
 
 	server, _ := c.Get("Server").(*server.ServerProcessor)
@@ -124,7 +124,7 @@ func PostLoginRequest(c echo.Context) error {
 	})
 }
 
-func postLogoutRequest(c echo.Context) error {
+func (h *BsmgHandler) PostLogoutRequest(c echo.Context) error {
 	log.Println("postLogoutRequest")
 	result := define.OnlyResult{}
 

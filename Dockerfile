@@ -1,5 +1,11 @@
+
+
 # Use the official Go image as a base image
 FROM golang:latest
+
+# Label 설정
+LABEL name="munprooo"
+
 RUN apt-get update && apt-get install -y iputils-ping
 
 # Set the working directory inside the container

@@ -11,7 +11,7 @@ import (
 )
 
 // 사용자 업무보고 속성트리
-func getAttrTreeReq(c echo.Context) (err error) {
+func (h *BsmgHandler) GetAttrTreeReq(c echo.Context) (err error) {
 	log.Println("getAttrTreeReq")
 
 	var result define.BsmgTreeResult
@@ -30,7 +30,7 @@ func getAttrTreeReq(c echo.Context) (err error) {
 }
 
 // 직급, 부서 정보
-func getRankPartReq(c echo.Context) error {
+func (h *BsmgHandler) GetRankPartReq(c echo.Context) error {
 	log.Println("getRankPartReq")
 
 	var result define.BsmgRankPartResult
@@ -59,7 +59,7 @@ func getRankPartReq(c echo.Context) error {
 }
 
 // 주간 업무보고 카테고리 정보
-func getPartTree(c echo.Context) (err error) {
+func (h *BsmgHandler) GetPartTree(c echo.Context) (err error) {
 	log.Println("getPartTree")
 
 	var apiResponse define.BsmgTreeResult
@@ -81,7 +81,7 @@ func getPartTree(c echo.Context) (err error) {
 
 // 주간 업무보고를 수정한다면, 해당 팀의 팀장으로 바로 보고자 변경하기 위해
 // 팀장을 response
-func getToRptReq(c echo.Context) (err error) {
+func (h *BsmgHandler) GetToRptReq(c echo.Context) (err error) {
 	log.Println("getToRptReq")
 
 	var apiResponse define.BsmgTeamLeaderResponse
@@ -104,7 +104,7 @@ func getToRptReq(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
-func getAttr1Req(c echo.Context) (err error) {
+func (h *BsmgHandler) GetAttr1Req(c echo.Context) (err error) {
 	log.Println("getAttr1Req")
 
 	var apiResponse define.BsmgAttr1Response

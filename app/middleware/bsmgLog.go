@@ -98,7 +98,7 @@ func logProcess() {
 
 	}
 
-	defer logFile.Close()
+	// defer logFile.Close()
 
 }
 

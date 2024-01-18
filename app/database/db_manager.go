@@ -151,9 +151,9 @@ func (dbManager *DatabaseManager) MakeWeekRpt(bef7d, bef1d, now string, t time.T
 			continue
 		}
 
-		var findOmission *utils.OmissionMap
-		findOmission = utils.InitOmissionMap(t) // 업무보고 없는 날짜 map에 할당할 것.
-		weekContent := strings.Builder{}        // 주간보고 내용물
+		// var findOmission *utils.OmissionMap
+		findOmission := utils.InitOmissionMap(t) // 업무보고 없는 날짜 map에 할당할 것.
+		weekContent := strings.Builder{}         // 주간보고 내용물
 		for _, report := range rptList {
 			weekContent.WriteString("📆")
 			weekContent.WriteString(report.Rpt_date[:8] + "\n")

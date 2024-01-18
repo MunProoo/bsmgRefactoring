@@ -2,6 +2,7 @@ package database
 
 import (
 	"BsmgRefactoring/define"
+	"BsmgRefactoring/middleware"
 	"fmt"
 	"log"
 )
@@ -15,6 +16,7 @@ func (dbm *DBGormMaria) InsertDefaultAttr1() {
 	for _, val := range attr1List {
 		err := dbm.DB.Create(val).Error
 		if err != nil {
+			middleware.PrintE(middleware.LogArg{"pn": "db_gorm", "err": err})
 		}
 	}
 }

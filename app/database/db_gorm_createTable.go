@@ -39,7 +39,6 @@ func (dbm *DBGormMaria) CreateMemberTable() (err error) {
 		err = dbm.DB.CreateTable(&define.BsmgMemberInfo{}).Error
 		if err != nil {
 			return err
-			return
 		}
 		err = dbm.DB.Model(&define.BsmgMemberInfo{}).AddForeignKey("mem_rank", "bsmg_rank_infos(rank_idx)", "NO ACTION", "CASCADE").Error
 		if err != nil {

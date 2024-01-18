@@ -2,15 +2,13 @@ package database
 
 import (
 	"BsmgRefactoring/define"
+	"BsmgRefactoring/middleware"
 	"BsmgRefactoring/utils"
 	"fmt"
-	"log"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/blue1004jy/gorm"
-	"github.com/inconshreveable/log15"
 )
 
 type DatabaseManagerInterface interface {
@@ -22,7 +20,6 @@ type DatabaseManagerInterface interface {
 
 type DatabaseManager struct {
 	DBGorm DBInterface
-	Log    log15.Logger
 }
 
 type DBGormMaria struct {
@@ -31,10 +28,9 @@ type DBGormMaria struct {
 }
 
 func (dbManager *DatabaseManager) InitDBManager(config define.DBConfig) (err error) {
-	dbManager.Log = InitLog()
-
 	// mariaDB 연결
-	dbManager.Log.Info("Connect DB ... ")
+	// dbManager.Log.Info("Connect DB ... ")
+	middleware.PrintI(middleware.LogArg{"layer": "database", "fn": "NewDBManager", "text": "Connect DB ..."})
 
 	dbManager.DBGorm = &DBGormMaria{
 		DBConfig: config,
@@ -42,7 +38,8 @@ func (dbManager *DatabaseManager) InitDBManager(config define.DBConfig) (err err
 	err = dbManager.DBGorm.ConnectMariaDB()
 	if err != nil {
 		// 로그남기기
-		dbManager.Log.Error("ConnectMariaDB Failed.", "error", err)
+		// dbManager.Log.Error("ConnectMariaDB Failed.", "error", err)
+		middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "InitDBManager", "text": "ConnectMariaDB Failed. ...", "err": err})
 		return err
 	}
 
@@ -58,21 +55,25 @@ func (dbManager *DatabaseManager) InitDBManager(config define.DBConfig) (err err
 		err = dbManager.DBGorm.CreateDataBase()
 		if err != nil {
 			// 로그
-			dbManager.Log.Error("CreateDataBase Failed ", "error", err)
+			// dbManager.Log.Error("CreateDataBase Failed ", "error", err)
+			middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "InitDBManager", "text": "CreateDataBase Failed ...", "err": err})
 		}
 
 		err = dbManager.DBGorm.ConnectBSMG()
 		if err != nil {
 			// 로그
 			// Database connect Failed
-			dbManager.Log.Error("Database connect Failed ", "error", err)
+			// dbManager.Log.Error("Database connect Failed ", "error", err)
+			middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "InitDBManager", "text": "Database connect Failed ...", "err": err})
 			return
 		}
 		// 테이블 생성
-		log.Println("Create Tables ... ")
+		// log.Println("Create Tables ... ")
+		middleware.PrintI(middleware.LogArg{"message": "Create Tables ... "})
 		err = dbManager.CreateTables()
 		if err != nil {
-			dbManager.Log.Error("CreateTables", "error", err)
+			// dbManager.Log.Error("CreateTables", "error", err)
+			middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "InitDBManager", "text": "CreateTables Failed ...", "err": err})
 			return err
 		}
 
@@ -81,12 +82,14 @@ func (dbManager *DatabaseManager) InitDBManager(config define.DBConfig) (err err
 	}
 
 	// database 연결
-	dbManager.Log.Info("Connect BSMG ... ")
+	// dbManager.Log.Info("Connect BSMG ... ")
+	middleware.PrintI(middleware.LogArg{"message": "Connect BSMG ... "})
 	err = dbManager.DBGorm.ConnectBSMG()
 	if err != nil {
 		// 로그
 		// Database connect Failed
-		dbManager.Log.Error("Database connect Failed", "error", err)
+		// dbManager.Log.Error("Database connect Failed", "error", err)
+		middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "InitDBManager", "text": "Database connect Failed..", "err": err})
 		return
 	}
 
@@ -131,7 +134,8 @@ func (dbManager *DatabaseManager) CreateTables() (err error) {
 }
 
 func (dbManager *DatabaseManager) MakeWeekRpt(bef7d, bef1d, now string, t time.Time) (err error) {
-	dbManager.Log.Info("dbManager.MakeWeekRpt is proceed")
+	// dbManager.Log.Info("dbManager.MakeWeekRpt is proceed")
+	middleware.PrintI(middleware.LogArg{"layer": "database", "fn": "MakeWeekRpt", "text": "MakeWeekRpt is proceed"})
 	userList, err := dbManager.DBGorm.SelectUserList()
 	if err != nil {
 		return err
@@ -177,37 +181,19 @@ func (dbManager *DatabaseManager) MakeWeekRpt(bef7d, bef1d, now string, t time.T
 		}
 		err = dbManager.DBGorm.InsertWeekReport(weekRptInfo)
 		if err != nil {
-			return err
+			middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "MakeWeekRpt", "text": "InsertWeekReport is failed", "err": err})
 		}
 	}
 
 	return err
 }
 
-func InitLog() log15.Logger {
-	log := log15.New("module", "database")
-
-	// 스트림 핸들러 (터미널에 출력)
-	streamHandler := log15.StreamHandler(os.Stdout, log15.TerminalFormat())
-
-	// 파일 핸들러 (프로덕션 환경에서만 중요한 오류 기록)
-	fileHandler := log15.LvlFilterHandler(
-		log15.LvlError,
-		log15.Must.FileHandler("errors.json", log15.JsonFormat()),
-	)
-
-	// 로거에 여러 핸들러 추가 (디버깅 중에는 모든 로그를 스트림에, 프로덕션 환경에서는 중요한 오류만 파일에)
-	log.SetHandler(log15.MultiHandler(streamHandler, fileHandler))
-
-	return log
-}
-
 func NewDBManager(config define.DBConfig) DatabaseManagerInterface {
 	dbManager := DatabaseManager{}
-	dbManager.Log = InitLog()
 
 	// mariaDB 연결
-	dbManager.Log.Info("Connect DB ... ")
+	// dbManager.Log.Info("Connect DB ... ")
+	middleware.PrintI(middleware.LogArg{"layer": "database", "fn": "NewDBManager", "text": "Connect DB ..."})
 
 	dbManager.DBGorm = &DBGormMaria{
 		DBConfig: config,
@@ -215,7 +201,8 @@ func NewDBManager(config define.DBConfig) DatabaseManagerInterface {
 	err := dbManager.DBGorm.ConnectMariaDB()
 	if err != nil {
 		// 로그남기기
-		dbManager.Log.Error("ConnectMariaDB Failed.", "error", err)
+		// dbManager.Log.Error("ConnectMariaDB Failed.", "error", err)
+		middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "NewDBManager", "text": "ConnectMariaDB failed", "err": err})
 	}
 
 	// BSMG Database 연결
@@ -230,21 +217,25 @@ func NewDBManager(config define.DBConfig) DatabaseManagerInterface {
 		err = dbManager.DBGorm.CreateDataBase()
 		if err != nil {
 			// 로그
-			dbManager.Log.Error("CreateDataBase Failed ", "error", err)
+			// dbManager.Log.Error("CreateDataBase Failed ", "error", err)
+			middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "NewDBManager", "text": "CreateDataBase failed", "err": err})
 		}
 
 		err = dbManager.DBGorm.ConnectBSMG()
 		if err != nil {
 			// 로그
 			// Database connect Failed
-			dbManager.Log.Error("Database connect Failed ", "error", err)
+			// dbManager.Log.Error("Database connect Failed ", "error", err)
+			middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "NewDBManager", "text": "CreateDataBase failed", "err": err})
 			return nil
 		}
 		// 테이블 생성
-		log.Println("Create Tables ... ")
+		// log.Println("Create Tables ... ")
+		middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "NewDBManager", "text": "Create Tables", "err": err})
 		err = dbManager.CreateTables()
 		if err != nil {
-			dbManager.Log.Error("CreateTables", "error", err)
+			// dbManager.Log.Error("CreateTables", "error", err)
+			middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "NewDBManager", "text": "CreateTables", "err": err})
 		}
 
 		dbManager.DBGorm.InsertDefaultAttr1()
@@ -252,12 +243,14 @@ func NewDBManager(config define.DBConfig) DatabaseManagerInterface {
 	}
 
 	// database 연결
-	dbManager.Log.Info("Connect BSMG ... ")
+	// dbManager.Log.Info("Connect BSMG ... ")
+	middleware.PrintI(middleware.LogArg{"layer": "database", "fn": "NewDBManager", "text": "Connect BSMG"})
 	err = dbManager.DBGorm.ConnectBSMG()
 	if err != nil {
 		// 로그
 		// Database connect Failed
-		dbManager.Log.Error("Database connect Failed", "error", err)
+		// dbManager.Log.Error("Database connect Failed", "error", err)
+		middleware.PrintE(middleware.LogArg{"layer": "database", "fn": "NewDBManager", "text": "Database connect Failed", "err": err})
 	}
 	return &dbManager
 }

@@ -17,7 +17,7 @@ func (server *ServerProcessor) MakeWeekRpt() {
 	bef7d, bef1d, now, t := utils.GetDate()
 	err := server.DBManager.MakeWeekRpt(bef7d, bef1d, now, t)
 	if err != nil {
-		server.log.Error("MakeWeekRpt Faield : ", "date", now, "error", err)
+		// server.log.Error("MakeWeekRpt Faield : ", "date", now, "error", err)
 		return
 	}
 

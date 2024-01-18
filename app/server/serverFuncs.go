@@ -13,7 +13,7 @@ func (server *ServerProcessor) ConnectDataBase() (err error) {
 	err = server.DBManager.InitDBManager(server.Config.DBConfig)
 	if err != nil {
 		// 로그
-		server.log.Error("InitDBManager Failed ", "error", err)
+		// server.log.Error("InitDBManager Failed ", "error", err)
 		return err
 	}
 	return

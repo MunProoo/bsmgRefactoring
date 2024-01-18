@@ -6,7 +6,7 @@ import (
 	"BsmgRefactoring/database"
 	"BsmgRefactoring/define"
 	"BsmgRefactoring/handler"
-	md "BsmgRefactoring/middleware"
+	bsmgMd "BsmgRefactoring/middleware"
 	"BsmgRefactoring/repository"
 	"BsmgRefactoring/router"
 	"BsmgRefactoring/server"
@@ -29,6 +29,10 @@ func init() {
 }
 
 func main() {
+
+	// 로그 시작
+	bsmgMd.InitLog()
+
 	// TODO : server를 goroutine으로 돌리기
 	server := server.InitServer()
 	server.LoadConfig()
@@ -55,11 +59,11 @@ func main() {
 	e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
 	// e.Use(middleware.Static("views/bsmgBsmgRefactoring/webRoot")) // 빠른 디버깅용. 배포위치를 변경하여 front 수정 시 바로 반영되도록
 
-	e.Use(session.Middleware(md.Store)) // 세션 미들웨어 추가
+	e.Use(session.Middleware(bsmgMd.Store)) // 세션 미들웨어 추가
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			// 세션 초기화
-			md.InitSessionMiddleware(c)
+			bsmgMd.InitSessionMiddleware(c)
 			// 스레드 안정성을 고려하여 서버 변수를 컨텍스트에 할당
 			c.Set("Server", server)
 			return next(c)
@@ -77,19 +81,19 @@ func main() {
 	// URL 그룹화 + JWT 미들웨어 적용
 	bsmgGroup := e.Group("/bsmg", echojwt.WithConfig(echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(md.MemberClaims)
+			return new(bsmgMd.MemberClaims)
 		},
 		// ContextKey: "member", // 클레임의 이름 . default : user
 		// SigningMethod: "RS256",      // 토큰 서명 방식 . defaelt : HMAC SHA-256 (HS256)
-		SigningKey: []byte(md.AccessTokenKey),
+		SigningKey: []byte(bsmgMd.AccessTokenKey),
 		// TokenLookup: "header:Auth", // 헤더이름 Auth, Value에 Bearer 안써도 되게
 		TokenLookup: "cookie:AC_bsmgCookie",
 	}),
 		echojwt.WithConfig(echojwt.Config{
 			NewClaimsFunc: func(c echo.Context) jwt.Claims {
-				return new(md.MemberClaims)
+				return new(bsmgMd.MemberClaims)
 			},
-			SigningKey: []byte(md.RefreshTokenKey),
+			SigningKey: []byte(bsmgMd.RefreshTokenKey),
 			// TokenLookup: "header:Auth", // 헤더이름 Auth, Value에 Bearer 안써도 되게
 			TokenLookup: "cookie:RS_bsmgCookie",
 		}),

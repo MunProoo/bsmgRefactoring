@@ -98,8 +98,7 @@ func (dbm *DBGormMaria) InsertMember(member define.BsmgMemberInfo) (err error) {
 
 	err = dbm.DB.Debug().Create(&member).Error
 	if err != nil {
-		log.Printf("%v \n", err)
-		return
+		return err
 	}
 	return
 }
@@ -108,8 +107,7 @@ func (dbm *DBGormMaria) InsertDailyReport(report define.BsmgReportInfo) (err err
 	dbWhere := dbm.DB.Model(define.BsmgReportInfo{})
 	err = dbWhere.Debug().Create(&report).Error
 	if err != nil {
-		log.Printf("CreateDailyReport : %v \n", err)
-		return
+		return err
 	}
 
 	return
@@ -119,8 +117,7 @@ func (dbm *DBGormMaria) InsertSchedule(schedule define.BsmgScheduleInfo) (err er
 	dbWhere := dbm.DB.Model(define.BsmgScheduleInfo{})
 	err = dbWhere.Debug().Create(&schedule).Error
 	if err != nil {
-		log.Printf("InsertSchedule : %v \n", err)
-		return
+		return err
 	}
 
 	return
@@ -134,8 +131,7 @@ func (dbm *DBGormMaria) InsertWeekReport(weekRptInfo define.BsmgWeekRptInfo) (er
 	err = dbWhere.Error
 
 	if err != nil {
-		log.Printf("%s 's InsertWeekReport Failed: %v \n", weekRptInfo.WRpt_Reporter, err)
-		return
+		return err
 	}
 
 	return

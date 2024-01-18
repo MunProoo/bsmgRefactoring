@@ -2,6 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -90,4 +92,42 @@ func InitOmissionMap(t time.Time) (findOmission *OmissionMap) {
 
 	}
 	return findOmission
+}
+
+// 로그 파일 생성 (/logs/curTimeDir/ 날짜.logs)
+func CreateLogFile() (file *os.File, err error) {
+	curPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	fmt.Println(err)
+
+	// logs 디렉토리 생성
+	if _, err = os.Stat(curPath + "/logs"); os.IsNotExist(err) {
+		if err = os.Mkdir(curPath+"/logs", os.FileMode(0755)); err != nil {
+			return
+		}
+	}
+
+	// 날짜 디렉토리 생성
+	timeInfo := time.Now()
+	dirName := fmt.Sprintf("%s/logs/%0.4d%0.2d%0.2d", curPath, timeInfo.Year(), timeInfo.Month(), timeInfo.Day())
+	if _, err = os.Stat(dirName); os.IsNotExist(err) {
+		if err = os.Mkdir(dirName, os.FileMode(0755)); err != nil {
+			return
+		}
+	}
+
+	fileIndex := 0
+	fileNamePrefix := fmt.Sprintf("%s/%s_%0.4d%0.2d%0.2d", dirName, "BSMG", timeInfo.Year(), timeInfo.Month(), timeInfo.Day())
+
+	for fileIndex = 0; ; fileIndex++ {
+		fileName := fmt.Sprintf("%s_%d.log", fileNamePrefix, fileIndex)
+		if _, err = os.Stat(fileName); os.IsNotExist(err) {
+			file, err = os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666) // 모두에게 읽기 쓰기 권한
+			if err != nil {
+				return
+			}
+			fmt.Println(file.Name())
+			return file, err
+		}
+	}
+
 }

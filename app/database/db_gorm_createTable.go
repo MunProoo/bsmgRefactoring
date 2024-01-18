@@ -12,7 +12,7 @@ func (dbm *DBGormMaria) CreateRankTable() (err error) {
 	if !exist {
 		err := dbm.DB.CreateTable(&define.BsmgRankInfo{}).Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 	}
 	return
@@ -25,7 +25,7 @@ func (dbm *DBGormMaria) CreatePartTable() (err error) {
 	if !exist {
 		err := dbm.DB.CreateTable(&define.BsmgPartInfo{}).Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 	}
 	return
@@ -38,16 +38,16 @@ func (dbm *DBGormMaria) CreateMemberTable() (err error) {
 	if !exist {
 		err = dbm.DB.CreateTable(&define.BsmgMemberInfo{}).Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 			return
 		}
 		err = dbm.DB.Model(&define.BsmgMemberInfo{}).AddForeignKey("mem_rank", "bsmg_rank_infos(rank_idx)", "NO ACTION", "CASCADE").Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 		err = dbm.DB.Model(&define.BsmgMemberInfo{}).AddForeignKey("mem_part", "bsmg_part_infos(part_idx)", "NO ACTION", "CASCADE").Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 	}
 	return
@@ -60,7 +60,7 @@ func (dbm *DBGormMaria) CreateAttr1Table() (err error) {
 	if !exist {
 		err := dbm.DB.CreateTable(&define.BsmgAttr1Info{}).Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 	}
 	return
@@ -73,11 +73,11 @@ func (dbm *DBGormMaria) CreateAttr2Table() (err error) {
 	if !exist {
 		err := dbm.DB.CreateTable(&define.BsmgAttr2Info{}).Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 		err = dbm.DB.Model(&define.BsmgAttr2Info{}).AddForeignKey("attr1_idx", "bsmg_attr1_infos(attr1_idx)", "NO ACTION", "CASCADE").Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 	}
 	return
@@ -90,15 +90,15 @@ func (dbm *DBGormMaria) CreateDailyReportTable() (err error) {
 	if !exist {
 		err := dbm.DB.CreateTable(&define.BsmgReportInfo{}).Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 		err = dbm.DB.Model(&define.BsmgReportInfo{}).AddForeignKey("rpt_attr1", "bsmg_attr1_infos(attr1_idx)", "NO ACTION", "CASCADE").Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 		err = dbm.DB.Model(&define.BsmgReportInfo{}).AddForeignKey("rpt_attr2", "bsmg_attr2_infos(attr2_idx)", "NO ACTION", "CASCADE").Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 	}
 	return
@@ -111,7 +111,7 @@ func (dbm *DBGormMaria) CreateScheduleTable() (err error) {
 	if !exist {
 		err := dbm.DB.CreateTable(&define.BsmgScheduleInfo{}).Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 	}
 	return
@@ -124,11 +124,11 @@ func (dbm *DBGormMaria) CreateWeekReportTable() (err error) {
 	if !exist {
 		err := dbm.DB.CreateTable(&define.BsmgWeekRptInfo{}).Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 		err = dbm.DB.Model(&define.BsmgWeekRptInfo{}).AddForeignKey("w_rpt_part", "bsmg_part_infos(part_idx)", "NO ACTION", "CASCADE").Error
 		if err != nil {
-			log.Printf("%v \n", err)
+			return err
 		}
 	}
 	return

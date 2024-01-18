@@ -3,8 +3,6 @@ package usecase
 import (
 	"BsmgRefactoring/define"
 	"fmt"
-
-	"github.com/robfig/cron"
 )
 
 func (su structBsmgUsecase) SelectUserList() (userList []define.BsmgMemberInfo, err error) {
@@ -20,9 +18,9 @@ func (su structBsmgUsecase) SelectUserList() (userList []define.BsmgMemberInfo, 
 
 // 일일 업무보고 -> 주간 업무보고 취합 스케쥴링 생성
 func (su structBsmgUsecase) CreateCron(config define.ScheduleConfig) {
-	CronSpec := config
+	// CronSpec := config
 
-	server.WeekRptMaker = cron.New()
-	server.WeekRptMaker.AddFunc(CronSpec, server.MakeWeekRpt)
-	server.WeekRptMaker.Start()
+	// server.WeekRptMaker = cron.New()
+	// server.WeekRptMaker.AddFunc(CronSpec, server.MakeWeekRpt)
+	// server.WeekRptMaker.Start()
 }

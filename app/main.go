@@ -3,7 +3,6 @@ package main
 // SPA (클라이언트 측 페이지 전환) 방식이므로 세션체크는 클라이언트에서 한다.
 
 import (
-	"BsmgRefactoring/database"
 	"BsmgRefactoring/define"
 	"BsmgRefactoring/handler"
 	bsmgMd "BsmgRefactoring/middleware"
@@ -33,22 +32,20 @@ func main() {
 	// 로그 시작
 	bsmgMd.InitLog()
 
-	// TODO : server를 goroutine으로 돌리기
 	server := server.InitServer()
-	server.LoadConfig()
-
-	// go server.StartServer()
 
 	e := echo.New()
 
 	// DBManager 생성
-	dbManager := database.NewDBManager(server.Config.DBConfig)
+	server.ConnectDataBase() // 서브 고루틴에서 연결 시 비동기이므로.. 첫 연결은 절차적으로
+	dbManager := server.DBManager
 
 	// Repository 생성 DB 의존성 주입
 	repo := repository.NewBsmgRepository(dbManager)
 
 	// UseCase 생성 및 Repository 의존성 주입
 	useCase := usecase.NewBsmgUsecase(repo)
+	server.CreateCron(useCase) // 주간보고 스케쥴러 생성
 
 	// handler 생성 및 Usecase 의존성 주입
 	bsmgHandler := handler.NewBsmgHandler(useCase)
@@ -102,4 +99,5 @@ func main() {
 	router.InitRouteGroup(bsmgGroup, *bsmgHandler)
 
 	e.Logger.Fatal(e.Start(":3000"))
+	go server.StartServer() // DB 상태 체크 및 재연결 등..
 }

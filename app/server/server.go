@@ -3,7 +3,6 @@ package server
 import (
 	"BsmgRefactoring/database"
 	"BsmgRefactoring/define"
-	"fmt"
 	"sync"
 	"time"
 
@@ -11,7 +10,7 @@ import (
 )
 
 type ServerProcessor struct {
-	DBManager    database.DatabaseManager
+	DBManager    database.DatabaseManagerInterface
 	State        uint16 // 서버의 상태
 	Mutex        sync.RWMutex
 	WeekRptMaker *cron.Cron // 주간보고 스케쥴러
@@ -27,6 +26,7 @@ func InitServer() (server *ServerProcessor) {
 	server.ReqCh = make(chan interface{}, 1000)
 	server.ResCh = make(chan interface{}, 1000)
 	server.Config = &define.Config{}
+	server.LoadConfig()
 
 	return
 }
@@ -38,24 +38,24 @@ func (server *ServerProcessor) StartServer() {
 	for {
 		switch server.State {
 		case define.StateInit:
-			err = server.LoadConfig()
-			if err != nil {
-				// server.log.Error("Load config Failed", "error", err)
-				time.Sleep(100 * time.Millisecond)
-				continue
-			}
+			// err = server.LoadConfig()
+			// if err != nil {
+			// 	// server.log.Error("Load config Failed", "error", err)
+			// 	time.Sleep(100 * time.Millisecond)
+			// 	continue
+			// }
 
-			err = server.ConnectDataBase()
-			if err != nil {
-				// server.log.Error("Connect Database Failed", "error", err)
-				time.Sleep(100 * time.Millisecond)
-				continue
-			}
+			// err = server.ConnectDataBase()
+			// if err != nil {
+			// 	// server.log.Error("Connect Database Failed", "error", err)
+			// 	time.Sleep(100 * time.Millisecond)
+			// 	continue
+			// }
 			server.SetState(define.StateConnected)
 
 		case define.StateConnected:
-			go server.DBQuery() // 1.DB 쿼리용 고루틴 생성 (미정)
-			server.CreateCron() // 2.주간보고 스케쥴러 생성
+			// go server.DBQuery() // 1.DB 쿼리용 고루틴 생성 (미정)
+			// server.CreateCron() // 2.주간보고 스케쥴러 생성
 
 			server.SetState(define.StateRunning)
 
@@ -94,19 +94,17 @@ func (server *ServerProcessor) IsConnected() (err error) {
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()
 
-	err = server.DBManager.DBGorm.IsConnected()
+	err = server.DBManager.IsConnected()
 	return
 }
 
-// DB 쿼리 작업
-func (server *ServerProcessor) DBQuery() {
-	// 호출하는 곳에서 Mutex Lock 하도록
-	for {
-		select {
-		case msg := <-server.ReqCh:
-			fmt.Printf("%v \n", msg)
-		}
-	}
-}
-
-// *****************   로그 작업     *****************************************************************************
+// // DB 쿼리 작업
+// func (server *ServerProcessor) DBQuery() {
+// 	// 호출하는 곳에서 Mutex Lock 하도록
+// 	for {
+// 		select {
+// 		case msg := <-server.ReqCh:
+// 			fmt.Printf("%v \n", msg)
+// 		}
+// 	}
+// }

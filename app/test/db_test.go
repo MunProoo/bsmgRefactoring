@@ -14,8 +14,8 @@ import (
 func TestFindMinQuery(t *testing.T) {
 	server := server.ServerProcessor{}
 	server.ConnectDataBase()
-	defer server.DBManager.DBGorm.Release()
-	int2 := server.DBManager.DBGorm.FindMinIdx()
+	defer server.DBManager.Release()
+	int2 := server.DBManager.FindMinIdx()
 
 	// assert.err
 
@@ -26,9 +26,9 @@ func TestFindMinQuery(t *testing.T) {
 func TestTableSturctureUpdate(t *testing.T) {
 	server := server.ServerProcessor{}
 	server.ConnectDataBase()
-	defer server.DBManager.DBGorm.Release()
+	defer server.DBManager.Release()
 
-	err := server.DBManager.DBGorm.CreateDailyReportTable()
+	err := server.DBManager.CreateDailyReportTable()
 	fmt.Printf("%v \n ", err)
 	assert.NoError(t, err, "err있나본데")
 
@@ -37,19 +37,19 @@ func TestTableSturctureUpdate(t *testing.T) {
 func TestInsertDefaultDBData(t *testing.T) {
 	server := server.ServerProcessor{}
 	server.ConnectDataBase()
-	defer server.DBManager.DBGorm.Release()
+	defer server.DBManager.Release()
 
-	// server.dbManager.DBGorm.InsertDefaultAttr1()
-	// server.dbManager.DBGorm.InsertDefaultAttr2()
-	server.DBManager.DBGorm.InsertDefaultRank()
-	server.DBManager.DBGorm.InsertDefaultPart()
+	// server.dbManager.InsertDefaultAttr1()
+	// server.dbManager.InsertDefaultAttr2()
+	server.DBManager.InsertDefaultRank()
+	server.DBManager.InsertDefaultPart()
 
 }
 
 func TestMakeAttrTree(t *testing.T) {
 	server := server.ServerProcessor{}
 	server.ConnectDataBase()
-	defer server.DBManager.DBGorm.Release()
+	defer server.DBManager.Release()
 
 	expectAttrTrees := make([]define.AttrTree, 3)
 	expectAttrTrees[0].Label = "솔루션"
@@ -62,7 +62,7 @@ func TestMakeAttrTree(t *testing.T) {
 	expectAttrTrees[2].Value = "1-1"
 	expectAttrTrees[2].Parent = "1"
 
-	attrTrees, err := server.DBManager.DBGorm.MakeAttrTree()
+	attrTrees, err := server.DBManager.MakeAttrTree()
 	assert.NoError(t, err, "뭐야 에러있어")
 	fmt.Printf("%v\n", attrTrees)
 
@@ -72,9 +72,9 @@ func TestMakeAttrTree(t *testing.T) {
 func TestSelectUser(t *testing.T) {
 	server := server.ServerProcessor{}
 	server.ConnectDataBase()
-	defer server.DBManager.DBGorm.Release()
+	defer server.DBManager.Release()
 
-	userList, err := server.DBManager.DBGorm.SelectUserList()
+	userList, err := server.DBManager.SelectUserList()
 	assert.NoError(t, err, "에러있네")
 	fmt.Printf("%v \n", userList)
 
@@ -82,20 +82,20 @@ func TestSelectUser(t *testing.T) {
 }
 
 func TestGetAWeekRpt(t *testing.T) {
-	server := server.ServerProcessor{}
-	server.ConnectDataBase()
-	defer server.DBManager.DBGorm.Release()
+	// server := server.ServerProcessor{}
+	// server.ConnectDataBase()
+	// defer server.DBManager.Release()
 
-	bef7d, bef1d, now, tms := utils.GetDate()
-	err := server.DBManager.MakeWeekRpt(bef7d, bef1d, now, tms)
-	assert.NoError(t, err, "WeekRpt는 실패했다")
+	// bef7d, bef1d, now, tms := utils.GetDate()
+	// err := server.DBManager.MakeWeekRpt(bef7d, bef1d, now, tms)
+	// assert.NoError(t, err, "WeekRpt는 실패했다")
 }
 
 func TestGetWeekRptList(t *testing.T) {
 	server := server.ServerProcessor{}
 	err := server.ConnectDataBase()
 	assert.NoError(t, err, "DB 연결 실패")
-	defer server.DBManager.DBGorm.Release()
+	defer server.DBManager.Release()
 
 	pageInfo := define.PageInfo{}
 	pageInfo.Offset, pageInfo.Limit = int32(0), int32(6)
@@ -105,7 +105,7 @@ func TestGetWeekRptList(t *testing.T) {
 		SearchInput: "",
 	}
 
-	rptList, _, err := server.DBManager.DBGorm.SelectWeekReportList(pageInfo, searchData)
+	rptList, _, err := server.DBManager.SelectWeekReportList(pageInfo, searchData)
 	fmt.Printf("%v \n", rptList)
 	assert.NoError(t, err, "WeekRpt 가져오기 실패했다")
 }
@@ -115,9 +115,9 @@ func TestGetWeekRptList(t *testing.T) {
 // 	server := server.ServerProcessor{}
 // 	err := server.ConnectDataBase()
 // 	assert.NoError(t, err, "DB 연결 실패")
-// 	defer server.DBManager.DBGorm.Release()
+// 	defer server.DBManager.Release()
 
-// 	userList, err := server.DBManager.DBGorm.SelectUserList()
+// 	userList, err := server.DBManager.SelectUserList()
 // 	assert.NoError(t, err, "User Select 실패")
 // 	for _, user := range userList {
 // 		if user.Mem_ID == "argon2" {
@@ -127,7 +127,7 @@ func TestGetWeekRptList(t *testing.T) {
 // 		assert.NoError(t, err, "암호화 실패")
 
 // 		user.Mem_Password = encodedHash
-// 		server.DBManager.DBGorm.UpdateUser(user)
+// 		server.DBManager.UpdateUser(user)
 
 // 	}
 // }

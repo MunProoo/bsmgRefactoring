@@ -15,26 +15,12 @@ import (
 func (h *BsmgHandler) GetUserListRequest(c echo.Context) error {
 	log.Println("GetUserList Req")
 
-	result := &define.BsmgMemberListResponse{}
-
 	server, _ := c.Get("Server").(*server.ServerProcessor)
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()
 
 	// Handler -> Usecase -> Repository
-	userList, err := h.bmUsecase.SelectUserList()
-	// userList, err := server.DBManager.DBGorm.SelectUserList()
-	if err != nil {
-		result.Result.ResultCode = define.ErrorDataBase
-		return c.JSON(http.StatusOK, result)
-	}
-	count := len(userList)
-	result.TotalCount.Count = int32(count)
-	if count > 0 {
-		result.MemberList = userList
-	}
-
-	result.Result.ResultCode = define.Success
+	result := h.uc.GetUserListRequest()
 	return c.JSON(http.StatusOK, result)
 }
 
@@ -52,19 +38,7 @@ func (h *BsmgHandler) GetIdCheckRequest(c echo.Context) (err error) {
 	// TODO : parameter로 추가 (offset처럼)
 	memID := c.Request().FormValue("@d1#mem_id")
 
-	isExist, err := server.DBManager.DBGorm.CheckMemberIDDuplicate(memID)
-	if err != nil {
-		// record not found는 nil로 오도록 처리함. 그외 문제만 DB에러로
-		apiResponse.Result.ResultCode = define.ErrorDataBase
-		return c.JSON(http.StatusOK, apiResponse)
-	}
-
-	if isExist {
-		apiResponse.Result.ResultCode = define.ErrorDuplicatedID
-		return c.JSON(http.StatusOK, apiResponse)
-	}
-
-	apiResponse.Result.ResultCode = define.Success
+	apiResponse = h.uc.GetIdCheckRequest(memID)
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
@@ -84,8 +58,10 @@ func (h *BsmgHandler) GetUserSearchRequest(c echo.Context) error {
 	searchData.SearchCombo = int32(combo)
 	searchData.SearchInput = c.Request().FormValue("@d1#search_input")
 
-	memberList, err := server.DBManager.DBGorm.SelectMemberListSearch(searchData)
+	memberList, err := h.uc.SelectMemberListSearch(searchData)
+	// memberList, err := server.DBManager.DBGorm.SelectMemberListSearch(searchData)
 	if err != nil {
+		middleware.PrintE(middleware.LogArg{"pn": "handlerUser", "err": err})
 		apiResponse.Result.ResultCode = define.ErrorDataBase
 		return c.JSON(http.StatusOK, apiResponse)
 	}
@@ -103,48 +79,20 @@ func (h *BsmgHandler) PostUserReq(c echo.Context) error {
 	log.Println("postUserReq")
 
 	var apiRequest define.BsmgMemberRequest
-	var apiResponse define.BsmgMemberResponse
+	var apiResponse define.OnlyResult
 
 	server, _ := c.Get("Server").(*server.ServerProcessor)
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()
 
-	// value, err := c.FormParams()
-	// if err != nil {
-	// 	log.Printf("%v \n", err)
-	// 	apiResponse.Result.ResultCode = define.ErrorInvalidParameter
-	// 	return c.JSON(http.StatusOK, apiResponse)
-	// }
-	// parser := InitFormParser(value)
-	// member, err = parseUserRegistRequest(parser)
 	err := c.Bind(&apiRequest)
 	if err != nil {
+		middleware.PrintE(middleware.LogArg{"pn": "handlerUser", "err": err})
 		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
 		return c.JSON(http.StatusOK, apiResponse)
 	}
 
-	member := apiRequest.Data.MemberInfo
-	// argon2 사용하여 salting, hashing
-	// Pass the plaintext password and parameters to our generateFromPassword
-	encodedHash, err := middleware.GenerateFromPassword(member.Mem_Password)
-	if err != nil {
-		log.Printf("%v \n", err)
-		// TODO : 암호화 전용 에러코드 생성 필요
-		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
-		return c.JSON(http.StatusOK, apiResponse)
-	}
-
-	member.Mem_Password = encodedHash
-
-	err = server.DBManager.DBGorm.InsertMember(member)
-	if err != nil {
-		log.Printf("%v \n", err)
-		apiResponse.Result.ResultCode = define.ErrorDataBase
-		return c.JSON(http.StatusOK, apiResponse)
-	}
-
-	apiResponse.Result.ResultCode = define.Success
-
+	apiResponse = h.uc.PostUserReq(c, apiRequest)
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
@@ -161,17 +109,12 @@ func (h *BsmgHandler) PutUserReq(c echo.Context) error {
 
 	err := c.Bind(&apiRequest)
 	if err != nil {
+		middleware.PrintE(middleware.LogArg{"pn": "handlerUser", "err": err})
 		apiResponse.Result.ResultCode = define.ErrorInvalidParameter
 		return c.JSON(http.StatusOK, apiResponse)
 	}
-	var member define.BsmgMemberInfo
 
-	for _, reqMember := range apiRequest.Data.MemberList {
-		member = reqMember.ParseMember()
-		server.DBManager.DBGorm.UpdateUser(member)
-	}
-
-	apiResponse.Result.ResultCode = define.Success
+	apiResponse = h.uc.PutUserReq(c, apiRequest)
 
 	return c.JSON(http.StatusOK, apiResponse)
 }
@@ -186,11 +129,19 @@ func (h *BsmgHandler) DeleteUserReq(c echo.Context) (err error) {
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()
 
+	// 인가 체크
+	if _, resultCode := h.uc.AuthorizationCheck(c); resultCode != define.Success {
+		apiResponse.Result.ResultCode = int32(resultCode)
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+
 	memID := c.Param("memID")
 
 	// 사용자는 지워도 그 사람의 업무보고는 남겨야지. 기록이니까
-	err = server.DBManager.DBGorm.DeleteMember(memID)
+	err = h.uc.DeleteMember(memID)
+	// err = server.DBManager.DBGorm.DeleteMember(memID)
 	if err != nil {
+		middleware.PrintE(middleware.LogArg{"pn": "handlerUser", "err": err})
 		apiResponse.Result.ResultCode = define.ErrorDataBase
 		return c.JSON(http.StatusOK, apiResponse)
 	}

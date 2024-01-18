@@ -128,7 +128,7 @@ type BsmgIncludeNameReport struct {
 }
 
 func (brName *BsmgIncludeNameReport) ChangeIDToName() {
-	brName.Rpt_Reporter = brName.Reporter_Name
+	brName.Rpt_ReporterName = brName.Reporter_Name
 }
 
 type BsmgIncludeNameWeekReport struct {
@@ -138,8 +138,8 @@ type BsmgIncludeNameWeekReport struct {
 }
 
 func (brName *BsmgIncludeNameWeekReport) ChangeIDToName() {
-	brName.WRpt_Reporter = brName.Reporter_Name
-	brName.WRpt_ToRpt = brName.ToRpt_Name
+	brName.WRpt_ReporterName = brName.Reporter_Name
+	brName.WRpt_ToRptName = brName.ToRpt_Name
 }
 
 // 주간 업무 보고 json Binding용

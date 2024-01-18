@@ -17,7 +17,7 @@ func TestMakePartTree(t *testing.T) {
 	// 서버 연결
 	server := server.ServerProcessor{}
 	server.ConnectDataBase()
-	defer server.DBManager.DBGorm.Release()
+	defer server.DBManager.Release()
 
 	assert := assert.New(t)
 
@@ -64,7 +64,7 @@ func getWeekRptCategoryHandler(server *server.ServerProcessor, c echo.Context) (
 	log.Println("getWeekRptCategoryReq")
 
 	var apiResponse define.BsmgTreeResult
-	apiResponse.PartTreeList, err = server.DBManager.DBGorm.MakePartTree()
+	apiResponse.PartTreeList, err = server.DBManager.MakePartTree()
 	if err != nil {
 		log.Printf("%v \n", err)
 		apiResponse.Result.ResultCode = define.ErrorDataBase

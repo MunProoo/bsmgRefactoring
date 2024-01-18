@@ -2,7 +2,6 @@ package repository
 
 import (
 	"BsmgRefactoring/database"
-	"BsmgRefactoring/define"
 )
 
 /*
@@ -12,7 +11,7 @@ import (
 */
 
 type BsmgRepository interface {
-	SelectUserList() (userList []define.BsmgMemberInfo, err error)
+	database.DBInterface
 }
 
 type structBsmgRepository struct {

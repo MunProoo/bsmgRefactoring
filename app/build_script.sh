@@ -4,7 +4,7 @@
 # 서버 빌드 및 빌드파일 move
 
 
-GOOS=linux GOARCH=arm64 go build -o bsmg . 
+GOOS=linux GOARCH=amd64 go build -o bsmg . 
 mv bsmg ../Docker/build/server
 cp -r views ../Docker/build/server
 cp config.json ../Docker/build/server

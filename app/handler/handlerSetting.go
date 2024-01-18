@@ -2,6 +2,7 @@ package handler
 
 import (
 	"BsmgRefactoring/define"
+	"BsmgRefactoring/middleware"
 	"BsmgRefactoring/server"
 	"log"
 	"net/http"
@@ -19,9 +20,10 @@ func (h *BsmgHandler) GetAttrTreeReq(c echo.Context) (err error) {
 	server, _ := c.Get("Server").(*server.ServerProcessor)
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()
-	result.AttrTreeList, err = server.DBManager.DBGorm.MakeAttrTree()
+	result.AttrTreeList, err = h.uc.MakeAttrTree()
+	// result.AttrTreeList, err = server.DBManager.DBGorm.MakeAttrTree()
 	if err != nil {
-		log.Printf("%v \n", err)
+		middleware.PrintE(middleware.LogArg{"pn": "handlerSetting", "err": err})
 		return err
 	}
 	result.PartTreeList = make([]define.PartTree, 0)
@@ -38,17 +40,19 @@ func (h *BsmgHandler) GetRankPartReq(c echo.Context) error {
 
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()
-	rankList, err := server.DBManager.DBGorm.SelectRankList()
+	rankList, err := h.uc.SelectRankList()
+	// rankList, err := server.DBManager.DBGorm.SelectRankList()
 	if err != nil {
-		log.Printf("%v \n", err)
+		middleware.PrintE(middleware.LogArg{"pn": "handlerSetting", "err": err})
 		result.Result.ResultCode = define.ErrorInvalidParameter
 		return c.JSON(http.StatusOK, result)
 	}
 	result.RankList = rankList
 
-	partList, err := server.DBManager.DBGorm.SelectPartist()
+	partList, err := h.uc.SelectPartist()
+	// partList, err := server.DBManager.DBGorm.SelectPartist()
 	if err != nil {
-		log.Printf("%v \n", err)
+		middleware.PrintE(middleware.LogArg{"pn": "handlerSetting", "err": err})
 		result.Result.ResultCode = define.ErrorInvalidParameter
 		return c.JSON(http.StatusOK, result)
 	}
@@ -68,9 +72,10 @@ func (h *BsmgHandler) GetPartTree(c echo.Context) (err error) {
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()
 
-	apiResponse.PartTreeList, err = server.DBManager.DBGorm.MakePartTree()
+	apiResponse.PartTreeList, err = h.uc.MakePartTree()
+	// apiResponse.PartTreeList, err = server.DBManager.DBGorm.MakePartTree()
 	if err != nil {
-		log.Printf("%v \n", err)
+		middleware.PrintE(middleware.LogArg{"pn": "handlerSetting", "err": err})
 		apiResponse.Result.ResultCode = define.ErrorDataBase
 		return c.JSON(http.StatusOK, apiResponse)
 	}
@@ -92,9 +97,10 @@ func (h *BsmgHandler) GetToRptReq(c echo.Context) (err error) {
 
 	partIdx, _ := strconv.Atoi(c.Request().FormValue("@d1#part_idx"))
 
-	apiResponse.Part.TeamLeader, err = server.DBManager.DBGorm.SelectPartLeader(int32(partIdx))
+	apiResponse.Part.TeamLeader, err = h.uc.SelectPartLeader(int32(partIdx))
+	// apiResponse.Part.TeamLeader, err = server.DBManager.DBGorm.SelectPartLeader(int32(partIdx))
 	if err != nil {
-		log.Printf("getToRptReq : %v \n", err)
+		middleware.PrintE(middleware.LogArg{"pn": "handlerSetting", "err": err})
 		apiResponse.Result.ResultCode = define.ErrorDataBase
 		return c.JSON(http.StatusOK, apiResponse)
 	}
@@ -113,9 +119,10 @@ func (h *BsmgHandler) GetAttr1Req(c echo.Context) (err error) {
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()
 
-	apiResponse.Attr1List, err = server.DBManager.DBGorm.SelectAttr1List()
+	apiResponse.Attr1List, err = h.uc.SelectAttr1List()
+	// apiResponse.Attr1List, err = server.DBManager.DBGorm.SelectAttr1List()
 	if err != nil {
-		log.Printf("getAttr1Req : %v \n", err)
+		middleware.PrintE(middleware.LogArg{"pn": "handlerSetting", "err": err})
 		apiResponse.Result.ResultCode = define.ErrorDataBase
 		return c.JSON(http.StatusOK, apiResponse)
 	}

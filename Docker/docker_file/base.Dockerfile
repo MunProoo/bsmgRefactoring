@@ -1,5 +1,5 @@
 # nginx 기반 베이스 도커파일
-FROM --platform=arm64 nginx:latest
+FROM --platform=amd64 nginx:latest
 
 USER root
 

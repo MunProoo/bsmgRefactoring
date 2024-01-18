@@ -128,9 +128,10 @@ kafka를 통해서 보고서 확인 시 알림서비스 및 이벤트 보관도 
 
  // mock 패키지 다운 및 설치 !!!!!!!!
  go install github.com/vektra/mockery/...
+ github.com/vektra/mockery
 
  - windows OS에서 Mock 자동 생성
- & $env:GOPATH\bin\mockery --keeptree --all
+ & $env:GOPATH/bin/mockery --keeptree --all
 
  - MacOS에선?
 

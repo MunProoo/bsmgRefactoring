@@ -243,7 +243,6 @@ func (dbm *DBGormMaria) SelectReportInfo(idx int) (rptInfo define.BsmgReportInfo
 	reportIncludeName.ChangeIDToName()
 	rptInfo = reportIncludeName.BsmgReportInfo
 	return
-
 }
 
 func (dbm *DBGormMaria) SelectScheduleList(rptIdx int32) (scheduleList []define.BsmgScheduleInfo, err error) {

@@ -87,13 +87,13 @@ func (rp structBsmgRepository) SelectUserList() (userList []define.BsmgMemberInf
 	return rp.dm.SelectUserList()
 }
 
-func (rp structBsmgRepository) SelectReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error) {
+func (rp structBsmgRepository) SelectReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgReportInfoForWeb, totalCount int32, err error) {
 	return rp.dm.SelectReportList(pageInfo, searchData)
 }
-func (rp structBsmgRepository) SelecAttrSearchReportList(pageInfo define.PageInfo, attrData define.AttrSearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error) {
+func (rp structBsmgRepository) SelecAttrSearchReportList(pageInfo define.PageInfo, attrData define.AttrSearchData) (rptList []define.BsmgReportInfoForWeb, totalCount int32, err error) {
 	return rp.dm.SelecAttrSearchReportList(pageInfo, attrData)
 }
-func (rp structBsmgRepository) SelectReportInfo(idx int) (rptInfo define.BsmgReportInfo, err error) {
+func (rp structBsmgRepository) SelectReportInfo(idx int) (reportInfoForWeb define.BsmgReportInfoForWeb, err error) {
 	return rp.dm.SelectReportInfo(idx)
 }
 func (rp structBsmgRepository) SelectLatestRptIdx(reporter string) (rptIdx int32, err error) {
@@ -115,13 +115,13 @@ func (rp structBsmgRepository) SelectReportListAWeek(Mem_ID, bef7d, bef1d string
 func (rp structBsmgRepository) SelectPartLeader(Mem_Part int32) (partLeader string, err error) {
 	return rp.dm.SelectPartLeader(Mem_Part)
 }
-func (rp structBsmgRepository) SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error) {
+func (rp structBsmgRepository) SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfoForWeb, totalCount int32, err error) {
 	return rp.dm.SelectWeekReportList(pageInfo, searchData)
 }
-func (rp structBsmgRepository) SelectWeekReportCategorySearch(pageInfo define.PageInfo, partIdx int) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error) {
+func (rp structBsmgRepository) SelectWeekReportCategorySearch(pageInfo define.PageInfo, partIdx int) (rptList []define.BsmgWeekRptInfoForWeb, totalCount int32, err error) {
 	return rp.dm.SelectWeekReportCategorySearch(pageInfo, partIdx)
 }
-func (rp structBsmgRepository) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWeekRptInfo, err error) {
+func (rp structBsmgRepository) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWeekRptInfoForWeb, err error) {
 	return rp.dm.SelectWeekReportInfo(wRptIdx)
 }
 func (rp structBsmgRepository) SelectAttr1List() (attr1List []define.BsmgAttr1Info, err error) {

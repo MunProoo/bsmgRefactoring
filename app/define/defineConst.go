@@ -46,3 +46,11 @@ const (
 const (
 	WeekCategoryName = "부서별 주간 업무보고"
 )
+
+// 직급 define
+const (
+	Rank1 = iota + 1
+	Rank2
+	Rank3
+	Rank4
+)

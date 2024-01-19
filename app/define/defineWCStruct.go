@@ -75,7 +75,7 @@ type BsmgWeekRptResult struct {
 	Result         Result            `json:"Result"`
 }
 
-// 일일 업무보고 json Bind용
+// 일일 업무보고 json Bind용 (MacOS에선 변수타입 때문에 bind 안되므로)
 type BsmgReportInfoStringField struct {
 	Rpt_idx      string `json:"rpt_idx"`
 	Rpt_Reporter string `json:"rpt_reporter"`
@@ -87,6 +87,7 @@ type BsmgReportInfoStringField struct {
 	Rpt_attr1    string `json:"rpt_attr1" gorm:"type:int"`          // 업무속성1(솔루션/제품)
 	Rpt_attr2    string `json:"rpt_attr2" gorm:"type:int"`          // 업무속성2 (이름)
 	Rpt_etc      string `json:"rpt_etc" gorm:"type:nvarchar(50)"`   // 기타 특이사항
+	Rpt_toRptID  string `json:"rpt_toRptID"`                        // 실제 보고대상 ID
 }
 
 // string으로 받은 필드들을 실제 DB 타입에 맞게 변환
@@ -106,6 +107,7 @@ func (stringReport *BsmgReportInfoStringField) ParseReport() (report BsmgReportI
 
 	report.Rpt_attr2 = int32(attr2)
 	report.Rpt_etc = stringReport.Rpt_etc
+	report.Rpt_toRpt = stringReport.Rpt_toRptID
 
 	return
 }
@@ -125,21 +127,46 @@ func (bs *BsmgScheduleInfoString) ParseSchedule() (schedule BsmgScheduleInfo) {
 type BsmgIncludeNameReport struct {
 	BsmgReportInfo
 	Reporter_Name string
+	To_Rpt_Name   string
 }
 
-func (brName *BsmgIncludeNameReport) ChangeIDToName() {
-	brName.Rpt_ReporterName = brName.Reporter_Name
+func (brName *BsmgIncludeNameReport) AllocationInfo() (BsmgReportInfo BsmgReportInfoForWeb) {
+	BsmgReportInfo.Rpt_Idx = brName.BsmgReportInfo.Rpt_Idx
+	BsmgReportInfo.Rpt_Reporter = brName.BsmgReportInfo.Rpt_Reporter
+	BsmgReportInfo.Rpt_date = brName.BsmgReportInfo.Rpt_date
+	BsmgReportInfo.Rpt_toRpt = brName.BsmgReportInfo.Rpt_toRpt
+	BsmgReportInfo.Rpt_ref = brName.BsmgReportInfo.Rpt_ref
+	BsmgReportInfo.Rpt_title = brName.BsmgReportInfo.Rpt_title
+	BsmgReportInfo.Rpt_content = brName.BsmgReportInfo.Rpt_content
+	BsmgReportInfo.Rpt_confirm = brName.BsmgReportInfo.Rpt_confirm
+	BsmgReportInfo.Rpt_attr1 = brName.Rpt_attr1
+	BsmgReportInfo.Rpt_attr2 = brName.Rpt_attr2
+	BsmgReportInfo.Rpt_etc = brName.Rpt_etc
+
+	BsmgReportInfo.Rpt_ReporterName = brName.Reporter_Name
+	BsmgReportInfo.Rpt_toRptName = brName.To_Rpt_Name
+	return
 }
 
 type BsmgIncludeNameWeekReport struct {
 	BsmgWeekRptInfo
 	Reporter_Name string
-	ToRpt_Name    string
+	To_Rpt_Name   string
 }
 
-func (brName *BsmgIncludeNameWeekReport) ChangeIDToName() {
-	brName.WRpt_ReporterName = brName.Reporter_Name
-	brName.WRpt_ToRptName = brName.ToRpt_Name
+func (brName *BsmgIncludeNameWeekReport) AllocationInfo() (BsmgReportInfo BsmgWeekRptInfoForWeb) {
+	BsmgReportInfo.WRpt_Idx = brName.BsmgWeekRptInfo.WRpt_Idx
+	BsmgReportInfo.WRpt_Reporter = brName.BsmgWeekRptInfo.WRpt_Reporter
+	BsmgReportInfo.WRpt_Date = brName.BsmgWeekRptInfo.WRpt_Date
+	BsmgReportInfo.WRpt_ToRpt = brName.BsmgWeekRptInfo.WRpt_ToRpt
+	BsmgReportInfo.WRpt_Title = brName.BsmgWeekRptInfo.WRpt_Title
+	BsmgReportInfo.WRpt_Content = brName.BsmgWeekRptInfo.WRpt_Content
+	BsmgReportInfo.WRpt_Part = brName.BsmgWeekRptInfo.WRpt_Part
+	BsmgReportInfo.WRpt_OmissionDate = brName.BsmgWeekRptInfo.WRpt_OmissionDate
+
+	BsmgReportInfo.WRpt_ReporterName = brName.Reporter_Name
+	BsmgReportInfo.WRpt_ToRptName = brName.To_Rpt_Name
+	return
 }
 
 // 주간 업무 보고 json Binding용
@@ -166,4 +193,65 @@ func (bwr *BsmgWeekRptInfoStringField) ParseReport() (report BsmgWeekRptInfo) {
 	report.WRpt_Part = int32(part)
 	report.WRpt_OmissionDate = bwr.WRpt_OmissionDate
 	return
+}
+
+// 웹에서 아이디 대신 이름으로 보여주기 위한 객체
+type BsmgReportInfoForWeb struct {
+	Rpt_Idx          int32  `json:"rpt_idx"`      // 인덱스
+	Rpt_Reporter     string `json:"rpt_reporter"` // 보고자
+	Rpt_date         string `json:"rpt_date"`     // 보고 일자
+	Rpt_toRpt        string `json:"rpt_toRpt"`    // 보고 대상
+	Rpt_ref          string `json:"rpt_ref"`      // 참조 대상
+	Rpt_title        string `json:"rpt_title"`    // 업무보고 제목
+	Rpt_content      string `json:"rpt_content"`  // 업무보고 내용
+	Rpt_attr1        int32  `json:"rpt_attr1"`    // 업무속성1(솔루션/제품)
+	Rpt_attr2        int32  `json:"rpt_attr2"`    // 업무속성2 (이름)
+	Rpt_etc          string `json:"rpt_etc"`      // 기타 특이사항
+	Rpt_confirm      bool   `json:"rpt_confirm"`  // 보고서 확정 상태
+	Rpt_ReporterName string `json:"rpt_reporter_name"`
+	Rpt_toRptName    string `json:"rpt_toRpt_name"`
+}
+
+func (rptForWeb *BsmgReportInfoForWeb) ParseReport(report BsmgReportInfo) {
+	rptForWeb.Rpt_Idx = report.Rpt_Idx
+	rptForWeb.Rpt_Reporter = report.Rpt_Reporter
+	rptForWeb.Rpt_date = report.Rpt_date
+	rptForWeb.Rpt_toRpt = report.Rpt_toRpt
+	rptForWeb.Rpt_ref = report.Rpt_ref
+	rptForWeb.Rpt_title = report.Rpt_title
+	rptForWeb.Rpt_content = report.Rpt_content
+	rptForWeb.Rpt_attr1 = report.Rpt_attr1
+	rptForWeb.Rpt_attr2 = report.Rpt_attr2
+	rptForWeb.Rpt_etc = report.Rpt_etc
+	rptForWeb.Rpt_confirm = report.Rpt_confirm
+	rptForWeb.Rpt_ReporterName = ""
+	rptForWeb.Rpt_toRptName = ""
+}
+
+// 웹에서 아이디 대신 이름으로 보여주기 위한 객체
+type BsmgWeekRptInfoForWeb struct {
+	WRpt_Idx          int32  `json:"wRpt_idx"`           // 인덱스
+	WRpt_Reporter     string `json:"wRpt_reporter"`      // 보고자
+	WRpt_Date         string `json:"wRpt_date"`          // 보고 일자
+	WRpt_ToRpt        string `json:"wRpt_toRpt"`         // 보고 대상 아이디
+	WRpt_Title        string `json:"wRpt_title"`         // 제목
+	WRpt_Content      string `json:"wRpt_content"`       // 내용
+	WRpt_Part         int32  `json:"wRpt_part"`          // 부서
+	WRpt_OmissionDate string `json:"wRpt_omissionDate"`  // 보고 누락 날짜
+	WRpt_ReporterName string `json:"wRpt_reporter_name"` // 보고자 이름
+	WRpt_ToRptName    string `json:"wRpt_toRpt_name"`    // 보고대상 이름
+}
+
+func (rptForWeb *BsmgWeekRptInfoForWeb) ParseReport(report BsmgWeekRptInfo) {
+	rptForWeb.WRpt_Idx = report.WRpt_Idx
+	rptForWeb.WRpt_Reporter = report.WRpt_Reporter
+	rptForWeb.WRpt_Date = report.WRpt_Date
+	rptForWeb.WRpt_ToRpt = report.WRpt_ToRpt
+	rptForWeb.WRpt_Title = report.WRpt_Title
+	rptForWeb.WRpt_Content = report.WRpt_Content
+	rptForWeb.WRpt_Part = report.WRpt_Part
+	rptForWeb.WRpt_OmissionDate = report.WRpt_OmissionDate
+
+	rptForWeb.WRpt_ReporterName = ""
+	rptForWeb.WRpt_ToRptName = ""
 }

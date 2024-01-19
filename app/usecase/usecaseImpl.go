@@ -33,7 +33,7 @@ func (uc structBsmgUsecase) AuthorizationCheck(c echo.Context) (apiResponse defi
 
 	MemberInfo := define.BsmgMemberInfo{}
 	err = MemberInfo.ParsingClaim(claims)
-	if err != nil || MemberInfo.Mem_Rank >= 3 {
+	if err != nil || MemberInfo.Mem_Rank > define.Rank3 {
 		middleware.PrintE(middleware.LogArg{"Authorization Err": err})
 		ResultCode = define.ErrorNotAuthorizedUser
 		return
@@ -93,9 +93,9 @@ func (uc structBsmgUsecase) MakeWeekRpt() {
 			continue
 		}
 
-		var findOmission *utils.OmissionMap
-		findOmission = utils.InitOmissionMap(t) // 업무보고 없는 날짜 map에 할당할 것.
-		weekContent := strings.Builder{}        // 주간보고 내용물
+		// var findOmission *utils.OmissionMap
+		findOmission := utils.InitOmissionMap(t) // 업무보고 없는 날짜 map에 할당할 것.
+		weekContent := strings.Builder{}         // 주간보고 내용물
 		for _, report := range rptList {
 			weekContent.WriteString("📆")
 			weekContent.WriteString(report.Rpt_date[:8] + "\n")
@@ -247,9 +247,8 @@ func (uc structBsmgUsecase) PostReportReq(c echo.Context, apiRequest define.Bsmg
 	}
 	report.Rpt_Idx = idx
 
-	apiResponse.ReportInfo = report
+	apiResponse.ReportInfo.ParseReport(report)
 	apiResponse.Result.ResultCode = define.Success
-
 	return
 }
 
@@ -284,7 +283,7 @@ func (uc structBsmgUsecase) PutReportReq(c echo.Context, report define.BsmgRepor
 	client := session.Values["Member"].(define.BsmgMemberInfo)
 
 	// 본인만 수정 가능
-	if client.Mem_Name != report.Rpt_Reporter {
+	if client.Mem_ID != report.Rpt_Reporter {
 		middleware.PrintE(middleware.LogArg{"pn": "usecase", "text": "This User is not him"})
 		apiResponse.Result.ResultCode = define.ErrorNotAuthorizedUser
 		return

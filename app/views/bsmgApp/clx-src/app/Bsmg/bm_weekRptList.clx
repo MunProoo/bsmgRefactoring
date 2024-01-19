@@ -13,6 +13,8 @@
           <cl:datacolumn std:sid="d-column-54f9fdd7" name="wRpt_content"/>
           <cl:datacolumn std:sid="d-column-9d571377" name="wRpt_toRpt"/>
           <cl:datacolumn std:sid="d-column-9056d395" name="wRpt_reporter" datatype="string"/>
+          <cl:datacolumn std:sid="d-column-4f5b5968" name="wRpt_reporter_name"/>
+          <cl:datacolumn std:sid="d-column-4bebefd1" name="wRpt_toRpt_name"/>
         </cl:datacolumnlist>
       </cl:dataset>
       <cl:dataset std:sid="d-set-4ee1c610" id="ds_partTree">
@@ -102,7 +104,7 @@
         <cl:item std:sid="item-b55bc07a" label="전체" value="0"/>
         <cl:item std:sid="item-7e937ffd" label="제목" value="1"/>
         <cl:item std:sid="item-29c3db48" label="내용" value="2"/>
-        <cl:item std:sid="item-2f7401e3" label="보고자" value="3"/>
+        <cl:item std:sid="item-2f7401e3" label="보고대상" value="3"/>
       </cl:combobox>
       <cl:searchinput std:sid="s-input-0b9ccfc8" id="ipb1">
         <cl:listener std:sid="listener-3f82031b" name="search" handler="onIpb1Search"/>
@@ -142,8 +144,8 @@
           <cl:gridcell std:sid="gd-cell-44ea37b6" rowindex="0" colindex="2" style="background-color:transparent; color:#000000;" columnname="wRpt_content">
             <cl:textarea std:sid="t-area-6024b158" id="txa1" style="padding-left:5px;"/>
           </cl:gridcell>
-          <cl:gridcell std:sid="gd-cell-08399a0a" rowindex="0" colindex="3" style="background-color:transparent; color:#000000;" columnname="wRpt_toRpt"/>
-          <cl:gridcell std:sid="gd-cell-deeec300" rowindex="0" colindex="4" style="background-color:transparent; color:#000000;" columnname="wRpt_reporter"/>
+          <cl:gridcell std:sid="gd-cell-08399a0a" rowindex="0" colindex="3" style="background-color:transparent; color:#000000;" columnname="wRpt_toRpt_name"/>
+          <cl:gridcell std:sid="gd-cell-deeec300" rowindex="0" colindex="4" style="background-color:transparent; color:#000000;" columnname="wRpt_reporter_name"/>
         </cl:griddetail>
       </cl:grid>
       <cl:radiobutton std:sid="r-button-06c3601f" id="rdb1" value="0">

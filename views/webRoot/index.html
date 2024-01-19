@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Expires" content="-1">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="No-Cache">
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<script type="text/javascript" src="runtime/cleopatra.js"></script>
+		<script type="text/javascript" src="./cpr-lib/language.js"></script>
+		<script type="text/javascript" src="./cpr-lib/user-modules.js"></script>
+		<script type="text/javascript" src="./cpr-lib/udc.js"></script>
+		<script type="text/javascript" src="app/Bsmg/bm_login.clx.js"></script>
+		<link rel="stylesheet" type="text/css" href="runtime/css/cleopatra.css">
+		<link rel="stylesheet" type="text/css" href="./theme/cleopatra-theme.css">
+		<style>
+			/* for HTML5 */
+			html, body {
+				margin: 0px;
+				padding: 0px;
+				height: 100%;
+			}
+			body{
+				box-sizing: content-box;
+				min-height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var app = cpr.core.Platform.INSTANCE.lookup("app/Bsmg/bm_login");
+			app.createNewInstance().run();
+		</script>
+	</body>
+</html>

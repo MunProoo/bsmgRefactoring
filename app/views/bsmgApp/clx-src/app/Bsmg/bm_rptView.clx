@@ -36,6 +36,8 @@
           <cl:datacolumn std:sid="d-column-f30156bb" name="rpt_attr1"/>
           <cl:datacolumn std:sid="d-column-13b973a8" name="rpt_attr2"/>
           <cl:datacolumn std:sid="d-column-2ccf1fed" name="rpt_confirm" datatype="string"/>
+          <cl:datacolumn std:sid="d-column-9f4ff2e4" name="rpt_reporter_name"/>
+          <cl:datacolumn std:sid="d-column-d90ec3c9" name="rpt_toRpt_name"/>
         </cl:datacolumnlist>
       </cl:datamap>
       <cl:datamap std:sid="d-map-6d8fa261" id="Result">
@@ -48,20 +50,6 @@
           <cl:datacolumn std:sid="d-column-d476baf1" name="rpt_idx"/>
         </cl:datacolumnlist>
       </cl:datamap>
-      <cl:datamap std:sid="d-map-7aa9454e" id="dm_reportInfoSrc">
-        <cl:datacolumnlist>
-          <cl:datacolumn std:sid="d-column-235e184d" name="rpt_idx"/>
-          <cl:datacolumn std:sid="d-column-004496d4" name="rpt_reporter"/>
-          <cl:datacolumn std:sid="d-column-7aed70ea" name="rpt_date"/>
-          <cl:datacolumn std:sid="d-column-39d48bd7" name="rpt_toRpt"/>
-          <cl:datacolumn std:sid="d-column-d37fdb2b" name="rpt_ref"/>
-          <cl:datacolumn std:sid="d-column-d1b508df" name="rpt_title"/>
-          <cl:datacolumn std:sid="d-column-ef1a29d5" name="rpt_content"/>
-          <cl:datacolumn std:sid="d-column-9de050e2" name="rpt_etc"/>
-          <cl:datacolumn std:sid="d-column-3f52fdb0" name="rpt_attr1"/>
-          <cl:datacolumn std:sid="d-column-df492072" name="rpt_attr2"/>
-        </cl:datacolumnlist>
-      </cl:datamap>
       <cl:datamap std:sid="d-map-35bc4199" id="dm_memberInfo">
         <cl:datacolumnlist>
           <cl:datacolumn std:sid="d-column-748505f4" name="mem_id"/>
@@ -69,6 +57,23 @@
           <cl:datacolumn std:sid="d-column-bb6dcca0" name="mem_name"/>
           <cl:datacolumn std:sid="d-column-bffbe21f" name="mem_rank"/>
           <cl:datacolumn std:sid="d-column-3aac1b5b" name="mem_part"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-f832fbfe" id="dm_reportInfoSrc">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-e5f753ef" name="rpt_idx"/>
+          <cl:datacolumn std:sid="d-column-8a4a9bb2" name="rpt_reporter"/>
+          <cl:datacolumn std:sid="d-column-b26ddac9" name="rpt_date"/>
+          <cl:datacolumn std:sid="d-column-63a19145" name="rpt_toRpt"/>
+          <cl:datacolumn std:sid="d-column-bd34789e" name="rpt_ref"/>
+          <cl:datacolumn std:sid="d-column-08aa04fd" name="rpt_title"/>
+          <cl:datacolumn std:sid="d-column-ec835cab" name="rpt_content"/>
+          <cl:datacolumn std:sid="d-column-6c9ba0ad" name="rpt_etc"/>
+          <cl:datacolumn std:sid="d-column-6b77f72f" name="rpt_attr1"/>
+          <cl:datacolumn std:sid="d-column-469d2a07" name="rpt_attr2"/>
+          <cl:datacolumn std:sid="d-column-d4110410" name="rpt_confirm" datatype="string"/>
+          <cl:datacolumn std:sid="d-column-68d8326b" name="rpt_reporter_name"/>
+          <cl:datacolumn std:sid="d-column-3b453c99" name="rpt_toRpt_name"/>
         </cl:datacolumnlist>
       </cl:datamap>
       <cl:submission std:sid="submission-932515fc" id="sms_getRptInfo" async="false" method="get" action="/bsmg/report/reportInfo">
@@ -229,7 +234,7 @@
           <cl:formdata std:sid="f-data-6015603c" row="0" col="2"/>
         </cl:output>
         <cl:output std:sid="output-13170a19" id="toRpt" style="background-color:#f8e4e4; padding-left:2px; text-align:left;" readonly="true">
-          <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_reportInfo" columnname="rpt_toRpt"/>
+          <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_reportInfo" columnname="rpt_toRpt_name"/>
           <cl:formdata std:sid="f-data-25b49d26" row="0" col="3"/>
         </cl:output>
         <cl:output std:sid="output-6d3b538d" style="font-weight:bold; text-align:center;" value="참조대상">
@@ -243,7 +248,7 @@
           <cl:formdata std:sid="f-data-c5967578" row="0" col="0"/>
         </cl:output>
         <cl:output std:sid="output-07747cce" style="background-color:#e4eff8; padding-left:2px; text-align:left;" readonly="true">
-          <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_reportInfo" columnname="rpt_reporter"/>
+          <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_reportInfo" columnname="rpt_reporter_name"/>
           <cl:formdata std:sid="f-data-7aaf4bb8" row="0" col="1"/>
         </cl:output>
         <cl:formlayout std:sid="f-layout-ec010a35" hspace="0px" vspace="0px" top-margin="0px" right-margin="0px" bottom-margin="0px" left-margin="0px" hseparatorwidth="1" hseparatortype="BY_CLASS" vseparatorwidth="1" vseparatortype="BY_CLASS">

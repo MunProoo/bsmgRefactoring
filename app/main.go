@@ -53,8 +53,8 @@ func main() {
 	// middleware ------------------------------------
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
-	// e.Use(middleware.Static("views/bsmgBsmgRefactoring/webRoot")) // 빠른 디버깅용. 배포위치를 변경하여 front 수정 시 바로 반영되도록
+	// e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
+	e.Use(middleware.Static("views/bsmgApp/webRoot")) // 빠른 디버깅용. 배포위치를 변경하여 front 수정 시 바로 반영되도록
 
 	e.Use(session.Middleware(bsmgMd.Store)) // 세션 미들웨어 추가
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -98,6 +98,6 @@ func main() {
 	// Route
 	router.InitRouteGroup(bsmgGroup, *bsmgHandler)
 
-	e.Logger.Fatal(e.Start(":3000"))
 	go server.StartServer() // DB 상태 체크 및 재연결 등..
+	e.Logger.Fatal(e.Start(":3000"))
 }

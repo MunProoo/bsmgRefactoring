@@ -14,6 +14,7 @@
           <cl:datacolumn std:sid="d-column-236e43a1" name="rpt_reporter"/>
           <cl:datacolumn std:sid="d-column-ec5e9e6d" name="rpt_date"/>
           <cl:datacolumn std:sid="d-column-94bad066" name="rpt_attr1"/>
+          <cl:datacolumn std:sid="d-column-a733d652" name="rpt_reporter_name"/>
         </cl:datacolumnlist>
       </cl:dataset>
       <cl:dataset std:sid="d-set-47ec1824" id="ds_List">
@@ -135,7 +136,7 @@
           <cl:gridcell std:sid="gd-cell-16944d23" rowindex="0" colindex="2" style="background-color:transparent; color:#000000; font-weight:normal; padding-left:5px; text-align:left;" columnname="rpt_content">
             <cl:textarea std:sid="t-area-c7c04c2e" id="txa1" style="font-weight:normal;"/>
           </cl:gridcell>
-          <cl:gridcell std:sid="gd-cell-5b0157f6" rowindex="0" colindex="3" style="background-color:transparent; color:#000000; font-weight:normal;" columnname="rpt_reporter"/>
+          <cl:gridcell std:sid="gd-cell-5b0157f6" rowindex="0" colindex="3" style="background-color:transparent; color:#000000; font-weight:normal;" columnname="rpt_reporter_name"/>
           <cl:gridcell std:sid="gd-cell-f7f95192" rowindex="0" colindex="4" style="background-color:transparent; color:#000000; font-weight:normal;" columnname="rpt_attr1">
             <cl:combobox std:sid="c-box-e5eaa5e4" id="cmb_attr1" readonly="true">
               <cl:itemset datasetid="ds_attr1" label="attr1_category" value="attr1_idx"/>

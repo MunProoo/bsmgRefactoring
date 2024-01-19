@@ -89,7 +89,7 @@ function onButtonClick(/* cpr.events.CMouseEvent */ e){
 	 * @type cpr.controls.Button
 	 */
 	var button = e.control;
-	app.close();
+	app.close(1);
 }
 
 
@@ -273,13 +273,13 @@ function onSms_chkLoginSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	if(result == 0){
 		var mem_rank = app.lookup("dm_memberInfo").getString("mem_rank")
 		var mem_name = app.lookup("dm_memberInfo").getString("mem_name");	
-		var wRpt_reporter = app.lookup("dm_weekRptInfo").getString("wRpt_reporter");
+		var wRpt_reporter = app.lookup("dm_weekRptInfo").getValue("wRpt_reporter_name");
 		var wRpt_toRpt = app.lookup("dm_weekRptInfo").getString("wRpt_toRpt");
 		if(mem_name == wRpt_reporter){
 			app.lookup("update").visible = true;
 			app.lookup("cancel").visible = true;
 			app.lookup("delete").visible = true;
-		} else if(mem_name == wRpt_toRpt || (mem_rank < 4)){
+		} else if(mem_name == wRpt_toRpt || (mem_rank < Rank3)){
 			
 		}
 		app.getContainer().redraw();

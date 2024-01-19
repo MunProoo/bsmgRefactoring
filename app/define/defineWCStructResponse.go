@@ -30,15 +30,15 @@ type BsmgReportResult struct {
 
 // getRptList 응답
 type BsmgReportListResponse struct {
-	ReportList []BsmgReportInfo `json:"ds_rptList"`
-	TotalCount TotalCountData   `json:"totalCount"`
-	Result     Result           `json:"Result"`
+	ReportList []BsmgReportInfoForWeb `json:"ds_rptList"`
+	TotalCount TotalCountData         `json:"totalCount"`
+	Result     Result                 `json:"Result"`
 }
 
 // getReportDetail
 type BsmgReportInfoResponse struct {
-	ReportInfo BsmgReportInfo `json:"dm_reportInfo"`
-	Result     Result         `json:"Result"`
+	ReportInfo BsmgReportInfoForWeb `json:"dm_reportInfo"`
+	Result     Result               `json:"Result"`
 }
 
 // getSchedull
@@ -49,15 +49,15 @@ type BsmgScheduleListResponse struct {
 
 // getWeekReportList
 type BsmgWeekReportListResponse struct {
-	WeekReportList []BsmgWeekRptInfo `json:"ds_weekRptList"`
-	TotalCount     TotalCountData    `json:"totalCount"`
-	Result         Result            `json:"Result"`
+	WeekReportList []BsmgWeekRptInfoForWeb `json:"ds_weekRptList"`
+	TotalCount     TotalCountData          `json:"totalCount"`
+	Result         Result                  `json:"Result"`
 }
 
 // getWeekReportInfo
 type BsmgWeekReportInfoResponse struct {
-	WeekReportInfo BsmgWeekRptInfo `json:"dm_weekRptInfo"`
-	Result         Result          `json:"Result"`
+	WeekReportInfo BsmgWeekRptInfoForWeb `json:"dm_weekRptInfo"`
+	Result         Result                `json:"Result"`
 }
 
 // getToRpt

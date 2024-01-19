@@ -82,13 +82,13 @@ func (uc structBsmgUsecase) SelectPartist() (partList []define.BsmgPartInfo, err
 	return uc.rp.SelectPartist()
 }
 
-func (uc structBsmgUsecase) SelectReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error) {
+func (uc structBsmgUsecase) SelectReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgReportInfoForWeb, totalCount int32, err error) {
 	return uc.rp.SelectReportList(pageInfo, searchData)
 }
-func (uc structBsmgUsecase) SelecAttrSearchReportList(pageInfo define.PageInfo, attrData define.AttrSearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error) {
+func (uc structBsmgUsecase) SelecAttrSearchReportList(pageInfo define.PageInfo, attrData define.AttrSearchData) (rptList []define.BsmgReportInfoForWeb, totalCount int32, err error) {
 	return uc.rp.SelecAttrSearchReportList(pageInfo, attrData)
 }
-func (uc structBsmgUsecase) SelectReportInfo(idx int) (rptInfo define.BsmgReportInfo, err error) {
+func (uc structBsmgUsecase) SelectReportInfo(idx int) (reportInfoForWeb define.BsmgReportInfoForWeb, err error) {
 	return uc.rp.SelectReportInfo(idx)
 }
 func (uc structBsmgUsecase) SelectLatestRptIdx(reporter string) (rptIdx int32, err error) {
@@ -110,13 +110,13 @@ func (uc structBsmgUsecase) SelectReportListAWeek(Mem_ID, bef7d, bef1d string) (
 func (uc structBsmgUsecase) SelectPartLeader(Mem_Part int32) (partLeader string, err error) {
 	return uc.rp.SelectPartLeader(Mem_Part)
 }
-func (uc structBsmgUsecase) SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error) {
+func (uc structBsmgUsecase) SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfoForWeb, totalCount int32, err error) {
 	return uc.rp.SelectWeekReportList(pageInfo, searchData)
 }
-func (uc structBsmgUsecase) SelectWeekReportCategorySearch(pageInfo define.PageInfo, partIdx int) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error) {
+func (uc structBsmgUsecase) SelectWeekReportCategorySearch(pageInfo define.PageInfo, partIdx int) (rptList []define.BsmgWeekRptInfoForWeb, totalCount int32, err error) {
 	return uc.rp.SelectWeekReportCategorySearch(pageInfo, partIdx)
 }
-func (uc structBsmgUsecase) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWeekRptInfo, err error) {
+func (uc structBsmgUsecase) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWeekRptInfoForWeb, err error) {
 	return uc.rp.SelectWeekReportInfo(wRptIdx)
 }
 func (uc structBsmgUsecase) SelectAttr1List() (attr1List []define.BsmgAttr1Info, err error) {

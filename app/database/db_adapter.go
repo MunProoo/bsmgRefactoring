@@ -87,15 +87,20 @@ func (dbManager *DatabaseManager) SelectUserList() (userList []define.BsmgMember
 	return dbManager.DBGorm.SelectUserList()
 }
 
-func (dbManager *DatabaseManager) SelectReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error) {
+func (dbManager *DatabaseManager) SelectReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgReportInfoForWeb, totalCount int32, err error) {
 	return dbManager.DBGorm.SelectReportList(pageInfo, searchData)
 }
-func (dbManager *DatabaseManager) SelecAttrSearchReportList(pageInfo define.PageInfo, attrData define.AttrSearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error) {
+func (dbManager *DatabaseManager) SelecAttrSearchReportList(pageInfo define.PageInfo, attrData define.AttrSearchData) (rptList []define.BsmgReportInfoForWeb, totalCount int32, err error) {
 	return dbManager.DBGorm.SelecAttrSearchReportList(pageInfo, attrData)
 }
-func (dbManager *DatabaseManager) SelectReportInfo(idx int) (rptInfo define.BsmgReportInfo, err error) {
+
+// func (dbManager *DatabaseManager) SelectReportInfo(idx int) (rptInfo define.BsmgReportInfo, err error) {
+// 	return dbManager.DBGorm.SelectReportInfo(idx)
+// }
+func (dbManager *DatabaseManager) SelectReportInfo(idx int) (reportInfoForWeb define.BsmgReportInfoForWeb, err error) {
 	return dbManager.DBGorm.SelectReportInfo(idx)
 }
+
 func (dbManager *DatabaseManager) SelectLatestRptIdx(reporter string) (rptIdx int32, err error) {
 	return dbManager.DBGorm.SelectLatestRptIdx(reporter)
 }
@@ -115,13 +120,13 @@ func (dbManager *DatabaseManager) SelectReportListAWeek(Mem_ID, bef7d, bef1d str
 func (dbManager *DatabaseManager) SelectPartLeader(Mem_Part int32) (partLeader string, err error) {
 	return dbManager.DBGorm.SelectPartLeader(Mem_Part)
 }
-func (dbManager *DatabaseManager) SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error) {
+func (dbManager *DatabaseManager) SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfoForWeb, totalCount int32, err error) {
 	return dbManager.DBGorm.SelectWeekReportList(pageInfo, searchData)
 }
-func (dbManager *DatabaseManager) SelectWeekReportCategorySearch(pageInfo define.PageInfo, partIdx int) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error) {
+func (dbManager *DatabaseManager) SelectWeekReportCategorySearch(pageInfo define.PageInfo, partIdx int) (rptList []define.BsmgWeekRptInfoForWeb, totalCount int32, err error) {
 	return dbManager.DBGorm.SelectWeekReportCategorySearch(pageInfo, partIdx)
 }
-func (dbManager *DatabaseManager) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWeekRptInfo, err error) {
+func (dbManager *DatabaseManager) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWeekRptInfoForWeb, err error) {
 	return dbManager.DBGorm.SelectWeekReportInfo(wRptIdx)
 }
 func (dbManager *DatabaseManager) SelectAttr1List() (attr1List []define.BsmgAttr1Info, err error) {

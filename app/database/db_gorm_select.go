@@ -126,7 +126,7 @@ func (dbm *DBGormMaria) SelectLatestRptIdx(reporter string) (rptIdx int32, err e
 	return
 }
 
-func (dbm *DBGormMaria) SelectReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error) {
+func (dbm *DBGormMaria) SelectReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgReportInfoForWeb, totalCount int32, err error) {
 	ipb := searchData.SearchInput
 	offset, limit := pageInfo.Offset, pageInfo.Limit
 
@@ -181,13 +181,12 @@ func (dbm *DBGormMaria) SelectReportList(pageInfo define.PageInfo, searchData de
 	// 보고의 reporter는 ID고 웹에선 이름으로 보여주기 위해..
 	// report쪽에 사용자 이름도 추가할까????
 	for _, report := range reportIncludeName {
-		report.ChangeIDToName()
-		rptList = append(rptList, report.BsmgReportInfo)
+		rptList = append(rptList, report.AllocationInfo())
 	}
 	return
 }
 
-func (dbm *DBGormMaria) SelecAttrSearchReportList(pageInfo define.PageInfo, attrData define.AttrSearchData) (rptList []define.BsmgReportInfo, totalCount int32, err error) {
+func (dbm *DBGormMaria) SelecAttrSearchReportList(pageInfo define.PageInfo, attrData define.AttrSearchData) (rptList []define.BsmgReportInfoForWeb, totalCount int32, err error) {
 	attrValue, attrCategory := attrData.AttrValue, attrData.AttrCategory
 
 	var reportIncludeName []define.BsmgIncludeNameReport
@@ -215,12 +214,11 @@ func (dbm *DBGormMaria) SelecAttrSearchReportList(pageInfo define.PageInfo, attr
 	}
 
 	for _, report := range reportIncludeName {
-		report.ChangeIDToName()
-		rptList = append(rptList, report.BsmgReportInfo)
+		rptList = append(rptList, report.AllocationInfo())
 	}
 	return
 }
-func (dbm *DBGormMaria) SelectReportInfo(idx int) (rptInfo define.BsmgReportInfo, err error) {
+func (dbm *DBGormMaria) SelectReportInfo(idx int) (reportInfoForWeb define.BsmgReportInfoForWeb, err error) {
 	/*
 		SELECT r.rpt_idx, m1.mem_name, r.rpt_date, m2.mem_name, r.rpt_ref, r.rpt_title,
 			r.rpt_content, r.rpt_etc, ba1.attr1_category, ba2.attr2_name, r.rpt_confirm
@@ -231,17 +229,16 @@ func (dbm *DBGormMaria) SelectReportInfo(idx int) (rptInfo define.BsmgReportInfo
 	*/
 	var reportIncludeName define.BsmgIncludeNameReport
 	dbWhere := dbm.DB.Model(define.BsmgReportInfo{})
-	dbWhere = dbWhere.Debug().Select(`*, m1.mem_name as reporter_name`).
+	dbWhere = dbWhere.Debug().Select(`*, m1.mem_name as reporter_name, m2.mem_name as to_rpt_name`).
 		Joins("INNER JOIN bsmg_member_infos m1 ON m1.mem_id = rpt_reporter").
-		// Joins("INNER JOIN bsmg_member_infos m2 ON m2.mem_id = rpt_to_rpt").
+		Joins("INNER JOIN bsmg_member_infos m2 ON m2.mem_id = rpt_to_rpt").
 		// Joins("INNER JOIN bsmg_member_infos m3 ON m3.mem_id = rpt_ref").
 		Where("rpt_idx = ?", idx).Scan(&reportIncludeName)
 	err = dbWhere.Error
 	if err != nil {
-		return define.BsmgReportInfo{}, err
+		return define.BsmgReportInfoForWeb{}, err
 	}
-	reportIncludeName.ChangeIDToName()
-	rptInfo = reportIncludeName.BsmgReportInfo
+	reportInfoForWeb = reportIncludeName.AllocationInfo()
 	return
 }
 
@@ -355,7 +352,7 @@ func (dbm *DBGormMaria) SelectPartLeader(Mem_Part int32) (partLeader string, err
 	return
 }
 
-func (dbm *DBGormMaria) SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error) {
+func (dbm *DBGormMaria) SelectWeekReportList(pageInfo define.PageInfo, searchData define.SearchData) (rptList []define.BsmgWeekRptInfoForWeb, totalCount int32, err error) {
 	ipb := searchData.SearchInput
 	offset, limit := pageInfo.Offset, pageInfo.Limit
 
@@ -403,14 +400,13 @@ func (dbm *DBGormMaria) SelectWeekReportList(pageInfo define.PageInfo, searchDat
 	// 보고의 reporter는 ID고 웹에선 이름으로 보여주기 위해..
 	// report쪽에 사용자 이름도 추가할까????
 	for _, report := range reportIncludeName {
-		report.ChangeIDToName()
-		rptList = append(rptList, report.BsmgWeekRptInfo)
+		rptList = append(rptList, report.AllocationInfo())
 	}
 
 	return
 }
 
-func (dbm *DBGormMaria) SelectWeekReportCategorySearch(pageInfo define.PageInfo, partIdx int) (rptList []define.BsmgWeekRptInfo, totalCount int32, err error) {
+func (dbm *DBGormMaria) SelectWeekReportCategorySearch(pageInfo define.PageInfo, partIdx int) (rptList []define.BsmgWeekRptInfoForWeb, totalCount int32, err error) {
 	offset, limit := pageInfo.Offset, pageInfo.Limit
 
 	var reportIncludeName []define.BsmgIncludeNameWeekReport
@@ -435,14 +431,13 @@ func (dbm *DBGormMaria) SelectWeekReportCategorySearch(pageInfo define.PageInfo,
 	// 보고의 reporter는 ID고 웹에선 이름으로 보여주기 위해..
 	// report쪽에 사용자 이름도 추가할까????
 	for _, report := range reportIncludeName {
-		report.ChangeIDToName()
-		rptList = append(rptList, report.BsmgWeekRptInfo)
+		rptList = append(rptList, report.AllocationInfo())
 	}
 
 	return
 }
 
-func (dbm *DBGormMaria) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWeekRptInfo, err error) {
+func (dbm *DBGormMaria) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWeekRptInfoForWeb, err error) {
 	var reportIncludeName define.BsmgIncludeNameWeekReport
 	dbm.DB.AutoMigrate(define.BsmgIncludeNameWeekReport{})
 
@@ -454,11 +449,10 @@ func (dbm *DBGormMaria) SelectWeekReportInfo(wRptIdx int) (rptInfo define.BsmgWe
 		Scan(&reportIncludeName)
 	err = dbWhere.Error
 	if err != nil {
-		return define.BsmgWeekRptInfo{}, err
+		return define.BsmgWeekRptInfoForWeb{}, err
 	}
 
-	reportIncludeName.ChangeIDToName()
-	rptInfo = reportIncludeName.BsmgWeekRptInfo
+	rptInfo = reportIncludeName.AllocationInfo()
 
 	return
 }

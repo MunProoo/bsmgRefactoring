@@ -22,23 +22,13 @@
           <cl:datacolumn std:sid="d-column-f2a323f9" name="wRpt_content"/>
           <cl:datacolumn std:sid="d-column-3dfd35a3" name="wRpt_part"/>
           <cl:datacolumn std:sid="d-column-fa6f9a88" name="wRpt_omissionDate"/>
+          <cl:datacolumn std:sid="d-column-3ccff98d" name="wRpt_reporter_name"/>
+          <cl:datacolumn std:sid="d-column-2d706e09" name="wRpt_toRpt_name"/>
         </cl:datacolumnlist>
       </cl:datamap>
       <cl:datamap std:sid="d-map-9c6bd4b2" id="dm_wRptIdx">
         <cl:datacolumnlist>
           <cl:datacolumn std:sid="d-column-90a5a2e2" name="wRpt_idx"/>
-        </cl:datacolumnlist>
-      </cl:datamap>
-      <cl:datamap std:sid="d-map-daf52b9e" id="dm_weekRptInfoSrc">
-        <cl:datacolumnlist>
-          <cl:datacolumn std:sid="d-column-aec544fe" name="wRpt_idx"/>
-          <cl:datacolumn std:sid="d-column-7b011067" name="wRpt_reporter"/>
-          <cl:datacolumn std:sid="d-column-1aa8bea3" name="wRpt_date"/>
-          <cl:datacolumn std:sid="d-column-d857bf64" name="wRpt_toRpt"/>
-          <cl:datacolumn std:sid="d-column-46d772fc" name="wRpt_title"/>
-          <cl:datacolumn std:sid="d-column-27f7b0f0" name="wRpt_content"/>
-          <cl:datacolumn std:sid="d-column-2d78ad31" name="wRpt_part"/>
-          <cl:datacolumn std:sid="d-column-8f68ee7e" name="wRpt_omissionDate"/>
         </cl:datacolumnlist>
       </cl:datamap>
       <cl:datamap std:sid="d-map-bfc68de4" id="Result">
@@ -59,6 +49,20 @@
           <cl:datacolumn std:sid="d-column-bb6dcca0" name="mem_name"/>
           <cl:datacolumn std:sid="d-column-bffbe21f" name="mem_rank"/>
           <cl:datacolumn std:sid="d-column-3aac1b5b" name="mem_part"/>
+        </cl:datacolumnlist>
+      </cl:datamap>
+      <cl:datamap std:sid="d-map-5bc301d0" id="dm_weekRptInfoSrc">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-6c7d2102" name="wRpt_idx"/>
+          <cl:datacolumn std:sid="d-column-a193f125" name="wRpt_reporter"/>
+          <cl:datacolumn std:sid="d-column-20990949" name="wRpt_date"/>
+          <cl:datacolumn std:sid="d-column-1132f99d" name="wRpt_toRpt"/>
+          <cl:datacolumn std:sid="d-column-8e65876f" name="wRpt_title"/>
+          <cl:datacolumn std:sid="d-column-b2c656c2" name="wRpt_content"/>
+          <cl:datacolumn std:sid="d-column-72c83f4a" name="wRpt_part"/>
+          <cl:datacolumn std:sid="d-column-c8e29701" name="wRpt_omissionDate"/>
+          <cl:datacolumn std:sid="d-column-84ecc682" name="wRpt_reporter_name"/>
+          <cl:datacolumn std:sid="d-column-b31091e0" name="wRpt_toRpt_name"/>
         </cl:datacolumnlist>
       </cl:datamap>
       <cl:submission std:sid="submission-c49f34e3" id="sms_getWeekRptInfo" async="false" method="get" action="/bsmg/report/getWeekRptInfo">
@@ -123,14 +127,14 @@
           <cl:formdata std:sid="f-data-58d4e953" row="0" col="0"/>
         </cl:output>
         <cl:output std:sid="output-07747cce" id="teamLeader" style="background-color:#e4eff8; padding-left:3px; text-align:left;" readonly="true">
-          <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_weekRptInfo" columnname="wRpt_toRpt"/>
+          <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_weekRptInfo" columnname="wRpt_toRpt_name"/>
           <cl:formdata std:sid="f-data-ea21548f" row="0" col="1"/>
         </cl:output>
         <cl:output std:sid="output-2b3f0991" style="font-weight:bold; text-align:center;" value="보고자">
           <cl:formdata std:sid="f-data-d9ec0962" row="0" col="2"/>
         </cl:output>
         <cl:output std:sid="output-13170a19" id="toRpt" style="background-color:#f8e4e4; padding-left:3px; text-align:left;" readonly="true">
-          <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_weekRptInfo" columnname="wRpt_reporter"/>
+          <cl:datamapbind property="value" category="PROPERTY" datacontrolid="dm_weekRptInfo" columnname="wRpt_reporter_name"/>
           <cl:formdata std:sid="f-data-1f238b69" row="0" col="3"/>
         </cl:output>
         <cl:formlayout std:sid="f-layout-8651be0c" hspace="0px" vspace="0px" top-margin="0px" right-margin="0px" bottom-margin="0px" left-margin="0px" hseparatorwidth="1" hseparatortype="BY_CLASS" vseparatorwidth="1" vseparatortype="BY_CLASS">

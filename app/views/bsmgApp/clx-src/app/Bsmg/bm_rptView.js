@@ -268,7 +268,7 @@ function onButtonClick4(/* cpr.events.CMouseEvent */ e){
 		
 //		console.log(app.lookup("ds_schedule").getRowDataRanged());
 		app.lookup("sms_putRpt").send();
-		app.lookup("sms_putShcedule").send();
+		
 	}
 }
 
@@ -333,6 +333,7 @@ function onSms_putRptSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	var result = app.lookup("Result").getString("ResultCode");
 	if(result == 0){
 //		console.log("보고 수정 완료");
+		app.lookup("sms_putShcedule").send();
 	} else {
 		alert(getErrorString(result));
 	}
@@ -409,17 +410,17 @@ function onSms_chkLoginSubmitDone(/* cpr.events.CSubmissionEvent */ e){
 	var sms_chkLogin = e.control;
 	var result = app.lookup("Result").getString("ResultCode");
 	if(result == 0){
-		var mem_rank = app.lookup("dm_memberInfo").getString("mem_rank")
-		var mem_name = app.lookup("dm_memberInfo").getString("mem_name");	
-		var rpt_reporter = app.lookup("dm_reportInfo").getString("rpt_reporter");
-		var rpt_toRpt = app.lookup("dm_reportInfo").getString("rpt_toRpt");
-		var rpt_confirm = app.lookup("dm_reportInfo").getString("rpt_confirm");
+		var mem_rank = app.lookup("dm_memberInfo").getValue("mem_rank")
+		var mem_name = app.lookup("dm_memberInfo").getValue("mem_name");	
+		var rpt_reporter_name = app.lookup("dm_reportInfo").getValue("rpt_reporter_name");
+		var rpt_toRpt_name = app.lookup("dm_reportInfo").getValue("rpt_toRpt_name");
+		var rpt_confirm = app.lookup("dm_reportInfo").getValue("rpt_confirm");
 		
-		if(mem_name == rpt_reporter && rpt_confirm == 'false'){
+		if(mem_name == rpt_reporter_name && rpt_confirm == 'false'){
 			app.lookup("update").visible = true;
 			app.lookup("cancel").visible = true;
 			app.lookup("delete").visible = true;
-		} else if(mem_name == rpt_toRpt || mem_rank < 4){
+		} else if(mem_name == rpt_toRpt_name || mem_rank < Rank3){
 			app.lookup("confirm").visible = true;
 		} 
 		app.getContainer().redraw();

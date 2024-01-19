@@ -3,6 +3,7 @@ package server
 import (
 	"BsmgRefactoring/database"
 	"BsmgRefactoring/define"
+	"errors"
 	"sync"
 	"time"
 
@@ -71,7 +72,7 @@ func (server *ServerProcessor) StartServer() {
 			err = server.ConnectDataBase()
 			if err != nil {
 				// server.log.Error("Connect Database Failed", "error", err)
-				time.Sleep(100 * time.Millisecond)
+				time.Sleep(1 * time.Second)
 				continue
 			}
 			server.SetState(define.StateInit)
@@ -94,7 +95,11 @@ func (server *ServerProcessor) IsConnected() (err error) {
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()
 
-	err = server.DBManager.IsConnected()
+	if server.DBManager != nil {
+		err = server.DBManager.IsConnected()
+		return
+	}
+	err = errors.New("database is not connected")
 	return
 }
 

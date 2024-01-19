@@ -1,13 +1,5 @@
 package define
 
-type DBConfig struct {
-	DatabaseIP   string `json:"host"`
-	DatabasePort string `json:"port"`
-	DatabaseID   string `json:"user"`
-	DatabasePW   string `json:"password"`
-	DatabaseName string `json:"dbname"`
-}
-
 // 멤버 구조체 객체
 type BsmgMemberInfo struct {
 	Mem_Idx      int32  `json:"mem_idx" gorm:"type:int;AUTO_INCREMENT;primary_key"` // 추후 서버 메모리에 담을때 사용할 예정

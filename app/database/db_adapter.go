@@ -94,9 +94,6 @@ func (dbManager *DatabaseManager) SelecAttrSearchReportList(pageInfo define.Page
 	return dbManager.DBGorm.SelecAttrSearchReportList(pageInfo, attrData)
 }
 
-// func (dbManager *DatabaseManager) SelectReportInfo(idx int) (rptInfo define.BsmgReportInfo, err error) {
-// 	return dbManager.DBGorm.SelectReportInfo(idx)
-// }
 func (dbManager *DatabaseManager) SelectReportInfo(idx int) (reportInfoForWeb define.BsmgReportInfoForWeb, err error) {
 	return dbManager.DBGorm.SelectReportInfo(idx)
 }

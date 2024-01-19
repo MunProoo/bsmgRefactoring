@@ -413,6 +413,52 @@
 				} else {
 					app.lookup("grd1").autoRowHeight = "all";
 				}
+			}
+			
+			
+			/*
+			 * "엑셀 내보내기" 버튼(Excel)에서 click 이벤트 발생 시 호출.
+			 * 사용자가 컨트롤을 클릭할 때 발생하는 이벤트.
+			 */
+			function onExcelClick(/* cpr.events.CMouseEvent */ e){
+				/** 
+				 * @type cpr.controls.Button
+				 */
+				var excel = e.control;
+				
+				processExportExcel(1);
+			}
+			
+			
+			function processExportExcel(fileNum) {
+				var InputData;
+				
+				var ds = app.lookup("ds_weekRptList");
+				
+				
+				var stringified = JSON.stringify(ds.getRowDataRanged());		
+				stringified = stringified.replace(/"wRpt_idx"/gi, '"번호"');
+				stringified = stringified.replace(/"wRpt_reporter_name"/gi, '"보고자 이름"');
+				stringified = stringified.replace(/"wRpt_toRpt_name"/gi, '"보고대상 이름"');
+			//	stringified = stringified.replace(/"wRpt_date"/gi, '"보고 날짜"');
+				stringified = stringified.replace(/"wRpt_title"/gi, '"제목"');
+				stringified = stringified.replace(/"wRpt_content"/gi, '"내용"');
+			//	stringified = stringified.replace(/"wRpt_part"/gi, '"부서"');
+			//	stringified = stringified.replace(/"wRpt_omissionDate"/gi, '"업무 누락 날짜"');
+			
+				
+				InputData = JSON.parse(stringified);
+				
+				/* original data */
+				var filename = "주간업무보고"+ ".xlsx";
+				var ws_name = "주간업무보고_";
+				
+				var wb = XLSX.utils.book_new(),
+					ws = XLSX.utils.json_to_sheet(InputData);
+				/* add worksheet to workbook */
+				XLSX.utils.book_append_sheet(wb, ws, ws_name);
+				
+				XLSX.writeFile(wb, filename);
 			};
 			// End - User Script
 			
@@ -427,7 +473,9 @@
 					{
 						"name": "wRpt_reporter",
 						"dataType": "string"
-					}
+					},
+					{"name": "wRpt_reporter_name"},
+					{"name": "wRpt_toRpt_name"}
 				]
 			});
 			app.register(dataSet_1);
@@ -637,7 +685,7 @@
 					comboBox_1.addItem(new cpr.controls.Item("전체", "0"));
 					comboBox_1.addItem(new cpr.controls.Item("제목", "1"));
 					comboBox_1.addItem(new cpr.controls.Item("내용", "2"));
-					comboBox_1.addItem(new cpr.controls.Item("보고자", "3"));
+					comboBox_1.addItem(new cpr.controls.Item("보고대상", "3"));
 				})(comboBox_1);
 				container.addChild(comboBox_1, {
 					positions: [
@@ -838,7 +886,7 @@
 							{
 								"constraint": {"rowIndex": 0, "colIndex": 3},
 								"configurator": function(cell){
-									cell.columnName = "wRpt_toRpt";
+									cell.columnName = "wRpt_toRpt_name";
 									cell.style.css({
 										"background-color" : "transparent",
 										"color" : "#000000"
@@ -848,7 +896,7 @@
 							{
 								"constraint": {"rowIndex": 0, "colIndex": 4},
 								"configurator": function(cell){
-									cell.columnName = "wRpt_reporter";
+									cell.columnName = "wRpt_reporter_name";
 									cell.style.css({
 										"background-color" : "transparent",
 										"color" : "#000000"
@@ -921,6 +969,43 @@
 							"left": "7px",
 							"width": "52px",
 							"height": "40px"
+						}
+					]
+				});
+				var button_2 = new cpr.controls.Button("Excel");
+				button_2.value = "엑셀 내보내기";
+				button_2.style.css({
+					"background-color" : "#52c183",
+					"color" : "#ffffff",
+					"background-image" : "none"
+				});
+				if(typeof onExcelClick == "function") {
+					button_2.addEventListener("click", onExcelClick);
+				}
+				container.addChild(button_2, {
+					positions: [
+						{
+							"media": "all and (min-width: 1024px)",
+							"top": "77px",
+							"left": "862px",
+							"width": "107px",
+							"height": "47px"
+						}, 
+						{
+							"media": "all and (min-width: 500px) and (max-width: 1023px)",
+							"hidden": false,
+							"top": "77px",
+							"left": "421px",
+							"width": "52px",
+							"height": "47px"
+						}, 
+						{
+							"media": "all and (max-width: 499px)",
+							"hidden": false,
+							"top": "77px",
+							"left": "295px",
+							"width": "37px",
+							"height": "47px"
 						}
 					]
 				});

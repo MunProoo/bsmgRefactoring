@@ -102,7 +102,7 @@
 				 * @type cpr.controls.Button
 				 */
 				var button = e.control;
-				app.close();
+				app.close(1);
 			}
 			
 			
@@ -286,13 +286,13 @@
 				if(result == 0){
 					var mem_rank = app.lookup("dm_memberInfo").getString("mem_rank")
 					var mem_name = app.lookup("dm_memberInfo").getString("mem_name");	
-					var wRpt_reporter = app.lookup("dm_weekRptInfo").getString("wRpt_reporter");
+					var wRpt_reporter = app.lookup("dm_weekRptInfo").getValue("wRpt_reporter_name");
 					var wRpt_toRpt = app.lookup("dm_weekRptInfo").getString("wRpt_toRpt");
 					if(mem_name == wRpt_reporter){
 						app.lookup("update").visible = true;
 						app.lookup("cancel").visible = true;
 						app.lookup("delete").visible = true;
-					} else if(mem_name == wRpt_toRpt || (mem_rank < 4)){
+					} else if(mem_name == wRpt_toRpt || (mem_rank < Rank3)){
 						
 					}
 					app.getContainer().redraw();
@@ -312,6 +312,22 @@
 				]
 			});
 			app.register(dataSet_1);
+			
+			var dataSet_2 = new cpr.data.DataSet("ds1");
+			dataSet_2.parseData({
+				"columns" : [
+					{"name": "wRpt_idx"},
+					{"name": "wRpt_reporter"},
+					{"name": "wRpt_date"},
+					{"name": "wRpt_toRpt"},
+					{"name": "wRpt_title"},
+					{"name": "wRpt_part"},
+					{"name": "wRpt_omissionDate"},
+					{"name": "wRpt_reporter_name"},
+					{"name": "wRpt_toRpt_name"}
+				]
+			});
+			app.register(dataSet_2);
 			var dataMap_1 = new cpr.data.DataMap("dm_weekRptInfo");
 			dataMap_1.parseData({
 				"columns" : [
@@ -322,7 +338,9 @@
 					{"name": "wRpt_title"},
 					{"name": "wRpt_content"},
 					{"name": "wRpt_part"},
-					{"name": "wRpt_omissionDate"}
+					{"name": "wRpt_omissionDate"},
+					{"name": "wRpt_reporter_name"},
+					{"name": "wRpt_toRpt_name"}
 				]
 			});
 			app.register(dataMap_1);
@@ -333,8 +351,35 @@
 			});
 			app.register(dataMap_2);
 			
-			var dataMap_3 = new cpr.data.DataMap("dm_weekRptInfoSrc");
+			var dataMap_3 = new cpr.data.DataMap("Result");
 			dataMap_3.parseData({
+				"columns" : [{"name": "ResultCode"}]
+			});
+			app.register(dataMap_3);
+			
+			var dataMap_4 = new cpr.data.DataMap("dm_part");
+			dataMap_4.parseData({
+				"columns" : [
+					{"name": "part_idx"},
+					{"name": "team_leader"}
+				]
+			});
+			app.register(dataMap_4);
+			
+			var dataMap_5 = new cpr.data.DataMap("dm_memberInfo");
+			dataMap_5.parseData({
+				"columns" : [
+					{"name": "mem_id"},
+					{"name": "mem_pw"},
+					{"name": "mem_name"},
+					{"name": "mem_rank"},
+					{"name": "mem_part"}
+				]
+			});
+			app.register(dataMap_5);
+			
+			var dataMap_6 = new cpr.data.DataMap("dm_weekRptInfoSrc");
+			dataMap_6.parseData({
 				"columns" : [
 					{"name": "wRpt_idx"},
 					{"name": "wRpt_reporter"},
@@ -343,34 +388,9 @@
 					{"name": "wRpt_title"},
 					{"name": "wRpt_content"},
 					{"name": "wRpt_part"},
-					{"name": "wRpt_omissionDate"}
-				]
-			});
-			app.register(dataMap_3);
-			
-			var dataMap_4 = new cpr.data.DataMap("Result");
-			dataMap_4.parseData({
-				"columns" : [{"name": "ResultCode"}]
-			});
-			app.register(dataMap_4);
-			
-			var dataMap_5 = new cpr.data.DataMap("dm_part");
-			dataMap_5.parseData({
-				"columns" : [
-					{"name": "part_idx"},
-					{"name": "team_leader"}
-				]
-			});
-			app.register(dataMap_5);
-			
-			var dataMap_6 = new cpr.data.DataMap("dm_memberInfo");
-			dataMap_6.parseData({
-				"columns" : [
-					{"name": "mem_id"},
-					{"name": "mem_pw"},
-					{"name": "mem_name"},
-					{"name": "mem_rank"},
-					{"name": "mem_part"}
+					{"name": "wRpt_omissionDate"},
+					{"name": "wRpt_reporter_name"},
+					{"name": "wRpt_toRpt_name"}
 				]
 			});
 			app.register(dataMap_6);
@@ -380,7 +400,7 @@
 			submission_1.action = "/bsmg/report/getWeekRptInfo";
 			submission_1.addRequestData(dataMap_2);
 			submission_1.addResponseData(dataMap_1, false);
-			submission_1.addResponseData(dataMap_4, false);
+			submission_1.addResponseData(dataMap_3, false);
 			if(typeof onSms_getWeekRptInfoSubmitDone == "function") {
 				submission_1.addEventListener("submit-done", onSms_getWeekRptInfoSubmitDone);
 			}
@@ -392,7 +412,7 @@
 			submission_2.action = "/bsmg/report/putWeekRpt";
 			submission_2.mediaType = "application/json";
 			submission_2.addRequestData(dataMap_1);
-			submission_2.addResponseData(dataMap_4, false);
+			submission_2.addResponseData(dataMap_3, false);
 			if(typeof onSms_putWeekRptSubmitDone == "function") {
 				submission_2.addEventListener("submit-done", onSms_putWeekRptSubmitDone);
 			}
@@ -412,9 +432,9 @@
 			submission_4.async = false;
 			submission_4.method = "get";
 			submission_4.action = "/bsmg/setting/getToRpt";
-			submission_4.addRequestData(dataMap_5);
-			submission_4.addResponseData(dataMap_5, false);
+			submission_4.addRequestData(dataMap_4);
 			submission_4.addResponseData(dataMap_4, false);
+			submission_4.addResponseData(dataMap_3, false);
 			if(typeof onSms_getToRptSubmitDone == "function") {
 				submission_4.addEventListener("submit-done", onSms_getToRptSubmitDone);
 			}
@@ -424,7 +444,7 @@
 			submission_5.method = "delete";
 			submission_5.action = "/bsmg/report/deleteWeekRpt";
 			submission_5.addRequestData(dataMap_2);
-			submission_5.addResponseData(dataMap_4, false);
+			submission_5.addResponseData(dataMap_3, false);
 			if(typeof onSms_deleteWeekRptSubmitDone == "function") {
 				submission_5.addEventListener("submit-done", onSms_deleteWeekRptSubmitDone);
 			}
@@ -433,8 +453,8 @@
 			var submission_6 = new cpr.protocols.Submission("sms_chkLogin");
 			submission_6.method = "get";
 			submission_6.action = "/bsmg/login/chkLogin";
-			submission_6.addResponseData(dataMap_4, false);
-			submission_6.addResponseData(dataMap_6, false);
+			submission_6.addResponseData(dataMap_3, false);
+			submission_6.addResponseData(dataMap_5, false);
 			if(typeof onSms_chkLoginSubmitDone == "function") {
 				submission_6.addEventListener("submit-done", onSms_chkLoginSubmitDone);
 			}
@@ -573,7 +593,7 @@
 						"padding-left" : "3px",
 						"text-align" : "left"
 					});
-					output_5.bind("value").toDataMap(app.lookup("dm_weekRptInfo"), "wRpt_toRpt");
+					output_5.bind("value").toDataMap(app.lookup("dm_weekRptInfo"), "wRpt_toRpt_name");
 					container.addChild(output_5, {
 						"colIndex": 1,
 						"rowIndex": 0
@@ -595,7 +615,7 @@
 						"padding-left" : "3px",
 						"text-align" : "left"
 					});
-					output_7.bind("value").toDataMap(app.lookup("dm_weekRptInfo"), "wRpt_reporter");
+					output_7.bind("value").toDataMap(app.lookup("dm_weekRptInfo"), "wRpt_reporter_name");
 					container.addChild(output_7, {
 						"colIndex": 3,
 						"rowIndex": 0

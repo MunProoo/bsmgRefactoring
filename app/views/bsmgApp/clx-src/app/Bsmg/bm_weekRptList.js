@@ -401,3 +401,49 @@ function onRdb1SelectionChange(/* cpr.events.CSelectionEvent */ e){
 		app.lookup("grd1").autoRowHeight = "all";
 	}
 }
+
+
+/*
+ * "엑셀 내보내기" 버튼(Excel)에서 click 이벤트 발생 시 호출.
+ * 사용자가 컨트롤을 클릭할 때 발생하는 이벤트.
+ */
+function onExcelClick(/* cpr.events.CMouseEvent */ e){
+	/** 
+	 * @type cpr.controls.Button
+	 */
+	var excel = e.control;
+	
+	processExportExcel(1);
+}
+
+
+function processExportExcel(fileNum) {
+	var InputData;
+	
+	var ds = app.lookup("ds_weekRptList");
+	
+	
+	var stringified = JSON.stringify(ds.getRowDataRanged());		
+	stringified = stringified.replace(/"wRpt_idx"/gi, '"번호"');
+	stringified = stringified.replace(/"wRpt_reporter_name"/gi, '"보고자 이름"');
+	stringified = stringified.replace(/"wRpt_toRpt_name"/gi, '"보고대상 이름"');
+//	stringified = stringified.replace(/"wRpt_date"/gi, '"보고 날짜"');
+	stringified = stringified.replace(/"wRpt_title"/gi, '"제목"');
+	stringified = stringified.replace(/"wRpt_content"/gi, '"내용"');
+//	stringified = stringified.replace(/"wRpt_part"/gi, '"부서"');
+//	stringified = stringified.replace(/"wRpt_omissionDate"/gi, '"업무 누락 날짜"');
+
+	
+	InputData = JSON.parse(stringified);
+	
+	/* original data */
+	var filename = "주간업무보고"+ ".xlsx";
+	var ws_name = "주간업무보고_";
+	
+	var wb = XLSX.utils.book_new(),
+		ws = XLSX.utils.json_to_sheet(InputData);
+	/* add worksheet to workbook */
+	XLSX.utils.book_append_sheet(wb, ws, ws_name);
+	
+	XLSX.writeFile(wb, filename);
+}

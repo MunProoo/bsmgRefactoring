@@ -496,7 +496,8 @@
 					{"name": "rpt_content"},
 					{"name": "rpt_reporter"},
 					{"name": "rpt_date"},
-					{"name": "rpt_attr1"}
+					{"name": "rpt_attr1"},
+					{"name": "rpt_reporter_name"}
 				]
 			});
 			app.register(dataSet_1);
@@ -843,7 +844,7 @@
 							{
 								"constraint": {"rowIndex": 0, "colIndex": 3},
 								"configurator": function(cell){
-									cell.columnName = "rpt_reporter";
+									cell.columnName = "rpt_reporter_name";
 									cell.style.css({
 										"background-color" : "transparent",
 										"color" : "#000000",

@@ -281,7 +281,7 @@
 					
 			//		console.log(app.lookup("ds_schedule").getRowDataRanged());
 					app.lookup("sms_putRpt").send();
-					app.lookup("sms_putShcedule").send();
+					
 				}
 			}
 			
@@ -346,6 +346,7 @@
 				var result = app.lookup("Result").getString("ResultCode");
 				if(result == 0){
 			//		console.log("보고 수정 완료");
+					app.lookup("sms_putShcedule").send();
 				} else {
 					alert(getErrorString(result));
 				}
@@ -422,17 +423,17 @@
 				var sms_chkLogin = e.control;
 				var result = app.lookup("Result").getString("ResultCode");
 				if(result == 0){
-					var mem_rank = app.lookup("dm_memberInfo").getString("mem_rank")
-					var mem_name = app.lookup("dm_memberInfo").getString("mem_name");	
-					var rpt_reporter = app.lookup("dm_reportInfo").getString("rpt_reporter");
-					var rpt_toRpt = app.lookup("dm_reportInfo").getString("rpt_toRpt");
-					var rpt_confirm = app.lookup("dm_reportInfo").getString("rpt_confirm");
+					var mem_rank = app.lookup("dm_memberInfo").getValue("mem_rank")
+					var mem_name = app.lookup("dm_memberInfo").getValue("mem_name");	
+					var rpt_reporter_name = app.lookup("dm_reportInfo").getValue("rpt_reporter_name");
+					var rpt_toRpt_name = app.lookup("dm_reportInfo").getValue("rpt_toRpt_name");
+					var rpt_confirm = app.lookup("dm_reportInfo").getValue("rpt_confirm");
 					
-					if(mem_name == rpt_reporter && rpt_confirm == 'false'){
+					if(mem_name == rpt_reporter_name && rpt_confirm == 'false'){
 						app.lookup("update").visible = true;
 						app.lookup("cancel").visible = true;
 						app.lookup("delete").visible = true;
-					} else if(mem_name == rpt_toRpt || mem_rank < 4){
+					} else if(mem_name == rpt_toRpt_name || mem_rank < Rank3){
 						app.lookup("confirm").visible = true;
 					} 
 					app.getContainer().redraw();
@@ -520,7 +521,9 @@
 					{
 						"name": "rpt_confirm",
 						"dataType": "string"
-					}
+					},
+					{"name": "rpt_reporter_name"},
+					{"name": "rpt_toRpt_name"}
 				]
 			});
 			app.register(dataMap_1);
@@ -537,8 +540,20 @@
 			});
 			app.register(dataMap_3);
 			
-			var dataMap_4 = new cpr.data.DataMap("dm_reportInfoSrc");
+			var dataMap_4 = new cpr.data.DataMap("dm_memberInfo");
 			dataMap_4.parseData({
+				"columns" : [
+					{"name": "mem_id"},
+					{"name": "mem_pw"},
+					{"name": "mem_name"},
+					{"name": "mem_rank"},
+					{"name": "mem_part"}
+				]
+			});
+			app.register(dataMap_4);
+			
+			var dataMap_5 = new cpr.data.DataMap("dm_reportInfoSrc");
+			dataMap_5.parseData({
 				"columns" : [
 					{"name": "rpt_idx"},
 					{"name": "rpt_reporter"},
@@ -549,19 +564,13 @@
 					{"name": "rpt_content"},
 					{"name": "rpt_etc"},
 					{"name": "rpt_attr1"},
-					{"name": "rpt_attr2"}
-				]
-			});
-			app.register(dataMap_4);
-			
-			var dataMap_5 = new cpr.data.DataMap("dm_memberInfo");
-			dataMap_5.parseData({
-				"columns" : [
-					{"name": "mem_id"},
-					{"name": "mem_pw"},
-					{"name": "mem_name"},
-					{"name": "mem_rank"},
-					{"name": "mem_part"}
+					{"name": "rpt_attr2"},
+					{
+						"name": "rpt_confirm",
+						"dataType": "string"
+					},
+					{"name": "rpt_reporter_name"},
+					{"name": "rpt_toRpt_name"}
 				]
 			});
 			app.register(dataMap_5);
@@ -642,7 +651,7 @@
 			submission_7.method = "get";
 			submission_7.action = "/bsmg/login/chkLogin";
 			submission_7.addResponseData(dataMap_2, false);
-			submission_7.addResponseData(dataMap_5, false);
+			submission_7.addResponseData(dataMap_4, false);
 			if(typeof onSms_chkLoginSubmitDone == "function") {
 				submission_7.addEventListener("submit-done", onSms_chkLoginSubmitDone);
 			}
@@ -1032,7 +1041,7 @@
 						"padding-left" : "2px",
 						"text-align" : "left"
 					});
-					output_10.bind("value").toDataMap(app.lookup("dm_reportInfo"), "rpt_toRpt");
+					output_10.bind("value").toDataMap(app.lookup("dm_reportInfo"), "rpt_toRpt_name");
 					container.addChild(output_10, {
 						"colIndex": 3,
 						"rowIndex": 0
@@ -1076,7 +1085,7 @@
 						"padding-left" : "2px",
 						"text-align" : "left"
 					});
-					output_14.bind("value").toDataMap(app.lookup("dm_reportInfo"), "rpt_reporter");
+					output_14.bind("value").toDataMap(app.lookup("dm_reportInfo"), "rpt_reporter_name");
 					container.addChild(output_14, {
 						"colIndex": 1,
 						"rowIndex": 0

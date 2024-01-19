@@ -202,11 +202,9 @@
 					} 
 				}
 				app.lookup("sms_registRpt").send();
-				if(grd.getRowCount() > 0){
-					app.lookup("sms_registSch").send();
-					return;
-				}
-				alert("보고가 성공적으로 저장되었습니다.");
+				
+				
+				
 				app.close(1);
 				
 			}
@@ -225,6 +223,14 @@
 				var rptIdx = Number(app.lookup("dm_reportInfo").getValue("rpt_idx"));
 				if (result == 0){
 					console.log(rptIdx);
+				
+					var grd = app.lookup("grdSch");	
+					if(grd.getRowCount() > 0){
+						app.lookup("sms_registSch").send();
+					} else {
+						alert("보고가 성공적으로 저장되었습니다.");
+					}
+					
 					return;
 				} else {
 					alert(getErrorString(result));

@@ -156,6 +156,12 @@
         <cl:item std:sid="item-cea07fc5" label="작게" value="0"/>
         <cl:item std:sid="item-97915e6f" label="크게" value="1"/>
       </cl:radiobutton>
+      <cl:button std:sid="button-8c02672e" id="Excel" style="background-color:#52c183; color:#ffffff; background-image:none;" value="엑셀 내보내기">
+        <cl:listener std:sid="listener-40560ada" name="click" handler="onExcelClick"/>
+        <cl:responsivexylayoutdata std:sid="rxyl-data-afc154ab">
+          <cl:xylayoutdata std:sid="sxyl-data-2907872f" top="77px" left="862px" width="107px" height="47px" horizontalAnchor="LEFT" verticalAnchor="TOP" screenid="default"/>
+        </cl:responsivexylayoutdata>
+      </cl:button>
       <cl:responsivexylayout std:sid="r-xylayout-4820a8a3"/>
     </cl:group>
     <cl:output std:sid="output-97800bf8" style="font-weight:bold;" value="주간 업무보고 카테고리">

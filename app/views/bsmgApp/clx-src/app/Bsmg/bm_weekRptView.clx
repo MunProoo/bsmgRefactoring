@@ -12,6 +12,19 @@
           <cl:datacolumn std:sid="d-column-44a72f16" name="part_idx"/>
         </cl:datacolumnlist>
       </cl:dataset>
+      <cl:dataset std:sid="d-set-4ce11808" id="ds1">
+        <cl:datacolumnlist>
+          <cl:datacolumn std:sid="d-column-5a2759a8" name="wRpt_idx"/>
+          <cl:datacolumn std:sid="d-column-c2f86e6b" name="wRpt_reporter"/>
+          <cl:datacolumn std:sid="d-column-df04ad23" name="wRpt_date"/>
+          <cl:datacolumn std:sid="d-column-ae28d8f1" name="wRpt_toRpt"/>
+          <cl:datacolumn std:sid="d-column-d9ef6258" name="wRpt_title"/>
+          <cl:datacolumn std:sid="d-column-36255dad" name="wRpt_part"/>
+          <cl:datacolumn std:sid="d-column-4023bc0d" name="wRpt_omissionDate"/>
+          <cl:datacolumn std:sid="d-column-3fbf95f1" name="wRpt_reporter_name"/>
+          <cl:datacolumn std:sid="d-column-a0c53b6a" name="wRpt_toRpt_name"/>
+        </cl:datacolumnlist>
+      </cl:dataset>
       <cl:datamap std:sid="d-map-88dfa158" id="dm_weekRptInfo">
         <cl:datacolumnlist>
           <cl:datacolumn std:sid="d-column-f3c78193" name="wRpt_idx"/>

@@ -10,6 +10,7 @@ admin / admin 으로 접속 가능합니다.
 리팩토링의 목적은 다음과 같습니다.
 - 클린 아키텍처 적용
 - 모듈화
+- goroutine 및 channel 사용
 - JWT 사용
 - Docker를 이용한 배포 경험
 

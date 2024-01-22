@@ -2,6 +2,7 @@ package repository
 
 import (
 	"BsmgRefactoring/database"
+	"sync"
 )
 
 /*
@@ -15,9 +16,10 @@ type BsmgRepository interface {
 }
 
 type structBsmgRepository struct {
-	dm database.DatabaseManagerInterface
+	dm    database.DatabaseManagerInterface
+	Mutex sync.RWMutex
 }
 
 func NewBsmgRepository(dm database.DatabaseManagerInterface) BsmgRepository {
-	return &structBsmgRepository{dm}
+	return &structBsmgRepository{dm, sync.RWMutex{}}
 }

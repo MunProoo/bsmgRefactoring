@@ -7,6 +7,7 @@ import (
 	"BsmgRefactoring/handler"
 	bsmgMd "BsmgRefactoring/middleware"
 	"BsmgRefactoring/repository"
+
 	"BsmgRefactoring/router"
 	"BsmgRefactoring/server"
 	"BsmgRefactoring/usecase"
@@ -18,6 +19,10 @@ import (
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
+	_ "BsmgRefactoring/docs"
+
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 // var server ServerProcessor // 핸들러에서도 접근 가능하도록 전역으로 할당
@@ -27,6 +32,14 @@ func init() {
 	gob.Register(define.BsmgMemberInfo{})
 }
 
+const (
+	swaggerIndexURL = "/swagger/index.html"
+)
+
+// @title BSMG Swagger API
+// @version 1.0
+// @host localhost:3000
+// @BasePath /api/v1
 func main() {
 
 	// 로그 시작
@@ -49,6 +62,18 @@ func main() {
 
 	// handler 생성 및 Usecase 의존성 주입
 	bsmgHandler := handler.NewBsmgHandler(useCase)
+
+	// Swagger Docs 추가
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			// Swagger UI를 불러오는 URL (/swagger/index.html)이 정적파일의 index.html과 충돌하여 동작하지 않으므로 후킹 추가
+			if c.Request().URL.Path == swaggerIndexURL {
+				return echoSwagger.WrapHandler(c)
+			}
+			return next(c)
+		}
+	})
 
 	// middleware ------------------------------------
 	e.Use(middleware.Logger())
@@ -75,7 +100,7 @@ func main() {
 	e.POST("/bsmg/login/login", bsmgHandler.PostLoginRequest)
 	e.GET("/bsmg/login/chkLogin", bsmgHandler.GetChkLoginRequest)
 
-	// URL 그룹화 + JWT 미들웨어 적용
+	// // URL 그룹화 + JWT 미들웨어 적용
 	bsmgGroup := e.Group("/bsmg", echojwt.WithConfig(echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(bsmgMd.MemberClaims)
@@ -99,5 +124,6 @@ func main() {
 	router.InitRouteGroup(bsmgGroup, *bsmgHandler)
 
 	go server.StartServer() // DB 상태 체크 및 재연결 등..
+
 	e.Logger.Fatal(e.Start(":3000"))
 }

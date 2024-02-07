@@ -1,0 +1,269 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "BSMG Swagger API",
+        "contact": {},
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/bsmg",
+    "paths": {
+        "/login/chkLogin": {
+            "get": {
+                "description": "check user is logined",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Login"
+                ],
+                "summary": "user's login check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/define.BsmgMemberResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/login/login": {
+            "post": {
+                "description": "Login must always precede.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "login Info",
+                        "name": "Data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/define.BsmgMemberLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/define.BsmgMemberResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportList": {
+            "get": {
+                "description": "Get Daily Report List des",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Report"
+                ],
+                "summary": "get report List summary",
+                "parameters": [
+                    {
+                        "enum": [
+                            "All",
+                            "Title",
+                            "Content",
+                            "Reporter"
+                        ],
+                        "type": "string",
+                        "description": "Search Condition enums",
+                        "name": "search_combo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Input",
+                        "name": "search_input",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/define.BsmgReportListResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "define.BsmgMemberInfo": {
+            "type": "object",
+            "properties": {
+                "mem_id": {
+                    "type": "string"
+                },
+                "mem_idx": {
+                    "description": "추후 서버 메모리에 담을때 사용할 예정",
+                    "type": "integer"
+                },
+                "mem_name": {
+                    "type": "string"
+                },
+                "mem_part": {
+                    "type": "integer"
+                },
+                "mem_pw": {
+                    "type": "string"
+                },
+                "mem_rank": {
+                    "type": "integer"
+                }
+            }
+        },
+        "define.BsmgMemberLoginRequest": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "dm_memberInfo": {
+                            "$ref": "#/definitions/define.BsmgMemberInfo"
+                        }
+                    }
+                }
+            }
+        },
+        "define.BsmgMemberResponse": {
+            "type": "object",
+            "properties": {
+                "Result": {
+                    "$ref": "#/definitions/define.Result"
+                },
+                "dm_memberInfo": {
+                    "$ref": "#/definitions/define.BsmgMemberInfo"
+                }
+            }
+        },
+        "define.BsmgReportInfoForWeb": {
+            "type": "object",
+            "properties": {
+                "rpt_attr1": {
+                    "description": "업무속성1(솔루션/제품)",
+                    "type": "integer"
+                },
+                "rpt_attr2": {
+                    "description": "업무속성2 (이름)",
+                    "type": "integer"
+                },
+                "rpt_confirm": {
+                    "description": "보고서 확정 상태",
+                    "type": "boolean"
+                },
+                "rpt_content": {
+                    "description": "업무보고 내용",
+                    "type": "string"
+                },
+                "rpt_date": {
+                    "description": "보고 일자",
+                    "type": "string"
+                },
+                "rpt_etc": {
+                    "description": "기타 특이사항",
+                    "type": "string"
+                },
+                "rpt_idx": {
+                    "description": "인덱스",
+                    "type": "integer"
+                },
+                "rpt_ref": {
+                    "description": "참조 대상",
+                    "type": "string"
+                },
+                "rpt_reporter": {
+                    "description": "보고자",
+                    "type": "string"
+                },
+                "rpt_reporter_name": {
+                    "type": "string"
+                },
+                "rpt_title": {
+                    "description": "업무보고 제목",
+                    "type": "string"
+                },
+                "rpt_toRpt": {
+                    "description": "보고 대상",
+                    "type": "string"
+                },
+                "rpt_toRpt_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "define.BsmgReportListResponse": {
+            "type": "object",
+            "properties": {
+                "Result": {
+                    "$ref": "#/definitions/define.Result"
+                },
+                "ds_rptList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/define.BsmgReportInfoForWeb"
+                    }
+                },
+                "totalCount": {
+                    "$ref": "#/definitions/define.TotalCountData"
+                }
+            }
+        },
+        "define.Result": {
+            "type": "object",
+            "properties": {
+                "ResultCode": {
+                    "type": "integer"
+                }
+            }
+        },
+        "define.TotalCountData": {
+            "type": "object",
+            "properties": {
+                "Count": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

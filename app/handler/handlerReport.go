@@ -12,11 +12,21 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// server 변수를 현재 context에서 꺼내쓰는데 타입에 대해서 불명확하기때문에 이건 지양해야 하는 방향.
-
+// @Summary get report List summary
+// @Description Get Daily Report List des
+// @Tags Report
+// @Accept json
+// @Produce json
+// @Param search_combo query string true "Search Condition enums"	Enums(All, Title, Content, Reporter)
+// @Param search_input query string false "Search Input"
+// @Param offset query int true "offset"
+// @Param limit query int true "limit"
+// @Success 200 {object} define.BsmgReportListResponse
+// @Router /reportList [get]
 func (h *BsmgHandler) GetReportSearchReq(c echo.Context) (err error) {
 	log.Println("getReportSearchReq")
 
+	// server 변수를 현재 context에서 꺼내쓰는데 타입에 대해서 불명확하기때문에 이건 지양해야 하는 방향.
 	server, _ := c.Get("Server").(*server.ServerProcessor)
 	server.Mutex.Lock()
 	defer server.Mutex.Unlock()

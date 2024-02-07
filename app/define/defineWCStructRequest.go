@@ -5,6 +5,7 @@ import "strconv"
 // 웹 클라이언트의 Request를 받는 구조체만 정의
 type BsmgMemberLoginRequest struct {
 	Data struct {
+		// Mem_id , Mem_PW is required
 		MemberInfo BsmgMemberInfo `json:"dm_memberInfo"`
 	} `json:"data"`
 }

@@ -1,0 +1,181 @@
+basePath: /bsmg
+definitions:
+  define.BsmgMemberInfo:
+    properties:
+      mem_id:
+        type: string
+      mem_idx:
+        description: 추후 서버 메모리에 담을때 사용할 예정
+        type: integer
+      mem_name:
+        type: string
+      mem_part:
+        type: integer
+      mem_pw:
+        type: string
+      mem_rank:
+        type: integer
+    type: object
+  define.BsmgMemberLoginRequest:
+    properties:
+      data:
+        properties:
+          dm_memberInfo:
+            $ref: '#/definitions/define.BsmgMemberInfo'
+        type: object
+    type: object
+  define.BsmgMemberResponse:
+    properties:
+      Result:
+        $ref: '#/definitions/define.Result'
+      dm_memberInfo:
+        $ref: '#/definitions/define.BsmgMemberInfo'
+    type: object
+  define.BsmgReportInfoForWeb:
+    properties:
+      rpt_attr1:
+        description: 업무속성1(솔루션/제품)
+        type: integer
+      rpt_attr2:
+        description: 업무속성2 (이름)
+        type: integer
+      rpt_confirm:
+        description: 보고서 확정 상태
+        type: boolean
+      rpt_content:
+        description: 업무보고 내용
+        type: string
+      rpt_date:
+        description: 보고 일자
+        type: string
+      rpt_etc:
+        description: 기타 특이사항
+        type: string
+      rpt_idx:
+        description: 인덱스
+        type: integer
+      rpt_ref:
+        description: 참조 대상
+        type: string
+      rpt_reporter:
+        description: 보고자
+        type: string
+      rpt_reporter_name:
+        type: string
+      rpt_title:
+        description: 업무보고 제목
+        type: string
+      rpt_toRpt:
+        description: 보고 대상
+        type: string
+      rpt_toRpt_name:
+        type: string
+    type: object
+  define.BsmgReportListResponse:
+    properties:
+      Result:
+        $ref: '#/definitions/define.Result'
+      ds_rptList:
+        items:
+          $ref: '#/definitions/define.BsmgReportInfoForWeb'
+        type: array
+      totalCount:
+        $ref: '#/definitions/define.TotalCountData'
+    type: object
+  define.Result:
+    properties:
+      ResultCode:
+        type: integer
+    type: object
+  define.TotalCountData:
+    properties:
+      Count:
+        type: integer
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: BSMG Swagger API
+  version: "1.0"
+paths:
+  /login/chkLogin:
+    get:
+      consumes:
+      - application/json
+      description: check user is logined
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/define.BsmgMemberResponse'
+      summary: user's login check
+      tags:
+      - Login
+  /login/login:
+    post:
+      consumes:
+      - application/json
+      description: Login must always precede.
+      parameters:
+      - description: login Info
+        in: body
+        name: Data
+        required: true
+        schema:
+          $ref: '#/definitions/define.BsmgMemberLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/define.BsmgMemberResponse'
+      summary: Login
+      tags:
+      - Login
+  /reportList:
+    get:
+      consumes:
+      - application/json
+      description: Get Daily Report List des
+      parameters:
+      - description: Search Condition enums
+        enum:
+        - All
+        - Title
+        - Content
+        - Reporter
+        in: query
+        name: search_combo
+        required: true
+        type: string
+      - description: Search Input
+        in: query
+        name: search_input
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/define.BsmgReportListResponse'
+      summary: get report List summary
+      tags:
+      - Report
+swagger: "2.0"

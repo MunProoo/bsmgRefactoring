@@ -10,7 +10,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// 로그인 중인지 확인
+// @Summary user's login check
+// @Description check user is logined
+// @Tags Login
+// @Accept json
+// @Produce json
+// @Success 200 {object} define.BsmgMemberResponse
+// @Router /login/chkLogin [get]
 func (h *BsmgHandler) GetChkLoginRequest(c echo.Context) error {
 	log.Println("getChkLogin Req")
 	// JWT 검증  ------------------------------------------
@@ -23,6 +29,14 @@ func (h *BsmgHandler) GetChkLoginRequest(c echo.Context) error {
 	return c.JSON(http.StatusOK, apiResponse)
 }
 
+// @Summary Login
+// @Description Login must always precede.
+// @Tags Login
+// @Accept json
+// @Produce json
+// @Param 	Data  body  define.BsmgMemberLoginRequest true "login Info"
+// @Success 200 {object} define.BsmgMemberResponse
+// @Router /login/login [post]
 func (h *BsmgHandler) PostLoginRequest(c echo.Context) error {
 	log.Println("postLoginRequest")
 

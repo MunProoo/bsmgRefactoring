@@ -13,16 +13,15 @@ import (
 )
 
 // @Summary get report List summary
-// @Description Get Daily Report List des
+// @Description combo means 0:all, 1:title, 2:content, 3:reporter
 // @Tags Report
 // @Accept json
 // @Produce json
-// @Param search_combo query string true "Search Condition enums"	Enums(All, Title, Content, Reporter)
-// @Param search_input query string false "Search Input"
+// @Param searchData query define.SearchData true "Search Condition"
 // @Param offset query int true "offset"
 // @Param limit query int true "limit"
 // @Success 200 {object} define.BsmgReportListResponse
-// @Router /reportList [get]
+// @Router /report/reportList [get]
 func (h *BsmgHandler) GetReportSearchReq(c echo.Context) (err error) {
 	log.Println("getReportSearchReq")
 

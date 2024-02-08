@@ -20,8 +20,12 @@ type Result struct {
 }
 
 type SearchData struct {
-	SearchCombo int32
-	SearchInput string
+	// * 0 - All
+	// * 1 - Title
+	// * 2 - Content
+	// * 3 - Reporter
+	SearchCombo int32  `json:"@d1#search_combo" enums:"0,1,2,3"`
+	SearchInput string `json:"@d1#search_input"`
 }
 
 type AttrSearchData struct {

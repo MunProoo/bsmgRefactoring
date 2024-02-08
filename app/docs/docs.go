@@ -68,17 +68,37 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/login/logout": {
+            "post": {
+                "description": "Logout",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Logout",
+                "responses": {
+                    "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/define.BsmgMemberResponse"
+                            "$ref": "#/definitions/define.OnlyResult"
                         }
                     }
                 }
             }
         },
-        "/reportList": {
+        "/report/reportList": {
             "get": {
-                "description": "Get Daily Report List des",
+                "description": "combo means 0:all, 1:title, 2:content, 3:reporter",
                 "consumes": [
                     "application/json"
                 ],
@@ -92,21 +112,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "enum": [
-                            "All",
-                            "Title",
-                            "Content",
-                            "Reporter"
+                            0,
+                            1,
+                            2,
+                            3
                         ],
-                        "type": "string",
-                        "description": "Search Condition enums",
-                        "name": "search_combo",
-                        "in": "query",
-                        "required": true
+                        "type": "integer",
+                        "description": "* 0 - All\n* 1 - Title",
+                        "name": "@d1#search_combo",
+                        "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Search Input",
-                        "name": "search_input",
+                        "name": "@d1#search_input",
                         "in": "query"
                     },
                     {
@@ -167,7 +185,12 @@ const docTemplate = `{
                     "type": "object",
                     "properties": {
                         "dm_memberInfo": {
-                            "$ref": "#/definitions/define.BsmgMemberInfo"
+                            "description": "Mem_id , Mem_PW is required",
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/define.BsmgMemberInfo"
+                                }
+                            ]
                         }
                     }
                 }
@@ -253,6 +276,14 @@ const docTemplate = `{
                 },
                 "totalCount": {
                     "$ref": "#/definitions/define.TotalCountData"
+                }
+            }
+        },
+        "define.OnlyResult": {
+            "type": "object",
+            "properties": {
+                "Result": {
+                    "$ref": "#/definitions/define.Result"
                 }
             }
         },

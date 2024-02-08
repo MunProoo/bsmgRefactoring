@@ -21,7 +21,9 @@ definitions:
       data:
         properties:
           dm_memberInfo:
-            $ref: '#/definitions/define.BsmgMemberInfo'
+            allOf:
+            - $ref: '#/definitions/define.BsmgMemberInfo'
+            description: Mem_id , Mem_PW is required
         type: object
     type: object
   define.BsmgMemberResponse:
@@ -82,6 +84,11 @@ definitions:
       totalCount:
         $ref: '#/definitions/define.TotalCountData'
     type: object
+  define.OnlyResult:
+    properties:
+      Result:
+        $ref: '#/definitions/define.Result'
+    type: object
   define.Result:
     properties:
       ResultCode:
@@ -133,30 +140,43 @@ paths:
       responses:
         "200":
           description: OK
-          schema:
-            $ref: '#/definitions/define.BsmgMemberResponse'
       summary: Login
       tags:
       - Login
-  /reportList:
+  /login/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/define.OnlyResult'
+      summary: Logout
+      tags:
+      - Login
+  /report/reportList:
     get:
       consumes:
       - application/json
-      description: Get Daily Report List des
+      description: combo means 0:all, 1:title, 2:content, 3:reporter
       parameters:
-      - description: Search Condition enums
+      - description: |-
+          * 0 - All
+          * 1 - Title
         enum:
-        - All
-        - Title
-        - Content
-        - Reporter
+        - 0
+        - 1
+        - 2
+        - 3
         in: query
-        name: search_combo
-        required: true
-        type: string
-      - description: Search Input
-        in: query
-        name: search_input
+        name: '@d1#search_combo'
+        type: integer
+      - in: query
+        name: '@d1#search_input'
         type: string
       - description: offset
         in: query

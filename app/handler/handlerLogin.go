@@ -10,32 +10,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary user's login check
-// @Description check user is logined
-// @Tags Login
-// @Accept json
-// @Produce json
-// @Success 200 {object} define.BsmgMemberResponse
-// @Router /login/chkLogin [get]
-func (h *BsmgHandler) GetChkLoginRequest(c echo.Context) error {
-	log.Println("getChkLogin Req")
-	// JWT 검증  ------------------------------------------
-	apiResponse, resultCode := h.uc.CheckLoginIng(c)
-	if resultCode != define.Success {
-		apiResponse.Result.ResultCode = int32(resultCode)
-		return c.JSON(http.StatusOK, apiResponse)
-	}
-
-	return c.JSON(http.StatusOK, apiResponse)
-}
-
 // @Summary Login
 // @Description Login must always precede.
 // @Tags Login
 // @Accept json
 // @Produce json
 // @Param 	Data  body  define.BsmgMemberLoginRequest true "login Info"
-// @Success 200 {object} define.BsmgMemberResponse
+// @Success 200 "OK"
 // @Router /login/login [post]
 func (h *BsmgHandler) PostLoginRequest(c echo.Context) error {
 	log.Println("postLoginRequest")
@@ -64,6 +45,32 @@ func (h *BsmgHandler) PostLoginRequest(c echo.Context) error {
 	})
 }
 
+// @Summary user's login check
+// @Description check user is logined
+// @Tags Login
+// @Accept json
+// @Produce json
+// @Success 200 {object} define.BsmgMemberResponse
+// @Router /login/chkLogin [get]
+func (h *BsmgHandler) GetChkLoginRequest(c echo.Context) error {
+	log.Println("getChkLogin Req")
+	// JWT 검증  ------------------------------------------
+	apiResponse, resultCode := h.uc.CheckLoginIng(c)
+	if resultCode != define.Success {
+		apiResponse.Result.ResultCode = int32(resultCode)
+		return c.JSON(http.StatusOK, apiResponse)
+	}
+
+	return c.JSON(http.StatusOK, apiResponse)
+}
+
+// @Summary Logout
+// @Description Logout
+// @Tags Login
+// @Accept json
+// @Produce json
+// @Success 200 {object} define.OnlyResult
+// @Router /login/logout [post]
 func (h *BsmgHandler) PostLogoutRequest(c echo.Context) error {
 	log.Println("postLogoutRequest")
 	result := h.uc.UserLogout(c)

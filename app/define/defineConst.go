@@ -10,10 +10,10 @@ const (
 
 // DailyReport Search Combobox Value
 const (
-	SearchReportAll = iota
-	SearchReportTitle
-	SearchReportContent
-	SearchReportReporter
+	SearchReportAll      = iota // SearchReportAll : Search for All
+	SearchReportTitle           // SearchReportTitle :  Search for Title
+	SearchReportContent         // SearchReportContent : Search for Content
+	SearchReportReporter        // SearchReportReporter : Search for Reporter
 )
 
 // WeekReport Search Combobox Value

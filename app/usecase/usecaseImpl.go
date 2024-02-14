@@ -24,10 +24,13 @@ import (
 // 권한 확인
 func (uc structBsmgUsecase) AuthorizationCheck(c echo.Context) (apiResponse define.BsmgMemberResponse, ResultCode int) {
 	// 인가 체크
-	claims, err := middleware.CheckToken(c)
+	claims, err, loginPossible := middleware.CheckToken(c, uc.loginUserAgentMap)
 	if err != nil {
 		middleware.PrintE(middleware.LogArg{"Token Err": err})
 		ResultCode = define.ErrorInvalidToken
+		return
+	} else if !loginPossible {
+		ResultCode = define.ErrorLoginFailed
 		return
 	}
 
@@ -46,10 +49,13 @@ func (uc structBsmgUsecase) AuthorizationCheck(c echo.Context) (apiResponse defi
 // 로그인만 확인
 func (uc structBsmgUsecase) CheckLoginIng(c echo.Context) (apiResponse define.BsmgMemberResponse, ResultCode int) {
 	// 인가 체크
-	claims, err := middleware.CheckToken(c)
+	claims, err, loginPossible := middleware.CheckToken(c, uc.loginUserAgentMap)
 	if err != nil {
 		middleware.PrintE(middleware.LogArg{"Token Err": err})
 		ResultCode = define.ErrorInvalidToken
+		return
+	} else if !loginPossible {
+		ResultCode = define.ErrorLoginFailed
 		return
 	}
 
@@ -153,11 +159,18 @@ func (uc structBsmgUsecase) CheckUserLogin(c echo.Context, apiRequest define.Bsm
 	}
 	// 인증 성공 ----------------------
 
-	// 중복 로그인 확인
-	if !middleware.IsNotDuplicateLogin(c, member.Mem_ID) {
-		middleware.PrintE(middleware.LogArg{"pn": "handlerLogin", "text": "This ID Login is Duplicated"})
-		apiResponse.Result.ResultCode = define.ErrorLoginDuplication
-		return
+	// 중복 로그인 방지
+	if useAgent, exist := uc.loginUserAgentMap[member.Mem_ID]; exist {
+		present_user_agent := c.Request().UserAgent()
+		// 같은 브라우저면 X
+		if useAgent == present_user_agent {
+			middleware.PrintE(middleware.LogArg{"pn": "handlerLogin", "text": "This ID Login is Duplicated"})
+			apiResponse.Result.ResultCode = define.ErrorLoginDuplication
+			return
+		}
+
+		// 다른 브라우저면 로그인 OK (기존 연결 해제)
+		uc.loginUserAgentMap[member.Mem_ID] = present_user_agent
 	}
 
 	apiResponse.Result.ResultCode = define.Success
@@ -182,9 +195,12 @@ func (uc structBsmgUsecase) CheckUserLogin(c echo.Context, apiRequest define.Bsm
 		apiResponse.Result.ResultCode = define.ErrorTokenCreationFailed
 		return
 	}
+	// 로그인 여부 저장
+	uc.loginUserAgentMap[member.Mem_ID] = c.Request().UserAgent()
 
-	// 세션 생성
-	middleware.CreateSession(c, &apiResponse.MemberInfo)
+	// 세션 저장
+	// session := middleware.CreateSession(c, &apiResponse.MemberInfo)
+
 	return
 }
 

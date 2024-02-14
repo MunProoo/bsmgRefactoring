@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	database "BsmgRefactoring/database"
 	define "BsmgRefactoring/define"
 
 	mock "github.com/stretchr/testify/mock"
@@ -60,6 +61,11 @@ func (_m *BsmgRepository) ConnectBSMG() error {
 	}
 
 	return r0
+}
+
+// ConnectDB provides a mock function with given fields: dm
+func (_m *BsmgRepository) ConnectDB(dm database.DatabaseManagerInterface) {
+	_m.Called(dm)
 }
 
 // ConnectMariaDB provides a mock function with given fields:

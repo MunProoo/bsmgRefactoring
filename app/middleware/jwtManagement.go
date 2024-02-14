@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -164,32 +165,46 @@ func IsExpired(claims jwt.MapClaims) (expired bool) {
 
 // Token을 쿠키로부터 꺼내서 검증 후 반환
 // AccessToken 만료시 재발급
-func CheckToken(c echo.Context) (jwt.MapClaims, error) {
+func CheckToken(c echo.Context, loginMap map[string]string) (jwt.MapClaims, error, bool) {
+	loginPossible := false
+
 	// accessToken 검증
 	accessClaims, err := ExtractClaims(c, "AC")
 	if err == nil || err.Error() == "http: named cookie not present" {
 		// accessToken 쿠키가 만료되서 사라짐
 		refreshClaims, err := ExtractClaims(c, "RS")
 		if err != nil {
-			return nil, err
+			return nil, err, loginPossible
 		}
 
 		// claims 재생성
 		memberClaims, err := ClaimsMappingMember(refreshClaims)
 		if err != nil {
-			return nil, err
+			return nil, err, loginPossible
+		}
+
+		if existAgent, exist := loginMap[memberClaims.Mem_ID]; exist {
+			if !strings.EqualFold(existAgent, c.Request().UserAgent()) {
+				return nil, err, loginPossible
+			}
+
+			loginPossible = true
 		}
 
 		// 토큰 재발급
-		MakeJwtToken(c, &memberClaims)
-		return accessClaims, nil
+		if err = MakeJwtToken(c, &memberClaims); err != nil {
+			return nil, err, false
+		}
+
+		// 로그인 유지
+		return accessClaims, err, loginPossible
 		/*
 			if isExpired(refreshClaims) {
 				return accessClaims, nil
 			}
 		*/
 	}
-	return nil, errors.New("token is expired")
+	return nil, errors.New("token is expired"), loginPossible
 
 }
 

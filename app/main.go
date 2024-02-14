@@ -15,7 +15,6 @@ import (
 	"encoding/gob"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo-contrib/session"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -54,10 +53,11 @@ func main() {
 
 	// DBManager 생성
 	server.ConnectDataBase() // 서브 고루틴에서 연결 시 비동기이므로.. 첫 연결은 절차적으로
-	dbManager := server.DBManager
+	// dbManager := server.DBManager
 
 	// Repository 생성 DB 의존성 주입
-	repo := repository.NewBsmgRepository(dbManager)
+	// repo := repository.NewBsmgRepository(dbManager)
+	repo := repository.NewBsmgRepository()
 
 	// UseCase 생성 및 Repository 의존성 주입
 	useCase := usecase.NewBsmgUsecase(repo)
@@ -70,6 +70,9 @@ func main() {
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			// 서버변수 컨텍스트에 할당
+			c.Set("Server", server)
+
 			// Swagger UI를 불러오는 URL (/swagger/index.html)이 정적파일의 index.html과 충돌하여 동작하지 않으므로 후킹 추가
 			if c.Request().URL.Path == swaggerIndexURL {
 				return echoSwagger.WrapHandler(c)
@@ -84,16 +87,19 @@ func main() {
 	e.Use(middleware.Static("views/webRoot")) // eXBuilder6 의존성 파일 추가
 	// e.Use(middleware.Static("views/bsmgApp/webRoot")) // 빠른 디버깅용. 배포위치를 변경하여 front 수정 시 바로 반영되도록
 
-	e.Use(session.Middleware(bsmgMd.Store)) // 세션 미들웨어 추가
-	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			// 세션 초기화
-			bsmgMd.InitSessionMiddleware(c)
-			// 스레드 안정성을 고려하여 서버 변수를 컨텍스트에 할당
-			c.Set("Server", server)
-			return next(c)
-		}
-	})
+	/*
+		// JWT로 변경하면서 사용 X. 브라우저간 세션 쿠키 공유 안되는 문제있음
+		e.Use(session.Middleware(bsmgMd.Store)) // 세션 미들웨어 추가
+		e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+			return func(c echo.Context) error {
+				// 세션 초기화
+				bsmgMd.InitSessionMiddleware(c)
+				// 스레드 안정성을 고려하여 서버 변수를 컨텍스트에 할당
+				c.Set("Server", server)
+				return next(c)
+			}
+		})
+	*/
 
 	e.GET("/", func(c echo.Context) error {
 		return c.File("index.html")
@@ -126,7 +132,7 @@ func main() {
 	// Route
 	router.InitRouteGroup(bsmgGroup, *bsmgHandler)
 
-	go server.StartServer() // DB 상태 체크 및 재연결 등..
+	go server.StartServer(repo) // DB 상태 체크 및 재연결 등..
 
 	e.Logger.Fatal(e.Start(":3000"))
 }

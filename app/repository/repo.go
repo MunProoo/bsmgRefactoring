@@ -13,6 +13,7 @@ import (
 
 type BsmgRepository interface {
 	database.DBInterface
+	ConnectDB(dm database.DatabaseManagerInterface)
 }
 
 type structBsmgRepository struct {
@@ -20,6 +21,11 @@ type structBsmgRepository struct {
 	Mutex sync.RWMutex
 }
 
-func NewBsmgRepository(dm database.DatabaseManagerInterface) BsmgRepository {
-	return &structBsmgRepository{dm, sync.RWMutex{}}
+// DB 연결 끊겼을 시 재 연결용
+func (repo *structBsmgRepository) ConnectDB(dm database.DatabaseManagerInterface) {
+	repo.dm = dm
+}
+
+func NewBsmgRepository() BsmgRepository {
+	return &structBsmgRepository{Mutex: sync.RWMutex{}}
 }

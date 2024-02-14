@@ -35,8 +35,15 @@ type BsmgUsecase interface {
 
 type structBsmgUsecase struct {
 	rp repository.BsmgRepository
+
+	loginUserAgentMap map[string]string // Key : loginID , value : userAgent (브라우저)
 }
 
 func NewBsmgUsecase(br repository.BsmgRepository) BsmgUsecase {
-	return &structBsmgUsecase{br}
+	usecase := &structBsmgUsecase{
+		rp:                br,
+		loginUserAgentMap: make(map[string]string),
+	}
+
+	return usecase
 }

@@ -3,6 +3,7 @@ package server
 import (
 	"BsmgRefactoring/database"
 	"BsmgRefactoring/define"
+	"BsmgRefactoring/repository"
 	"errors"
 	"sync"
 	"time"
@@ -33,7 +34,7 @@ func InitServer() (server *ServerProcessor) {
 }
 
 // Server 시작 (서버상태 별 프로세스 실행)
-func (server *ServerProcessor) StartServer() {
+func (server *ServerProcessor) StartServer(repo repository.BsmgRepository) {
 	// TODO : DB 연결상태 확인 다른방법 없을까? Ping은 성능에 문제 준다는데
 	var err error
 	for {
@@ -52,6 +53,7 @@ func (server *ServerProcessor) StartServer() {
 			// 	time.Sleep(100 * time.Millisecond)
 			// 	continue
 			// }
+
 			server.SetState(define.StateConnected)
 
 		case define.StateConnected:
@@ -66,6 +68,7 @@ func (server *ServerProcessor) StartServer() {
 				// server.log.Error("DB is not connected", "error", err)
 				server.SetState(define.StateDisconnected)
 			}
+			repo.ConnectDB(server.DBManager)
 			time.Sleep(1 * time.Second)
 
 		case define.StateDisconnected: // DB 연결 재시도

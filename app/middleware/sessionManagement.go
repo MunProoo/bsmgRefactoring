@@ -4,6 +4,7 @@ import (
 	"BsmgRefactoring/define"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
@@ -64,6 +65,7 @@ func InitSessionMiddleware(c echo.Context) error {
 		Path:     "/",   // 모든 경로에서 세션 확인
 		MaxAge:   86400, // 하루
 		HttpOnly: true,
+		// SameSite: http.SameSiteNoneMode,
 	}
 	session.Values["initialized"] = true
 	session.Save(c.Request(), c.Response())
@@ -108,7 +110,7 @@ func CheckSession(c echo.Context) bool {
 	return true
 }
 
-func CreateSession(c echo.Context, member *define.BsmgMemberInfo) {
+func CreateSession(c echo.Context, member *define.BsmgMemberInfo) *sessions.Session {
 	log.Println("Session 생성!!")
 	session, err := session.Get(SessionKey, c)
 	if err != nil {
@@ -126,6 +128,7 @@ func CreateSession(c echo.Context, member *define.BsmgMemberInfo) {
 			log.Printf("%v \n", err)
 		}
 	}
+	return session
 }
 
 func DeleteSession(c echo.Context) {
@@ -158,14 +161,31 @@ func GetSessionData(c echo.Context) (result define.BsmgMemberResponse) {
 	return
 }
 
-func IsNotDuplicateLogin(c echo.Context, loginID string) bool {
-	sessions, err := session.Get(SessionKey, c)
+func IsDuplicatedLogin(c echo.Context, loginID string, sessionMap map[string]*sessions.Session) bool {
+	presentSession, err := session.Get(SessionKey, c)
 	if err != nil {
 		log.Printf("%v", err)
 		return false
 	}
 
-	member, exist := sessions.Values["Member"]
+	// 로그인 기록이 있음
+	if existingSession, ok := sessionMap[loginID]; ok {
+
+		// 브라우저가 동일
+		if strings.EqualFold(presentSession.ID, existingSession.ID) {
+			log.Printf("Same Browser Duplicate Login : %s", loginID)
+			return false
+		}
+
+		// 다른 브라우저에서의 요청 -> 기존 브라우저 연결 해제
+		existingSession.Values["authenticated"] = false
+		existingSession.Values["Member"] = nil
+		existingSession.Options.MaxAge = -1
+		existingSession.Save(c.Request(), c.Response())
+
+	}
+
+	member, exist := presentSession.Values["Member"]
 	if !exist {
 		return true
 	}

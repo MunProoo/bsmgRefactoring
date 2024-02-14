@@ -99,7 +99,7 @@ definitions:
       Count:
         type: integer
     type: object
-host: localhost:3000
+host: localhost
 info:
   contact: {}
   license:
@@ -167,6 +167,8 @@ paths:
       - description: |-
           * 0 - All
           * 1 - Title
+          * 2 - Content
+          * 3 - Reporter
         enum:
         - 0
         - 1

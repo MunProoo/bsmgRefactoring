@@ -18,6 +18,7 @@ import (
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/rs/cors"
 
 	_ "BsmgRefactoring/docs"
 
@@ -37,7 +38,7 @@ const (
 
 // @title BSMG Swagger API
 // @version 1.0
-// @host localhost:3000
+// @host localhost
 // @BasePath /bsmg
 
 // @license.name  Apache 2.0
@@ -63,11 +64,30 @@ func main() {
 	useCase := usecase.NewBsmgUsecase(repo)
 	server.CreateCron(useCase) // 주간보고 스케쥴러 생성
 
+	// CORS 미들웨어 설정
+	corsMiddleware := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"}, // 허용할 오리진을 설정, "*"는 모든 오리진 허용
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Content-Type", "Authorization"},
+		MaxAge:         86400, // pre-flight 리퀘스트를 캐싱할 시간(초)
+	})
+
+	// Echo에 CORS 미들웨어 등록
+	e.Use(echo.WrapMiddleware(corsMiddleware.Handler))
 	// handler 생성 및 Usecase 의존성 주입
 	bsmgHandler := handler.NewBsmgHandler(useCase)
 
 	// Swagger Docs 추가
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	e.GET("/swagger/*", func(c echo.Context) error {
+		// CORS 헤더 추가
+		c.Response().Header().Set("Access-Control-Allow-Origin", "*")
+		c.Response().Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Response().Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		c.Response().Header().Set("Access-Control-Max-Age", "86400")
+
+		return echoSwagger.WrapHandler(c)
+	})
+
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			// 서버변수 컨텍스트에 할당
@@ -130,6 +150,7 @@ func main() {
 		}),
 	)
 	// Route
+
 	router.InitRouteGroup(bsmgGroup, *bsmgHandler)
 
 	go server.StartServer(repo) // DB 상태 체크 및 재연결 등..

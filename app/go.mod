@@ -12,6 +12,7 @@ require (
 	github.com/labstack/echo-jwt/v4 v4.2.0
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/robfig/cron v1.2.0
+	github.com/rs/cors v1.10.1
 	github.com/shinYeongHyeon/go-times v1.1.3
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/echo-swagger v1.4.1

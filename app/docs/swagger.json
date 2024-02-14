@@ -9,7 +9,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:3000",
+    "host": "localhost",
     "basePath": "/bsmg",
     "paths": {
         "/login/chkLogin": {
@@ -111,7 +111,7 @@
                             3
                         ],
                         "type": "integer",
-                        "description": "* 0 - All\n* 1 - Title",
+                        "description": "* 0 - All\n* 1 - Title\n* 2 - Content\n* 3 - Reporter",
                         "name": "@d1#search_combo",
                         "in": "query"
                     },

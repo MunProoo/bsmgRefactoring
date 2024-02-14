@@ -205,10 +205,22 @@ func (uc structBsmgUsecase) CheckUserLogin(c echo.Context, apiRequest define.Bsm
 }
 
 func (uc structBsmgUsecase) UserLogout(c echo.Context) (apiResponse define.OnlyResult) {
+	claims, err, _ := middleware.CheckToken(c, uc.loginUserAgentMap)
+	if err != nil {
+		middleware.PrintE(middleware.LogArg{"Token Err": err})
+		apiResponse.Result.ResultCode = define.ErrorInvalidToken
+		return
+	}
+
+	MemberInfo := define.BsmgMemberInfo{}
+	MemberInfo.ParsingClaim(claims)
+
+	// 로그인 상태 해제
+	delete(uc.loginUserAgentMap, MemberInfo.Mem_ID)
 	middleware.DeleteCookie(c, middleware.AccessCookieName)
 	middleware.DeleteCookie(c, middleware.RefreshCookieName)
 
-	middleware.DeleteSession(c)
+	// middleware.DeleteSession(c)
 	apiResponse.Result.ResultCode = define.Success
 	return
 }

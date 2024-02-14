@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
 
@@ -243,18 +242,31 @@ func (uc structBsmgUsecase) SelectReportListReq(searchData define.SearchData, pa
 }
 
 func (uc structBsmgUsecase) PostReportReq(c echo.Context, apiRequest define.BsmgReportInfoRequest) (apiResponse define.BsmgReportInfoResponse) {
-	// 세션으로 클라이언트 정보 Get
-	session, err := session.Get(middleware.SessionKey, c)
+	/*
+		// 세션으로 클라이언트 정보 Get
+		session, err := session.Get(middleware.SessionKey, c)
+		if err != nil {
+			middleware.PrintE(middleware.LogArg{"pn": "handlerReport", "err": err})
+			apiResponse.Result.ResultCode = define.ErrorSession
+			return
+		}
+		client := session.Values["Member"].(define.BsmgMemberInfo)
+	*/
+
+	// JWT로 사용자 정보 Get
+	claims, err, _ := middleware.CheckToken(c, uc.loginUserAgentMap)
 	if err != nil {
-		middleware.PrintE(middleware.LogArg{"pn": "handlerReport", "err": err})
-		apiResponse.Result.ResultCode = define.ErrorSession
+		middleware.PrintE(middleware.LogArg{"Token Err": err})
+		apiResponse.Result.ResultCode = define.ErrorInvalidToken
 		return
 	}
-	client := session.Values["Member"].(define.BsmgMemberInfo)
+
+	MemberInfo := define.BsmgMemberInfo{}
+	MemberInfo.ParsingClaim(claims)
 
 	// parsing
 	report := apiRequest.Data.BsmgReportInfo.ParseReport()
-	report.Rpt_Reporter = client.Mem_ID
+	report.Rpt_Reporter = MemberInfo.Mem_ID
 
 	// DB 처리
 	err = uc.InsertDailyReport(report)
@@ -301,17 +313,28 @@ func (uc structBsmgUsecase) PostRegistScheduleReq(c echo.Context, apiRequest def
 }
 
 func (uc structBsmgUsecase) PutReportReq(c echo.Context, report define.BsmgReportInfo) (apiResponse define.BsmgReportInfoResponse) {
-	// 세션으로 클라이언트 정보 Get
-	session, err := session.Get(middleware.SessionKey, c)
+	// // 세션으로 클라이언트 정보 Get
+	// session, err := session.Get(middleware.SessionKey, c)
+	// if err != nil {
+	// 	middleware.PrintE(middleware.LogArg{"pn": "usecase", "err": err})
+	// 	apiResponse.Result.ResultCode = define.ErrorSession
+	// 	return
+	// }
+	// client := session.Values["Member"].(define.BsmgMemberInfo)
+
+	// JWT로 사용자 정보 Get
+	claims, err, _ := middleware.CheckToken(c, uc.loginUserAgentMap)
 	if err != nil {
-		middleware.PrintE(middleware.LogArg{"pn": "usecase", "err": err})
-		apiResponse.Result.ResultCode = define.ErrorSession
+		middleware.PrintE(middleware.LogArg{"Token Err": err})
+		apiResponse.Result.ResultCode = define.ErrorInvalidToken
 		return
 	}
-	client := session.Values["Member"].(define.BsmgMemberInfo)
+
+	MemberInfo := define.BsmgMemberInfo{}
+	MemberInfo.ParsingClaim(claims)
 
 	// 본인만 수정 가능
-	if client.Mem_ID != report.Rpt_Reporter {
+	if MemberInfo.Mem_ID != report.Rpt_Reporter {
 		middleware.PrintE(middleware.LogArg{"pn": "usecase", "text": "This User is not him"})
 		apiResponse.Result.ResultCode = define.ErrorNotAuthorizedUser
 		return
@@ -385,17 +408,28 @@ func (uc structBsmgUsecase) DeleteReportReq(c echo.Context, rptIdx int32) (apiRe
 }
 
 func (uc structBsmgUsecase) PutWeekRptReq(c echo.Context, report define.BsmgWeekRptInfo) (apiResponse define.OnlyResult) {
-	// 세션으로 클라이언트 정보 Get
-	session, err := session.Get(middleware.SessionKey, c)
+	// // 세션으로 클라이언트 정보 Get
+	// session, err := session.Get(middleware.SessionKey, c)
+	// if err != nil {
+	// 	middleware.PrintE(middleware.LogArg{"pn": "handlerReport", "err": err})
+	// 	apiResponse.Result.ResultCode = define.ErrorSession
+	// 	return
+	// }
+	// client := session.Values["Member"].(define.BsmgMemberInfo)
+
+	// JWT로 사용자 정보 Get
+	claims, err, _ := middleware.CheckToken(c, uc.loginUserAgentMap)
 	if err != nil {
-		middleware.PrintE(middleware.LogArg{"pn": "handlerReport", "err": err})
-		apiResponse.Result.ResultCode = define.ErrorSession
+		middleware.PrintE(middleware.LogArg{"Token Err": err})
+		apiResponse.Result.ResultCode = define.ErrorInvalidToken
 		return
 	}
-	client := session.Values["Member"].(define.BsmgMemberInfo)
+
+	MemberInfo := define.BsmgMemberInfo{}
+	MemberInfo.ParsingClaim(claims)
 
 	// 본인만 수정 가능
-	if client.Mem_ID != report.WRpt_Reporter {
+	if MemberInfo.Mem_ID != report.WRpt_Reporter {
 		apiResponse.Result.ResultCode = define.ErrorNotAuthorizedUser
 		return
 	}

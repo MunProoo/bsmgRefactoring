@@ -2,6 +2,9 @@ Go로 만든 웹 서비스 프로젝트 입니다.
 http://141.164.54.101   
 admin / admin 으로 접속 가능합니다.
 
+* Swagger UI 접근은 http://141.164.54.101/swagger/index.html 입니다. 작업이 안된 API는 추가 예정입니다.
+* ref : swaggo/echo-swagger 
+
 
 ## 아키텍처
 ![시스템 아키텍처 drawio](https://github.com/MunProoo/bsmgRefactoring/assets/52486862/8d7ec53f-3dcb-4c67-89ae-0e84a339ff98)

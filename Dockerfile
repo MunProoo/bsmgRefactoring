@@ -14,6 +14,10 @@ WORKDIR /web
 # Copy the local package files to the container's workspace
 COPY ./app .
 
+# Swagger Init
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN swag init
+
 # Build the Go application
 RUN go build -o main .
 
